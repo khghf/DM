@@ -1,0 +1,32 @@
+Scene: Save.scene
+Entities:
+    -   ID: 11111111111
+        Components:
+            TagComponent:
+                Tag: Blue
+            SpriteComponent:
+                Color: [0, 0, 1, 1]
+            TransformComponent:
+                Location: [-0.147, -0.005, 0.004]
+                Rotation: [0, 0.128, 0]
+                Scale: [1, 2.786, 1]
+    -   ID: 11111111111
+        Components:
+            TagComponent:
+                Tag: Green
+            SpriteComponent:
+                Color: [0.24729602, 0.5808581, 0.24729602, 1]
+            TransformComponent:
+                Location: [1.693, 0, 0.001]
+                Rotation: [0, 0, 0]
+                Scale: [2.524, 1.116, 1]
+    -   ID: 11111111111
+        Components:
+            TagComponent:
+                Tag: Red
+            SpriteComponent:
+                Color: [0.9306931, 0.10750579, 0.10750579, 1]
+            TransformComponent:
+                Location: [-1.483, 0.166, -0.014]
+                Rotation: [0, 0, 0]
+                Scale: [1.029, 2.166, 1.009]

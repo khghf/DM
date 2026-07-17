@@ -1,0 +1,153 @@
+VulkanSDK/
+# 编译输出目录
+bin/
+obj/
+bin-int/
+# Visual Studio 生成的临时文件
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vs/
+!*.vs/ProjectSettings.json  # 保留项目设置（可选）
+!*.vs/SolutionSettings.json
+*.vcxproj
+*.vcxproj*
+*.vcxproj.filters
+
+
+# 调试相关文件
+*.pdb
+*.idb
+*.ilk
+*.log
+*.opensdf
+*.sdf
+*.ipch
+Debug/
+Release/
+x64/
+x86/
+AnyCPU/
+
+# 测试相关
+TestResults/
+*.vstestresults
+*.testlog
+*.trx
+
+# 发布相关
+Publish/
+app.publish/
+
+# 代码分析报告
+*.CodeAnalysisLog.xml
+*.CodeMetricsResult.xml
+
+# NuGet 相关（可选，若不忽略包文件）
+# packages/  # 若使用 PackageReference 管理依赖，可忽略此目录
+*.nupkg
+!*.nuget.props
+!*.nuget.targets
+.nuget/
+NuGet.Config
+NuGet.targets
+
+# _dotnet 工具链（若使用）
+.dotnet/
+
+# 环境配置文件（包含敏感信息）
+*.env
+*.env.local
+appsettings.Development.json
+appsettings.Test.json
+
+# 其他 IDE 相关
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 操作系统相关
+.DS_Store
+Thumbs.db
+
+# ========== CMake 构建相关 ==========
+# CMake 生成文件
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+CMakeScripts/
+*.cmake
+!CMakeLists.txt
+!*.cmake.in
+!Find*.cmake  # 保留自定义查找模块（可选）
+!CMakePresets.json  # 保留预设配置（可选）
+!CMakeUserPresets.json  # 用户预设可能含本地路径，建议视情况忽略
+
+# 构建目录（常见名称）
+build/
+build-*/
+cmake-build-*/
+out/
+install/
+_CPack_Packages/
+*.dir/
+
+
+# CMake 测试输出
+CTestTestfile.cmake
+Testing/
+*.test
+*.check
+
+# 编译生成的依赖扫描文件
+*.depend
+*.d
+*.dep
+*.deps
+
+# 编译数据库（可选，调试用）
+compile_commands.json
+compile_flags.txt
+
+# CPack 生成
+*.deb
+*.rpm
+*.tar.gz
+*.zip
+*.7z
+_CPack_Packages/
+
+# ========== 性能分析/覆盖率 ==========
+*.gcda
+*.gcno
+*.gcov
+*.prof
+*.profraw
+*.profdata
+
+# ========== 其他常见文件 ==========
+# 日志文件
+*.log
+*.out
+
+# 临时文件
+*.tmp
+*.temp
+*.bak
+*.backup
+*~
+
+# 压缩包（若不想提交）
+*.7z
+*.rar
+*.tar
+*.gz
+*.bz2
+*.xz
+
+# 自定义配置（包含本地路径）
+config.local.h
+*.local

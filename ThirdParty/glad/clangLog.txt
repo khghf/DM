@@ -1,0 +1,145 @@
+GObject.o: D:\Projects\DM\DM\Src\FrameWork\GObject.h Src\ReflectMarco.h \
+  Mirror\ReflectMarco.h Mirror\mirror.h \
+  D:\Projects\DM\DM\Src\Tool\Util\GameStatic.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\string \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\yvals_core.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\vcruntime.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\sal.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\concurrencysal.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\vadefs.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xkeycheck.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xstring \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\__msvc_sanitizer_annotate_container.hpp \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\__msvc_string_view.hpp \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\iosfwd \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\yvals.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\crtdbg.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\vcruntime_new_debug.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\vcruntime_new.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\crtdefs.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\use_ansi.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\cstdio \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\stdio.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_wstdio.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_stdio_config.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\cstring \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\string.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_memory.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_memcpy_s.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\errno.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\vcruntime_string.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_wstring.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\cwchar \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\wchar.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_wconio.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_wctype.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_wdirect.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_wio.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_share.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_wprocess.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_wstdlib.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_wtime.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\sys\stat.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\sys\types.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\intrin.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\intrin0.inl.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\setjmp.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\immintrin.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\wmmintrin.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\nmmintrin.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\smmintrin.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\tmmintrin.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\pmmintrin.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\emmintrin.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xmmintrin.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\mmintrin.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\malloc.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_malloc.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\zmmintrin.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\ammintrin.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xtr1common \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xutility \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\__msvc_iter_core.hpp \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\utility \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\initializer_list \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\cstddef \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\stddef.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\type_traits \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\cstdint \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\stdint.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\compare \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\concepts \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\climits \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\limits.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\cstdlib \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\math.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_math.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\stdlib.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_search.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xmemory \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\limits \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\cfloat \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\float.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\new \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\exception \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\vcruntime_exception.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\eh.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\corecrt_terminate.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xatomic.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\tuple \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xpolymorphic_allocator.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\cctype \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\ctype.h \
+  D:\Projects\DM\DM\Src\Core\MMM\Reference.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\memory \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\typeinfo \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\vcruntime_typeinfo.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\atomic \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xatomic_wait.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xthreads.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\__msvc_threads_core.hpp \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xtimec.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\ctime \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\time.h \
+  entt\entt.hpp \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\unordered_set \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xhash \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\cmath \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\list \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\vector \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\__msvc_bit_utils.hpp \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xbit_ops.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xnode_handle.h \
+  D:\Projects\DM\DM\Src\Core\Log.h D:\Projects\DM\DM\Src\DMPCH.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\string_view \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\map \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xtree \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\unordered_map \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\algorithm \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\__msvc_heap_algorithms.hpp \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\__msvc_minmax.hpp \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\iostream \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\istream \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\__msvc_ostream.hpp \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\ios \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xlocnum \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\iterator \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\streambuf \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xiosbase \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\share.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\system_error \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\__msvc_system_error_abi.hpp \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\cerrno \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\stdexcept \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xcall_once.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xerrc.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xlocale \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xfacet \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\xlocinfo \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\__msvc_xlocinfo_types.hpp \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\clocale \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.26100.0\ucrt\locale.h \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\ostream \
+  D:\APP\VisualStdio2022\VS2022\VC\Tools\MSVC\14.44.35207\include\functional \
+  spdlog\spdlog.h GObject.gen.h

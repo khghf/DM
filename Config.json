@@ -1,0 +1,14 @@
+﻿{
+  "Assets": {
+    "Folder": "Assets",
+    "Shader": "Assets/Shader",
+    "Texture": "Assets/Texture",
+    "Font": "Assets/Font",
+    "Icon": "Assets/Icon",
+    "Save": "Assets/Save"
+  },
+  "Cache": {
+    "Folder": "Cache",
+    "Shader": "Cache/Shader"
+  }
+}

@@ -1,0 +1,94 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CMakePredefinedTargets", "CMakePredefinedTargets", "{9780F03D-FA0D-31CB-A06B-6B11F5DDD703}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CTestDashboardTargets", "CTestDashboardTargets", "{624AF6ED-F160-3134-BC66-DFD398B2743F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{415B5F7E-06AB-39C4-8A78-D9038056B22D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ALL_BUILD", "ALL_BUILD.vcxproj", "{538BCC01-3EB2-3267-83A2-1F9930433058}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C139118-367D-3DBB-A3F4-51DF0D570343} = {6C139118-367D-3DBB-A3F4-51DF0D570343}
+		{E843C426-A014-3683-BCD7-43D118ED00EF} = {E843C426-A014-3683-BCD7-43D118ED00EF}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Continuous", "Continuous.vcxproj", "{6243828A-3AFA-31FD-8F7B-AF01276D4935}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C139118-367D-3DBB-A3F4-51DF0D570343} = {6C139118-367D-3DBB-A3F4-51DF0D570343}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Experimental", "Experimental.vcxproj", "{FCCED99D-0975-3823-8916-E67978359E2D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C139118-367D-3DBB-A3F4-51DF0D570343} = {6C139118-367D-3DBB-A3F4-51DF0D570343}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Nightly", "Nightly.vcxproj", "{5248A222-E684-3B6D-853B-1E6566DCA649}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C139118-367D-3DBB-A3F4-51DF0D570343} = {6C139118-367D-3DBB-A3F4-51DF0D570343}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NightlyMemoryCheck", "NightlyMemoryCheck.vcxproj", "{329D66F2-70F8-34CA-B835-B759A7FB1A2A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C139118-367D-3DBB-A3F4-51DF0D570343} = {6C139118-367D-3DBB-A3F4-51DF0D570343}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZERO_CHECK", "..\..\..\\ZERO_CHECK.vcxproj", "{6C139118-367D-3DBB-A3F4-51DF0D570343}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yaml-cpp", "yaml-cpp.vcxproj", "{E843C426-A014-3683-BCD7-43D118ED00EF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C139118-367D-3DBB-A3F4-51DF0D570343} = {6C139118-367D-3DBB-A3F4-51DF0D570343}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+		Editor|x64 = Editor|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{538BCC01-3EB2-3267-83A2-1F9930433058}.Debug|x64.ActiveCfg = Debug|x64
+		{538BCC01-3EB2-3267-83A2-1F9930433058}.Release|x64.ActiveCfg = Release|x64
+		{538BCC01-3EB2-3267-83A2-1F9930433058}.Editor|x64.ActiveCfg = Editor|x64
+		{6243828A-3AFA-31FD-8F7B-AF01276D4935}.Debug|x64.ActiveCfg = Debug|x64
+		{6243828A-3AFA-31FD-8F7B-AF01276D4935}.Release|x64.ActiveCfg = Release|x64
+		{6243828A-3AFA-31FD-8F7B-AF01276D4935}.Editor|x64.ActiveCfg = Editor|x64
+		{FCCED99D-0975-3823-8916-E67978359E2D}.Debug|x64.ActiveCfg = Debug|x64
+		{FCCED99D-0975-3823-8916-E67978359E2D}.Release|x64.ActiveCfg = Release|x64
+		{FCCED99D-0975-3823-8916-E67978359E2D}.Editor|x64.ActiveCfg = Editor|x64
+		{5248A222-E684-3B6D-853B-1E6566DCA649}.Debug|x64.ActiveCfg = Debug|x64
+		{5248A222-E684-3B6D-853B-1E6566DCA649}.Release|x64.ActiveCfg = Release|x64
+		{5248A222-E684-3B6D-853B-1E6566DCA649}.Editor|x64.ActiveCfg = Editor|x64
+		{329D66F2-70F8-34CA-B835-B759A7FB1A2A}.Debug|x64.ActiveCfg = Debug|x64
+		{329D66F2-70F8-34CA-B835-B759A7FB1A2A}.Release|x64.ActiveCfg = Release|x64
+		{329D66F2-70F8-34CA-B835-B759A7FB1A2A}.Editor|x64.ActiveCfg = Editor|x64
+		{6C139118-367D-3DBB-A3F4-51DF0D570343}.Debug|x64.ActiveCfg = Debug|x64
+		{6C139118-367D-3DBB-A3F4-51DF0D570343}.Debug|x64.Build.0 = Debug|x64
+		{6C139118-367D-3DBB-A3F4-51DF0D570343}.Release|x64.ActiveCfg = Release|x64
+		{6C139118-367D-3DBB-A3F4-51DF0D570343}.Release|x64.Build.0 = Release|x64
+		{6C139118-367D-3DBB-A3F4-51DF0D570343}.Editor|x64.ActiveCfg = Editor|x64
+		{6C139118-367D-3DBB-A3F4-51DF0D570343}.Editor|x64.Build.0 = Editor|x64
+		{E843C426-A014-3683-BCD7-43D118ED00EF}.Debug|x64.ActiveCfg = Debug|x64
+		{E843C426-A014-3683-BCD7-43D118ED00EF}.Debug|x64.Build.0 = Debug|x64
+		{E843C426-A014-3683-BCD7-43D118ED00EF}.Release|x64.ActiveCfg = Release|x64
+		{E843C426-A014-3683-BCD7-43D118ED00EF}.Release|x64.Build.0 = Release|x64
+		{E843C426-A014-3683-BCD7-43D118ED00EF}.Editor|x64.ActiveCfg = Editor|x64
+		{E843C426-A014-3683-BCD7-43D118ED00EF}.Editor|x64.Build.0 = Editor|x64
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{538BCC01-3EB2-3267-83A2-1F9930433058} = {9780F03D-FA0D-31CB-A06B-6B11F5DDD703}
+		{6C139118-367D-3DBB-A3F4-51DF0D570343} = {9780F03D-FA0D-31CB-A06B-6B11F5DDD703}
+		{6243828A-3AFA-31FD-8F7B-AF01276D4935} = {624AF6ED-F160-3134-BC66-DFD398B2743F}
+		{FCCED99D-0975-3823-8916-E67978359E2D} = {624AF6ED-F160-3134-BC66-DFD398B2743F}
+		{5248A222-E684-3B6D-853B-1E6566DCA649} = {624AF6ED-F160-3134-BC66-DFD398B2743F}
+		{329D66F2-70F8-34CA-B835-B759A7FB1A2A} = {624AF6ED-F160-3134-BC66-DFD398B2743F}
+		{E843C426-A014-3683-BCD7-43D118ED00EF} = {415B5F7E-06AB-39C4-8A78-D9038056B22D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {29B6942D-E0A7-3546-9A9E-A8A05F72B230}
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

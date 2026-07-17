@@ -1,0 +1,17 @@
+﻿set(BUILD_SHARED_LIBS   ON  CACHE BOOL "Build GLFW as shared library" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_DOCS     OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL        OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(glfw)
+
+# 输出目录
+set_target_properties(glfw PROPERTIES
+    FOLDER "${ThirdPartyName}"
+    RUNTIME_OUTPUT_DIRECTORY
+        "${CMAKE_SOURCE_DIR}/bin/$<CONFIG>-${DM_PLATFORM_SUFFIX}/${ApplicationName}"
+    ARCHIVE_OUTPUT_DIRECTORY
+        "${CMAKE_SOURCE_DIR}/bin/$<CONFIG>-${DM_PLATFORM_SUFFIX}/glfw"
+)
+

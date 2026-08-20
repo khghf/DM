@@ -62,7 +62,7 @@
 //			m_Times[time.ClassName].push_back(time);
 //			m_ClassTime[time.ClassName] += (float)time.Duration;
 //		}
-//		virtual void OnEvent(Event* const e) { e->bHandled = true; }
+//		virtual void HandleEvent(Event* const e) { e->bHandled = true; }
 //	private:
 //		TimeMeasurerLayer() :Layer("TimeMeasurer") {}
 //		virtual void Render()override;

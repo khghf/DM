@@ -2026,8 +2026,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -3253,11 +3253,11 @@ struct std::tuple_element<Index, entt::value_list<Value...>>: entt::value_list_e
 namespace entt {
 
 template<
-    typename Key,
+    typename KeyEvent,
     typename Type,
-    typename = std::hash<Key>,
+    typename = std::hash<KeyEvent>,
     typename = std::equal_to<>,
-    typename = std::allocator<std::pair<const Key, Type>>>
+    typename = std::allocator<std::pair<const KeyEvent, Type>>>
 class dense_map;
 
 template<
@@ -3289,9 +3289,9 @@ namespace internal {
 
 static constexpr std::size_t dense_map_placeholder_position = (std::numeric_limits<std::size_t>::max)();
 
-template<typename Key, typename Type>
+template<typename KeyEvent, typename Type>
 struct dense_map_node final {
-    using value_type = std::pair<Key, Type>;
+    using value_type = std::pair<KeyEvent, Type>;
 
     template<typename... Args>
     dense_map_node(const std::size_t pos, Args &&...args)
@@ -3513,21 +3513,21 @@ template<typename Lhs, typename Rhs>
  * placed into depends entirely on the hash of its key. Keys with the same hash
  * code appear in the same bucket.
  *
- * @tparam Key Key type of the associative container.
+ * @tparam KeyEvent KeyEvent type of the associative container.
  * @tparam Type Mapped type of the associative container.
  * @tparam Hash Type of function to use to hash the keys.
  * @tparam KeyEqual Type of function to use to compare the keys for equality.
  * @tparam Allocator Type of allocator used to manage memory and elements.
  */
-template<typename Key, typename Type, typename Hash, typename KeyEqual, typename Allocator>
+template<typename KeyEvent, typename Type, typename Hash, typename KeyEqual, typename Allocator>
 class dense_map {
     static constexpr float default_threshold = 0.875f;
     static constexpr std::size_t minimum_capacity = 8u;
     static constexpr std::size_t placeholder_position = internal::dense_map_placeholder_position;
 
-    using node_type = internal::dense_map_node<Key, Type>;
+    using node_type = internal::dense_map_node<KeyEvent, Type>;
     using alloc_traits = std::allocator_traits<Allocator>;
-    static_assert(std::is_same_v<typename alloc_traits::value_type, std::pair<const Key, Type>>, "Invalid value type");
+    static_assert(std::is_same_v<typename alloc_traits::value_type, std::pair<const KeyEvent, Type>>, "Invalid value type");
     using sparse_container_type = std::vector<std::size_t, typename alloc_traits::template rebind_alloc<std::size_t>>;
     using packed_container_type = std::vector<node_type, typename alloc_traits::template rebind_alloc<node_type>>;
 
@@ -3610,12 +3610,12 @@ class dense_map {
 public:
     /*! @brief Allocator type. */
     using allocator_type = Allocator;
-    /*! @brief Key type of the container. */
-    using key_type = Key;
+    /*! @brief KeyEvent type of the container. */
+    using key_type = KeyEvent;
     /*! @brief Mapped type of the container. */
     using mapped_type = Type;
-    /*! @brief Key-value type of the container. */
-    using value_type = std::pair<const Key, Type>;
+    /*! @brief KeyEvent-value type of the container. */
+    using value_type = std::pair<const KeyEvent, Type>;
     /*! @brief Unsigned integer type. */
     using size_type = std::size_t;
     /*! @brief Signed integer type. */
@@ -4032,7 +4032,7 @@ public:
 
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     [[nodiscard]] size_type count(const key_type &key) const {
@@ -4042,7 +4042,7 @@ public:
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     template<typename Other>
@@ -4053,7 +4053,7 @@ public:
 
     /**
      * @brief Finds an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -4070,7 +4070,7 @@ public:
      * @brief Finds an element with a key that compares _equivalent_ to a given
      * key.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -4089,7 +4089,7 @@ public:
 
     /**
      * @brief Returns a range containing all elements with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -4108,7 +4108,7 @@ public:
      * @brief Returns a range containing all elements that compare _equivalent_
      * to a given key.
      * @tparam Other Type of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -4129,7 +4129,7 @@ public:
 
     /**
      * @brief Checks if the container contains an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     [[nodiscard]] bool contains(const key_type &key) const {
@@ -4140,7 +4140,7 @@ public:
      * @brief Checks if the container contains an element with a key that
      * compares _equivalent_ to a given value.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     template<typename Other>
@@ -4324,8 +4324,8 @@ private:
 /*! @cond TURN_OFF_DOXYGEN */
 namespace std {
 
-template<typename Key, typename Value, typename Allocator>
-struct uses_allocator<entt::internal::dense_map_node<Key, Value>, Allocator>
+template<typename KeyEvent, typename Value, typename Allocator>
+struct uses_allocator<entt::internal::dense_map_node<KeyEvent, Value>, Allocator>
     : std::true_type {};
 
 } // namespace std
@@ -4631,7 +4631,7 @@ class dense_set {
 public:
     /*! @brief Allocator type. */
     using allocator_type = Allocator;
-    /*! @brief Key type of the container. */
+    /*! @brief KeyEvent type of the container. */
     using key_type = Type;
     /*! @brief Value type of the container. */
     using value_type = Type;
@@ -4980,7 +4980,7 @@ public:
 
     /**
      * @brief Returns the number of elements matching a value (either 1 or 0).
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     [[nodiscard]] size_type count(const value_type &key) const {
@@ -4990,7 +4990,7 @@ public:
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     template<typename Other>
@@ -9357,8 +9357,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -9876,8 +9876,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -13926,8 +13926,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -26739,8 +26739,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -29196,8 +29196,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -30683,7 +30683,7 @@ template<typename Lhs, typename Rhs>
  * placed into depends entirely on the hash of its key. Keys with the same hash
  * code appear in the same bucket.
  *
- * @tparam Key Key type of the associative container.
+ * @tparam KeyEvent KeyEvent type of the associative container.
  * @tparam Type Mapped type of the associative container.
  * @tparam Hash Type of function to use to hash the keys.
  * @tparam KeyEqual Type of function to use to compare the keys for equality.
@@ -30780,11 +30780,11 @@ class dense_map {
 public:
     /*! @brief Allocator type. */
     using allocator_type = Allocator;
-    /*! @brief Key type of the container. */
+    /*! @brief KeyEvent type of the container. */
     using key_type = Key;
     /*! @brief Mapped type of the container. */
     using mapped_type = Type;
-    /*! @brief Key-value type of the container. */
+    /*! @brief KeyEvent-value type of the container. */
     using value_type = std::pair<const Key, Type>;
     /*! @brief Unsigned integer type. */
     using size_type = std::size_t;
@@ -31202,7 +31202,7 @@ public:
 
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     [[nodiscard]] size_type count(const key_type &key) const {
@@ -31212,7 +31212,7 @@ public:
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     template<typename Other>
@@ -31223,7 +31223,7 @@ public:
 
     /**
      * @brief Finds an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -31240,7 +31240,7 @@ public:
      * @brief Finds an element with a key that compares _equivalent_ to a given
      * key.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -31259,7 +31259,7 @@ public:
 
     /**
      * @brief Returns a range containing all elements with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -31278,7 +31278,7 @@ public:
      * @brief Returns a range containing all elements that compare _equivalent_
      * to a given key.
      * @tparam Other Type of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -31299,7 +31299,7 @@ public:
 
     /**
      * @brief Checks if the container contains an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     [[nodiscard]] bool contains(const key_type &key) const {
@@ -31310,7 +31310,7 @@ public:
      * @brief Checks if the container contains an element with a key that
      * compares _equivalent_ to a given value.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     template<typename Other>
@@ -31801,7 +31801,7 @@ class dense_set {
 public:
     /*! @brief Allocator type. */
     using allocator_type = Allocator;
-    /*! @brief Key type of the container. */
+    /*! @brief KeyEvent type of the container. */
     using key_type = Type;
     /*! @brief Value type of the container. */
     using value_type = Type;
@@ -32150,7 +32150,7 @@ public:
 
     /**
      * @brief Returns the number of elements matching a value (either 1 or 0).
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     [[nodiscard]] size_type count(const value_type &key) const {
@@ -32160,7 +32160,7 @@ public:
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     template<typename Other>
@@ -37038,8 +37038,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -38525,7 +38525,7 @@ template<typename Lhs, typename Rhs>
  * placed into depends entirely on the hash of its key. Keys with the same hash
  * code appear in the same bucket.
  *
- * @tparam Key Key type of the associative container.
+ * @tparam KeyEvent KeyEvent type of the associative container.
  * @tparam Type Mapped type of the associative container.
  * @tparam Hash Type of function to use to hash the keys.
  * @tparam KeyEqual Type of function to use to compare the keys for equality.
@@ -38622,11 +38622,11 @@ class dense_map {
 public:
     /*! @brief Allocator type. */
     using allocator_type = Allocator;
-    /*! @brief Key type of the container. */
+    /*! @brief KeyEvent type of the container. */
     using key_type = Key;
     /*! @brief Mapped type of the container. */
     using mapped_type = Type;
-    /*! @brief Key-value type of the container. */
+    /*! @brief KeyEvent-value type of the container. */
     using value_type = std::pair<const Key, Type>;
     /*! @brief Unsigned integer type. */
     using size_type = std::size_t;
@@ -39044,7 +39044,7 @@ public:
 
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     [[nodiscard]] size_type count(const key_type &key) const {
@@ -39054,7 +39054,7 @@ public:
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     template<typename Other>
@@ -39065,7 +39065,7 @@ public:
 
     /**
      * @brief Finds an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -39082,7 +39082,7 @@ public:
      * @brief Finds an element with a key that compares _equivalent_ to a given
      * key.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -39101,7 +39101,7 @@ public:
 
     /**
      * @brief Returns a range containing all elements with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -39120,7 +39120,7 @@ public:
      * @brief Returns a range containing all elements that compare _equivalent_
      * to a given key.
      * @tparam Other Type of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -39141,7 +39141,7 @@ public:
 
     /**
      * @brief Checks if the container contains an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     [[nodiscard]] bool contains(const key_type &key) const {
@@ -39152,7 +39152,7 @@ public:
      * @brief Checks if the container contains an element with a key that
      * compares _equivalent_ to a given value.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     template<typename Other>
@@ -45886,8 +45886,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -48404,8 +48404,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -49891,7 +49891,7 @@ template<typename Lhs, typename Rhs>
  * placed into depends entirely on the hash of its key. Keys with the same hash
  * code appear in the same bucket.
  *
- * @tparam Key Key type of the associative container.
+ * @tparam KeyEvent KeyEvent type of the associative container.
  * @tparam Type Mapped type of the associative container.
  * @tparam Hash Type of function to use to hash the keys.
  * @tparam KeyEqual Type of function to use to compare the keys for equality.
@@ -49988,11 +49988,11 @@ class dense_map {
 public:
     /*! @brief Allocator type. */
     using allocator_type = Allocator;
-    /*! @brief Key type of the container. */
+    /*! @brief KeyEvent type of the container. */
     using key_type = Key;
     /*! @brief Mapped type of the container. */
     using mapped_type = Type;
-    /*! @brief Key-value type of the container. */
+    /*! @brief KeyEvent-value type of the container. */
     using value_type = std::pair<const Key, Type>;
     /*! @brief Unsigned integer type. */
     using size_type = std::size_t;
@@ -50410,7 +50410,7 @@ public:
 
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     [[nodiscard]] size_type count(const key_type &key) const {
@@ -50420,7 +50420,7 @@ public:
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     template<typename Other>
@@ -50431,7 +50431,7 @@ public:
 
     /**
      * @brief Finds an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -50448,7 +50448,7 @@ public:
      * @brief Finds an element with a key that compares _equivalent_ to a given
      * key.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -50467,7 +50467,7 @@ public:
 
     /**
      * @brief Returns a range containing all elements with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -50486,7 +50486,7 @@ public:
      * @brief Returns a range containing all elements that compare _equivalent_
      * to a given key.
      * @tparam Other Type of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -50507,7 +50507,7 @@ public:
 
     /**
      * @brief Checks if the container contains an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     [[nodiscard]] bool contains(const key_type &key) const {
@@ -50518,7 +50518,7 @@ public:
      * @brief Checks if the container contains an element with a key that
      * compares _equivalent_ to a given value.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     template<typename Other>
@@ -51009,7 +51009,7 @@ class dense_set {
 public:
     /*! @brief Allocator type. */
     using allocator_type = Allocator;
-    /*! @brief Key type of the container. */
+    /*! @brief KeyEvent type of the container. */
     using key_type = Type;
     /*! @brief Value type of the container. */
     using value_type = Type;
@@ -51358,7 +51358,7 @@ public:
 
     /**
      * @brief Returns the number of elements matching a value (either 1 or 0).
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     [[nodiscard]] size_type count(const value_type &key) const {
@@ -51368,7 +51368,7 @@ public:
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     template<typename Other>
@@ -55889,8 +55889,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -57376,7 +57376,7 @@ template<typename Lhs, typename Rhs>
  * placed into depends entirely on the hash of its key. Keys with the same hash
  * code appear in the same bucket.
  *
- * @tparam Key Key type of the associative container.
+ * @tparam KeyEvent KeyEvent type of the associative container.
  * @tparam Type Mapped type of the associative container.
  * @tparam Hash Type of function to use to hash the keys.
  * @tparam KeyEqual Type of function to use to compare the keys for equality.
@@ -57473,11 +57473,11 @@ class dense_map {
 public:
     /*! @brief Allocator type. */
     using allocator_type = Allocator;
-    /*! @brief Key type of the container. */
+    /*! @brief KeyEvent type of the container. */
     using key_type = Key;
     /*! @brief Mapped type of the container. */
     using mapped_type = Type;
-    /*! @brief Key-value type of the container. */
+    /*! @brief KeyEvent-value type of the container. */
     using value_type = std::pair<const Key, Type>;
     /*! @brief Unsigned integer type. */
     using size_type = std::size_t;
@@ -57895,7 +57895,7 @@ public:
 
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     [[nodiscard]] size_type count(const key_type &key) const {
@@ -57905,7 +57905,7 @@ public:
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     template<typename Other>
@@ -57916,7 +57916,7 @@ public:
 
     /**
      * @brief Finds an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -57933,7 +57933,7 @@ public:
      * @brief Finds an element with a key that compares _equivalent_ to a given
      * key.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -57952,7 +57952,7 @@ public:
 
     /**
      * @brief Returns a range containing all elements with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -57971,7 +57971,7 @@ public:
      * @brief Returns a range containing all elements that compare _equivalent_
      * to a given key.
      * @tparam Other Type of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -57992,7 +57992,7 @@ public:
 
     /**
      * @brief Checks if the container contains an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     [[nodiscard]] bool contains(const key_type &key) const {
@@ -58003,7 +58003,7 @@ public:
      * @brief Checks if the container contains an element with a key that
      * compares _equivalent_ to a given value.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     template<typename Other>
@@ -58494,7 +58494,7 @@ class dense_set {
 public:
     /*! @brief Allocator type. */
     using allocator_type = Allocator;
-    /*! @brief Key type of the container. */
+    /*! @brief KeyEvent type of the container. */
     using key_type = Type;
     /*! @brief Value type of the container. */
     using value_type = Type;
@@ -58843,7 +58843,7 @@ public:
 
     /**
      * @brief Returns the number of elements matching a value (either 1 or 0).
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     [[nodiscard]] size_type count(const value_type &key) const {
@@ -58853,7 +58853,7 @@ public:
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     template<typename Other>
@@ -63109,8 +63109,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -80953,8 +80953,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -82440,7 +82440,7 @@ template<typename Lhs, typename Rhs>
  * placed into depends entirely on the hash of its key. Keys with the same hash
  * code appear in the same bucket.
  *
- * @tparam Key Key type of the associative container.
+ * @tparam KeyEvent KeyEvent type of the associative container.
  * @tparam Type Mapped type of the associative container.
  * @tparam Hash Type of function to use to hash the keys.
  * @tparam KeyEqual Type of function to use to compare the keys for equality.
@@ -82537,11 +82537,11 @@ class dense_map {
 public:
     /*! @brief Allocator type. */
     using allocator_type = Allocator;
-    /*! @brief Key type of the container. */
+    /*! @brief KeyEvent type of the container. */
     using key_type = Key;
     /*! @brief Mapped type of the container. */
     using mapped_type = Type;
-    /*! @brief Key-value type of the container. */
+    /*! @brief KeyEvent-value type of the container. */
     using value_type = std::pair<const Key, Type>;
     /*! @brief Unsigned integer type. */
     using size_type = std::size_t;
@@ -82959,7 +82959,7 @@ public:
 
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     [[nodiscard]] size_type count(const key_type &key) const {
@@ -82969,7 +82969,7 @@ public:
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     template<typename Other>
@@ -82980,7 +82980,7 @@ public:
 
     /**
      * @brief Finds an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -82997,7 +82997,7 @@ public:
      * @brief Finds an element with a key that compares _equivalent_ to a given
      * key.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -83016,7 +83016,7 @@ public:
 
     /**
      * @brief Returns a range containing all elements with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -83035,7 +83035,7 @@ public:
      * @brief Returns a range containing all elements that compare _equivalent_
      * to a given key.
      * @tparam Other Type of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -83056,7 +83056,7 @@ public:
 
     /**
      * @brief Checks if the container contains an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     [[nodiscard]] bool contains(const key_type &key) const {
@@ -83067,7 +83067,7 @@ public:
      * @brief Checks if the container contains an element with a key that
      * compares _equivalent_ to a given value.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     template<typename Other>
@@ -84885,8 +84885,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -89576,8 +89576,8 @@ struct iterable_adaptor final {
 
     /**
      * @brief Creates an iterable object from a pair of iterators.
-     * @param from Begin iterator.
-     * @param to End iterator.
+     * @param from BeginRenderPass iterator.
+     * @param to EndRenderPass iterator.
      */
     constexpr iterable_adaptor(iterator from, sentinel to) noexcept(std::is_nothrow_move_constructible_v<iterator> && std::is_nothrow_move_constructible_v<sentinel>)
         : first{std::move(from)},
@@ -91063,7 +91063,7 @@ template<typename Lhs, typename Rhs>
  * placed into depends entirely on the hash of its key. Keys with the same hash
  * code appear in the same bucket.
  *
- * @tparam Key Key type of the associative container.
+ * @tparam KeyEvent KeyEvent type of the associative container.
  * @tparam Type Mapped type of the associative container.
  * @tparam Hash Type of function to use to hash the keys.
  * @tparam KeyEqual Type of function to use to compare the keys for equality.
@@ -91160,11 +91160,11 @@ class dense_map {
 public:
     /*! @brief Allocator type. */
     using allocator_type = Allocator;
-    /*! @brief Key type of the container. */
+    /*! @brief KeyEvent type of the container. */
     using key_type = Key;
     /*! @brief Mapped type of the container. */
     using mapped_type = Type;
-    /*! @brief Key-value type of the container. */
+    /*! @brief KeyEvent-value type of the container. */
     using value_type = std::pair<const Key, Type>;
     /*! @brief Unsigned integer type. */
     using size_type = std::size_t;
@@ -91582,7 +91582,7 @@ public:
 
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     [[nodiscard]] size_type count(const key_type &key) const {
@@ -91592,7 +91592,7 @@ public:
     /**
      * @brief Returns the number of elements matching a key (either 1 or 0).
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return Number of elements matching the key (either 1 or 0).
      */
     template<typename Other>
@@ -91603,7 +91603,7 @@ public:
 
     /**
      * @brief Finds an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -91620,7 +91620,7 @@ public:
      * @brief Finds an element with a key that compares _equivalent_ to a given
      * key.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return An iterator to an element with the given key. If no such element
      * is found, a past-the-end iterator is returned.
      */
@@ -91639,7 +91639,7 @@ public:
 
     /**
      * @brief Returns a range containing all elements with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -91658,7 +91658,7 @@ public:
      * @brief Returns a range containing all elements that compare _equivalent_
      * to a given key.
      * @tparam Other Type of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return A pair of iterators pointing to the first element and past the
      * last element of the range.
      */
@@ -91679,7 +91679,7 @@ public:
 
     /**
      * @brief Checks if the container contains an element with a given key.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     [[nodiscard]] bool contains(const key_type &key) const {
@@ -91690,7 +91690,7 @@ public:
      * @brief Checks if the container contains an element with a key that
      * compares _equivalent_ to a given value.
      * @tparam Other Type of the key value of an element to search for.
-     * @param key Key value of an element to search for.
+     * @param key KeyEvent value of an element to search for.
      * @return True if there is such an element, false otherwise.
      */
     template<typename Other>

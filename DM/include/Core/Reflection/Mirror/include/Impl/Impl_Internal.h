@@ -6,22 +6,13 @@
 #include"../Info/TypeInfo.h"
 #include"../Info/MemberInfo.h"
 #include"../Info/FunctionInfo.h"
-
 #include"../Tool/TypeHash.h"
 #include"../Tool/Util.h"
-
 #include"../Storage/TypeTuple.h"
-
 #include"../Impl/TypeConverter.h"
+#include"../GlobalData.h"
 
-template <>
-struct std::hash<mirror::TypeId>
-{
-	std::size_t operator()(const mirror::TypeId& id) const noexcept
-	{
-		return static_cast<size_t>(id.GetId());
-	}
-};
+
 template <>
 struct std::hash<mirror::VariableId>
 {
@@ -30,14 +21,9 @@ struct std::hash<mirror::VariableId>
 		return static_cast<size_t>(id.GetHash());
 	}
 };
-template <>
-struct std::hash<mirror::FunctionId>
-{
-	std::size_t operator()(const mirror::FunctionId& id) const noexcept
-	{
-		return static_cast<size_t>(id.GetId());
-	}
-};
+
+
+
 namespace mirror
 {
 	inline std::ostream& operator<<(std::ostream& lhs, const TypeId& rhs)
@@ -80,45 +66,40 @@ namespace mirror
 	{
 		return lhs.GetId() == rhs.GetId();
 	}
-	/*
-	存储全局反射信息
-	*/
-	struct GlobalData
-	{
-		GlobalData() = default;
-		~GlobalData() = default;
-		GlobalData(const GlobalData&) = delete;
-		GlobalData(GlobalData&&) noexcept = delete;
-		GlobalData& operator=(const GlobalData&) = delete;
-		GlobalData& operator=(GlobalData&&) noexcept = delete;
 
-		std::unordered_map<TypeId, TypeInfo>			TypeInfoMap{ };
-
-		std::unordered_map<std::string, TypeId>			NameToTypeIdMap{ };
-
-		std::unordered_map<FunctionId, FunctionInfo>	FunctionInfoMap{ };
-
-		std::unordered_map<std::string, FunctionId>		NameToFunctionIdMap{ };
-
-		std::unordered_map<const void*, FunctionId>		FunctionAddressToIdMap{ };
-	};
-	inline GlobalData& GetGlobalData() { static GlobalData data; return data; }
-
-	inline std::unordered_map<TypeId, TypeInfo>& GetTypeInfoMap()
-	{
-		return GetGlobalData().TypeInfoMap;
-	}
-
-	inline const std::unordered_map<TypeId, TypeInfo>& GetAllTypeInfo()
-	{
-		return GetTypeInfoMap();
-	}
 
 	inline const TypeInfo& GetTypeInfo(TypeId id)
 	{
-		assert(GetTypeInfoMap().contains(id));
-		return GetTypeInfoMap()[id];
+		auto& map = GetGlobalData().TypeInfoMap;
+		const auto& it = map.find(id);
+		assert(it != map.end()&&"Unregistered Type");
+		return it->second;
 	}
+
+	inline const TypeInfo& GetTypeInfo(const void* vTable)
+	{
+		auto& map = GetGlobalData().VTableToTypeIdMap;
+		const auto& it = map.find(vTable);
+		assert(it != map.end() && "Unregistered Type");
+		return it->second.GetInfo();
+	}
+
+	inline const TypeId& GetTypeId(const void* vTable)
+	{
+		auto& map = GetGlobalData().VTableToTypeIdMap;
+		const auto& it = map.find(vTable);
+		assert(it != map.end()&&"Unregistered Type");
+		return it->second;
+	}
+
+	inline const EnumInfo& GetEnumInfo(TypeId id)
+	{
+		auto& map = GetGlobalData().EnumInfoMap;
+		const auto& it = map.find(id);
+		assert(it != map.end()&&"Unregistered Type");
+		return it->second;
+	}
+
 
 	template <typename ... Types>
 	constexpr std::array<VariableId, sizeof...(Types)> GetVariableArray()
@@ -158,22 +139,6 @@ namespace mirror
 	{
 		return util::hash(name) ^ GetTypesHash<Class, ReturnType, ParameterTypes...>();
 	}
-
-	/*template <typename T>
-	TypeId GetTypeIDFromPolymorphic(const T* instance) requires std::is_polymorphic_v<T>
-	{
-		if (!instance)
-			return {};
-
-		const void* vTable = GetVTable(instance);
-
-		auto it = GetGlobalData().VTableMap.find(vTable);
-		if (it != GetGlobalData().VTableMap.end())
-		{
-			return it->second;
-		}
-		return {};
-	}*/
 
 	template <typename Parent, typename Child>
 	constexpr size_t GetClassOffset()

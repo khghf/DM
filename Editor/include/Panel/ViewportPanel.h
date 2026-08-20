@@ -1,13 +1,13 @@
-#pragma once
+﻿#pragma once
 #include "Panel.h"
 #include <Framework/Camera/CameraController.h>
-#include <Core/Render/FrameBuffer.h>
 #include <functional>
 #include <filesystem>
+#include <imgui.h>
 
 namespace DM
 {
-	struct ViewPort
+	struct ViewPortData
 	{
 		Vector2 MinBound = { 0.f,0.f };//视口左下角
 		Vector2 MaxBound = { 0.f,0.f };//视口右上角
@@ -32,21 +32,22 @@ namespace DM
 
 	class ViewportPanel : public Panel
 	{
-		friend class EditorLayer;
-		ViewportPanel(const SPtr<World>& context, float windowWidth, float windowHeight);
+		friend class Editor;
+		ViewportPanel();
 	public:
-		void OnUpdate(float DeltaTime);
-		void OnEvent(Event* const e);
+		//void OnUpdate(float DeltaTime);
+		void HandleEvent(Event* const e);
 		// 拖拽打开场景的回调，由 EditorLayer 设置
 		std::function<void(std::filesystem::path)> OnOpenScene;
 	protected:
+
+		void UpdataViewPortData();
 		virtual void Render() override;
 		void RenderViewPort();
 		void RenderSetting();
 	private:
 		CameraController m_CameraController;
-		SPtr<FrameBuffer> m_ViewportFramebuffer;
-		ViewPort m_ViewPort;
-		Vector2 m_PendingViewportSize = { 0.f, 0.f };
+		ViewPortData m_ViewPort;
+		ImTextureRef m_ViewPortTextureRef{};
 	};
 }

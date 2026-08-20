@@ -2,7 +2,7 @@
 #include "Panel/SceneHierarchyPanel.h"
 #include <Imgui.h>
 #include <Imgui_internal.h>
-#include <Framework/Entity.h>
+#include <Framework/Base/Entity.h>
 #include<Framework/Component/Component.h>
 #include<glm/gtc/type_ptr.hpp>
 namespace DM

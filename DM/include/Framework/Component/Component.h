@@ -1,8 +1,8 @@
-#pragma once
-#include <Core/Math/Matrix.h>
-#include <Core/Math/Vector.h>
+﻿#pragma once
+#include <Foundation/Math/Matrix.h>
+#include <Foundation/Math/Vector.h>
 #include<Framework/Camera/Camera.h>
-#include"Framework/Entity.h"
+#include"Framework/Base/Entity.h"
 namespace DM
 {
 	class DM_API CLASS() Component:public Entity

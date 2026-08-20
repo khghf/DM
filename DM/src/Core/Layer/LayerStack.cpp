@@ -40,39 +40,12 @@ namespace DM
 			delete layer;
 		}
 	}
-
-	/*void LayerStack::PushOverLayer(Layer* layer)
-	{
-		if (!layer) return;
-		m_Layers.emplace_back(layer);
-		layer->OnAttach();
-	}
-	void LayerStack::PopOverlay(Layer* layer)
-	{
-		auto it = std::find(m_Layers.begin(), m_Layers.end(), layer); 
-		if (it != m_Layers.end())
-		{
-			m_Layers.erase(it);
-			layer->OnDetach();
-		}
-	}*/
-	void LayerStack::Update(float DeletaTime)
+	
+	void LayerStack::UpdateData(float DeletaTime)
 	{
 		for (const auto layer : m_Layers)
 		{
 			layer->OnUpdate(DeletaTime);
-		}
-		for (const auto layer : m_Layers)
-		{
-			layer->Begin();
-		}
-		for (const auto layer : m_Layers)
-		{
-			layer->Render();
-		}
-		for (const auto layer : m_Layers)
-		{
-			layer->End();
 		}
 	}
 }

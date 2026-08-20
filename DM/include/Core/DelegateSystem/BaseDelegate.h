@@ -2,7 +2,7 @@
 #include<DMPCH.h>
 #include"DelegateInstance.h"
 #include"DelegateHash.h"
-#include<Core/MMM/Reference.h>
+#include<Foundation/MMM/Reference.h>
 namespace DM
 {
 	template<typename FunType>
@@ -87,7 +87,7 @@ namespace DM
 		{
 			return DelegateInstance == nullptr ? false : true;
 		}
-		inline HashKey Key()const
+		inline HashKey KeyEvent()const
 		{
 			return key;
 		}

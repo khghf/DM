@@ -1,14 +1,17 @@
-#include <DMPCH.h>
+﻿#include <DMPCH.h>
 #include "Panel/MenuBarPanel.h"
 #include <imgui.h>
-#include <Tool/Util/PlatformUtils.h>
+#include <Foundation/Util/PlatformUtils.h>
 #include "DM.h"
-
+#include<Core/AssetManagent/AssetMgr.h>
+#include<Editor.h>
+#include<Panel/ContentBrowserPanel.h>
+#include<Foundation/FileSystem.h>
+#include<EditorCommand/CommandInvoker.h>
 namespace DM
 {
-	MenuBarPanel::MenuBarPanel(const SPtr<World>& context)
+	MenuBarPanel::MenuBarPanel()
 	{
-		SetContext(context);
 	}
 
 	void MenuBarPanel::Render()
@@ -24,27 +27,29 @@ namespace DM
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("NewScene"))
+			if (ImGui::MenuItem("NewWorld"))
 			{
-				if (OnNewScene)
-					OnNewScene();
+				CommandInvoker::Invoke<CmdNewWorld>();
 			}
-			if (ImGui::MenuItem("OpenScene", "Ctrl+O"))
+			if (ImGui::MenuItem("OpenWorld", "Ctrl+O"))
 			{
 				std::string path = FileDialog::OpenFile();
-				if (OnOpenScene && !path.empty())
-					OnOpenScene(path);
+				if (!path.empty())OpenWorld(path);
 			}
 			if (ImGui::MenuItem("SaveScene", "Ctrl+S", nullptr, m_Context.get() != nullptr))
 			{
-				if (OnSaveScene)
-					OnSaveScene();
+					
 			}
 			if (ImGui::MenuItem("Exit"))
 			{
-				Engine::Get().Close();
+				Engine::Get()->Close();
 			}
 			ImGui::EndMenu();
 		}
+	}
+	
+	void MenuBarPanel::OpenWorld(const std::string& path)
+	{
+
 	}
 }

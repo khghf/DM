@@ -1,8 +1,8 @@
 ﻿#include "DMPCH.h"
 #include "Framework/Camera/OrthoGraphicCamera.h"
 #include<glm/gtc/matrix_transform.hpp>
-#include<Core/EventSystem/Event/Event.h>
-#include<Core/EventSystem/Event/WindowEvent.h>
+#include<Core/EventBus/Event/Event.h>
+#include<Core/EventBus/Event/WindowEvent.h>
 namespace DM
 {
 	OrthoGraphicCamera::OrthoGraphicCamera(float aspectRatio)

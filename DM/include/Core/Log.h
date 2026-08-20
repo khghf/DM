@@ -36,7 +36,7 @@ namespace DM
 {\
 	if (!(x))\
 	{\
-		LOG_ERROR(tip##fmt,#file, #line, __VA_ARGS__); \
+		LOG_ERROR(tip##fmt,file, line, __VA_ARGS__); \
 		__debugbreak(); \
 	}\
 }
@@ -49,8 +49,8 @@ namespace DM
 		__debugbreak(); \
 	}\
 }
-#define DM_ASSERT(x,fmt,...)\
-			DM_ASSERT_INTERNAL(x,"Assertion Failed.File:{}---Line:{}.",fmt,__FILE__,__LINE__,__VA_ARGS__)
+//#define DM_ASSERT(x,fmt,...)\
+//			DM_ASSERT_INTERNAL(x,"Assertion Failed.File:{}---Line:{}.",fmt,__FILE__,__LINE__,__VA_ARGS__)
 
 #define DM_CORE_ASSERT(x,fmt,...)\
 			DM_ASSERT_INTERNAL(x,"Assertion Failed.File:{}---Line:{}.",fmt,__FILE__,__LINE__,__VA_ARGS__)

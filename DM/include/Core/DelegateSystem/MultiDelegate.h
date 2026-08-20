@@ -3,7 +3,7 @@
 #include"BaseDelegate.h"
 #include"DelegateHash.h"
 #include<Core/Log.h>
-#include<Core/MMM/Reference.h>
+#include<Foundation/MMM/Reference.h>
 namespace DM
 {
 	template<typename FunType, typename T = void>
@@ -22,12 +22,12 @@ namespace DM
 		{
 			BaseDelegate<Ret(Args...)>BD;
 			BD.Bind(std::forward<FunType>(Fun));
-			if (Delegates.find(BD.Key()) != Delegates.end())
+			if (Delegates.find(BD.KeyEvent()) != Delegates.end())
 			{
 				LOG_CORE_INFO("MultiDelegate:repeat add");
 				return;
 			}
-			Delegates[BD.Key()] = std::move(BD);
+			Delegates[BD.KeyEvent()] = std::move(BD);
 		}
 		//成员函数
 		template<typename Class>
@@ -35,12 +35,12 @@ namespace DM
 		{
 			BaseDelegate<Ret(Args...)>BD;
 			BD.Bind(std::forward<SPtr<Class>>(Obj), std::forward<Ret(Class::*)(Args...)>(MebFunType));
-			if (Delegates.find(BD.Key()) != Delegates.end())
+			if (Delegates.find(BD.KeyEvent()) != Delegates.end())
 			{
 				LOG_CORE_INFO("MultiDelegate:repeat add");
 				return;
 			}
-			Delegates[BD.Key()] = std::move(BD);
+			Delegates[BD.KeyEvent()] = std::move(BD);
 		}
 		//Lambda表达式
 		template<typename CallObj>
@@ -48,25 +48,25 @@ namespace DM
 		{
 			BaseDelegate<Ret(Args...)>BD;
 			BD.Bind(std::forward<CallObj>(Obj));
-			if (Delegates.find(BD.Key()) != Delegates.end())
+			if (Delegates.find(BD.KeyEvent()) != Delegates.end())
 			{
 				LOG_CORE_INFO("MultiDelegate:repeat add");
 				return;
 			}
-			Delegates[BD.Key()] = std::move(BD);
+			Delegates[BD.KeyEvent()] = std::move(BD);
 		}
 		void Add(BaseDelegate<Ret(Args...)>&&BD)
 		{
-			if (Delegates.find(BD.Key()) != Delegates.end())
+			if (Delegates.find(BD.KeyEvent()) != Delegates.end())
 			{
-				LOG_CORE_ERROR("MultiDelegate:repeat add. HashKey:{}",BD.Key());
+				LOG_CORE_ERROR("MultiDelegate:repeat add. HashKey:{}",BD.KeyEvent());
 				return;
 			}
-			Delegates[BD.Key()] = std::move(BD);
+			Delegates[BD.KeyEvent()] = std::move(BD);
 		}
 		void Remove(BaseDelegate<Ret(Args...)>BD)
 		{
-			Delegates.erase(BD.Key());
+			Delegates.erase(BD.KeyEvent());
 		}
 		void BroadCast(Args...arg)
 		{

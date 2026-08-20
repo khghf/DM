@@ -1,4 +1,4 @@
-// Tencent is pleased to support the open source community by making RapidJSON available.
+﻿// Tencent is pleased to support the open source community by making RapidJSON available.
 // 
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
 //
@@ -544,7 +544,7 @@ public:
         RAPIDJSON_ASSERT(IsValid());
         ValueType* v = &root;
         for (const Token *t = tokens_; t != tokens_ + tokenCount_; ++t) {
-            switch (v->GetType()) {
+            switch (v->GetAssetType()) {
                 case kObjectType:
                 {
                     // See if we have an id, and if so resolve with the current base
@@ -602,7 +602,7 @@ public:
         RAPIDJSON_ASSERT(IsValid());
         ValueType* v = &root;
         for (const Token *t = tokens_; t != tokens_ + tokenCount_; ++t) {
-            switch (v->GetType()) {
+            switch (v->GetAssetType()) {
             case kObjectType:
                 {
                     typename ValueType::MemberIterator m = v->FindMember(GenericValue<EncodingType>(GenericStringRef<Ch>(t->name, t->length)));
@@ -838,7 +838,7 @@ public:
         ValueType* v = &root;
         const Token* last = tokens_ + (tokenCount_ - 1);
         for (const Token *t = tokens_; t != last; ++t) {
-            switch (v->GetType()) {
+            switch (v->GetAssetType()) {
             case kObjectType:
                 {
                     typename ValueType::MemberIterator m = v->FindMember(GenericValue<EncodingType>(GenericStringRef<Ch>(t->name, t->length)));
@@ -857,13 +857,13 @@ public:
             }
         }
 
-        switch (v->GetType()) {
+        switch (v->GetAssetType()) {
         case kObjectType:
             return v->EraseMember(GenericStringRef<Ch>(last->name, last->length));
         case kArrayType:
             if (last->index == kPointerInvalidIndex || last->index >= v->Size())
                 return false;
-            v->Erase(v->Begin() + last->index);
+            v->Erase(v->BeginRenderPass() + last->index);
             return true;
         default:
             return false;

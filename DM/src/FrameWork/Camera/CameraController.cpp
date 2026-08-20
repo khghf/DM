@@ -2,8 +2,8 @@
 #include <Framework/Camera/CameraController.h>
 #include<Platform/Input/KeyCode.h>
 #include<Platform/Input/Input.h>
-#include<Core/EventSystem/Disptcher.h>
-#include<Core/EventSystem/Event/MouseEvent.h>
+#include<Core/EventBus/Disptcher.h>
+#include<Core/EventBus/Event/MouseEvent.h>
 namespace DM
 {
 	CameraController::CameraController()
@@ -34,15 +34,15 @@ namespace DM
 	{
 		const float offset = m_MoveSpeed * m_MoveSensitivity*deletaTime;
 		Vector3 pos = GetPosition();
-		if (Input::s_Instance && Input::s_Instance->IsKeyPressed(KeyCode::W))pos += offset * GetUp();
-		if (Input::s_Instance && Input::s_Instance->IsKeyPressed(KeyCode::S))pos -= offset * GetUp();
-		if (Input::s_Instance && Input::s_Instance->IsKeyPressed(KeyCode::A))pos -= offset * GetRight();
-		if (Input::s_Instance && Input::s_Instance->IsKeyPressed(KeyCode::D))pos += offset * GetRight();
+		if (Input::m_Inst && Input::m_Inst->IsKeyPressed(KeyCode::W))pos += offset * GetUp();
+		if (Input::m_Inst && Input::m_Inst->IsKeyPressed(KeyCode::S))pos -= offset * GetUp();
+		if (Input::m_Inst && Input::m_Inst->IsKeyPressed(KeyCode::A))pos -= offset * GetRight();
+		if (Input::m_Inst && Input::m_Inst->IsKeyPressed(KeyCode::D))pos += offset * GetRight();
 		SetPosition(pos);
 		m_ViewPoint->OnUpdate(deletaTime);
 	}
 
-	void CameraController::OnEvent(Event* const e)
+	void CameraController::HandleEvent(Event* const e)
 	{
 		Disptcher dis(e);
 		dis.DisptchSpecifiedEvent<MouseScroll>([this](Event* const e) {

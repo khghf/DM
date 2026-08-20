@@ -1,4 +1,4 @@
-// Tencent is pleased to support the open source community by making RapidJSON available.
+﻿// Tencent is pleased to support the open source community by making RapidJSON available.
 // 
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
 //
@@ -150,7 +150,7 @@ public:
         current_ = takeFunc_(*is_);
     }
 
-    UTFType GetType() const { return type_; }
+    UTFType GetAssetType() const { return type_; }
     bool HasBOM() const { return hasBOM_; }
 
     Ch Peek() const { return current_; }
@@ -255,7 +255,7 @@ public:
             PutBOM();
     }
 
-    UTFType GetType() const { return type_; }
+    UTFType GetAssetType() const { return type_; }
 
     void Put(Ch c) { putFunc_(*os_, c); }
     void Flush() { os_->Flush(); } 

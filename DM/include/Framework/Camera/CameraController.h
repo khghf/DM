@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include"OrthoGraphicCamera.h"
-#include<Core/MMM/Reference.h>
+#include<Foundation/MMM/Reference.h>
 namespace DM
 {
 	class Event;
@@ -12,7 +12,7 @@ namespace DM
 		~CameraController();
 		void Control(SPtr<Camera> camera);
 		void OnUpdate(float deletaTime);
-		void OnEvent(Event* const e);
+		void HandleEvent(Event* const e);
 
 		void		AddRotation(const Vector3& rotation)						{ GetCamera()->AddRotation(rotation); }
 		void		AddPosition(const Vector3& offset)							{ GetCamera()->AddPosition(offset); }

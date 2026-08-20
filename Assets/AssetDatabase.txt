@@ -1,0 +1,64 @@
+{
+    "m_GuidToRecord": [
+        {
+            "First": {
+                "m_ID": "266ff2b112808badef18e40718062f98bd0b61879f98dba6265d25aa802ad6c6"
+            },
+            "Second": {
+                "AssetPackPath": "Assets/Shader/Texture.vs.dasset",
+                "SourceFilePath": "Assets/Shader/Texture.vs",
+                "SourceFileContentHash": "9477194bd48e6e547b861dfedb11acea17bcfb9a6cf9830d1a89931eedcd76a6",
+                "LastModifyTime": 13431684452,
+                "AssetType": 1
+            }
+        },
+        {
+            "First": {
+                "m_ID": "1eb2878ee7e421c14042d9c56bfb47e34f53a476177c7da66d9789c52a12323f"
+            },
+            "Second": {
+                "AssetPackPath": "./Assets/Icon/Folder.png.dasset",
+                "SourceFilePath": "./Assets/Icon/Folder.png",
+                "SourceFileContentHash": "882b7d4b1b8a4d319922da9cf70e1bf7678d4fa84e1fe9cf98cd57c608b91d4e",
+                "LastModifyTime": 13428136100,
+                "AssetType": 2
+            }
+        },
+        {
+            "First": {
+                "m_ID": "513fa60c54540515b95a1ba833be9fbe313d3e2c99b65450a52f726910baba33"
+            },
+            "Second": {
+                "AssetPackPath": "Assets/Shader/Texture.fs.dasset",
+                "SourceFilePath": "Assets/Shader/Texture.fs",
+                "SourceFileContentHash": "9fdb80f7a3705a08eb737385d9520de7ca333e31fdd965fa2c52b1d289359e51",
+                "LastModifyTime": 13430819047,
+                "AssetType": 1
+            }
+        },
+        {
+            "First": {
+                "m_ID": "da8da0adc09ddbb7867bc3ea7b1da56833085a8da03241f25029da0db9c43c35"
+            },
+            "Second": {
+                "AssetPackPath": "Assets/Texture/Container/container_diffuse.png.dasset",
+                "SourceFilePath": "Assets/Texture/Container/container_diffuse.png",
+                "SourceFileContentHash": "fd9c9421005719d75aab1e4494314436d9c197bd3ce2b823e75cccc4d02f44a1",
+                "LastModifyTime": 13377326062,
+                "AssetType": 2
+            }
+        },
+        {
+            "First": {
+                "m_ID": "d8843c5d7aa2a51d24a321abf839d82d339d93baef5ef96f78ff50b44590e6e7"
+            },
+            "Second": {
+                "AssetPackPath": "./Assets/Icon/File.png.dasset",
+                "SourceFilePath": "./Assets/Icon/File.png",
+                "SourceFileContentHash": "fc9abf52dc7e25f44686c41cdc66768dfdf829c93449e6adff7c986dbacaaff2",
+                "LastModifyTime": 13428136100,
+                "AssetType": 2
+            }
+        }
+    ]
+}

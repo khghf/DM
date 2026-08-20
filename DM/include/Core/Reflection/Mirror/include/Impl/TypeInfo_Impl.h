@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include"Impl_Internal.h"
+//#include "TypeInfo.h"
 namespace mirror
 {
-	
 	template <typename T>
 	inline constexpr void FillTypeInfo(TypeInfo& info)
 	{
@@ -53,6 +53,13 @@ namespace mirror
 		TypeInfo info{};
 
 		info.Name = TypeName<T>();
+
+		/*if constexpr (std::is_enum_v<T>)
+		{
+			EnumInfo*enumInfo = info.GetEnumInfo_Internal();
+			*enumInfo = EnumInfo::Create<T>();
+		}*/
+
 		if constexpr (std::is_same_v<T, void>)
 		{
 			info.Size = 0;
@@ -63,22 +70,31 @@ namespace mirror
 			info.Size = sizeof(T);
 			info.Align = alignof(T);
 		}
-		if constexpr (std::is_polymorphic_v<T> && std::is_default_constructible_v<T>)
+		if constexpr (std::is_polymorphic_v<T>)
 		{
-			T instance{};
-			info.VTable = GetVTable(&instance);
+			if constexpr (std::is_abstract_v<T>) 
+			{
+				info.VTable = nullptr;
+			}
+			else if constexpr (std::is_default_constructible_v<T>)
+			{
+				T instance{};
+				info.VTable = GetVTable(&instance);
+			}
+			else
+			{
+				std::cerr << "Any polymorphic class that wants to register with the reflection system must be default constructible.[class]" + info.Name << std::endl;
+				assert(false);
+			}
 		}
 		FillTypeInfo<T>(info);
-		Serialization::FillTypeInfoJSon<T>(info);
-
-#ifdef GLAS_SERIALIZATION_BINARY
+		Serialization::FillTypeInfoJson<T>(info);
 		Serialization::FillTypeInfoBinary<T>(info);
-#endif 
-#ifdef GLAS_SERIALIZATION_YAML
-		Serialization::FillTypeInfoYaml<T>(info);
-#endif
+		//Serialization::FillTypeInfoYaml<T>(info);
 		return info;
 	}
+
+	
 
 	inline FunctionId TypeInfo::GetFunctionId(std::string name) const
 	{
@@ -99,9 +115,21 @@ namespace mirror
 		return nullptr;
 	}
 
+	//inline const EnumInfo*TypeInfo::GetEnumInfo() const
+	//{
+	//	return GetEnumInfo_Internal();
+	//}
+
+	//inline EnumInfo*TypeInfo::GetEnumInfo_Internal() const
+	//{
+	//	//@todo 并非所有
+	//	static EnumInfo info{};
+	//	return &info;
+	//}
 
 
-	//--------------------TypeId
+	template <typename T>
+	struct AutoRegisterTypeOnce;
 
 	template <typename T>
 	inline constexpr TypeId TypeId::Create()
@@ -114,6 +142,10 @@ namespace mirror
 	inline const TypeInfo& TypeId::GetInfo() const
 	{
 		return GetTypeInfo(*this);
+	}
+	inline const EnumInfo& TypeId::GetEnumInfo() const
+	{
+		return mirror::GetEnumInfo(*this);
 	}
 	inline const  MemberInfo* TypeId::GetMemberInfo(size_t offset) const
 	{
@@ -159,8 +191,55 @@ namespace mirror
 		return IsValid() && ((*this == Create<T>())||...);
 	}
 
+	
+	
+	/// <summary>
+	/// 注册一个类型并返回其类型信息。
+	/// </summary>
+	/// <typeparam name="T">要注册的类型。</typeparam>
+	/// <returns>与注册类型关联的类型信息对象的引用。</returns>
 	template <typename T>
-	const TypeInfo& RegisterType();
+	inline const auto& RegisterType()
+	{
+		auto& globalData = GetGlobalData();
+		auto& nameToTypeIdMap = globalData.NameToTypeIdMap;
+		constexpr TypeId typeId = TypeId::Create<T>();
+
+
+		auto& typeInfoMap = globalData.TypeInfoMap;
+		auto& vTableToTypeIDMap = globalData.VTableToTypeIdMap;
+		const auto it = typeInfoMap.find(typeId);
+		if (it == typeInfoMap.end())
+		{
+			auto& createdTypeInfo = typeInfoMap.emplace(
+				typeId,
+				TypeInfo::Create<T>()
+			).first->second;
+			nameToTypeIdMap.emplace(TypeName<T>(), typeId);
+			if (createdTypeInfo.VTable)vTableToTypeIDMap.emplace(createdTypeInfo.VTable, typeId);
+
+
+			if constexpr (std::is_enum_v<T>)
+			{
+				auto& enumInfoMap = globalData.EnumInfoMap;
+				auto it = enumInfoMap.find(typeId);
+				if (it == enumInfoMap.end())
+				{
+					it = enumInfoMap.emplace(typeId, EnumInfo::Create<T>()).first;
+					nameToTypeIdMap.emplace(TypeName<T>(), typeId);
+				}
+				createdTypeInfo.EnumInfoPtr = &(it->second);
+			}
+			//std::cout << "注册" << TypeName<T>() << std::endl;
+
+			std::cout << "GlobalData@" << (void*)&globalData
+				<< " typeId=" << typeId.GetId()
+				<< " TypeName:" << TypeName<T>() << std::endl;
+			return createdTypeInfo;
+		}
+		return it->second;
+	}
+	
 	template <typename T>
 	struct AutoRegisterType
 	{
@@ -169,46 +248,12 @@ namespace mirror
 			RegisterType<T>();
 		}
 	};
-	
-	/// <summary>
-	/// 注册一个类型并返回其类型信息。
-	/// </summary>
-	/// <typeparam name="T">要注册的类型。</typeparam>
-	/// <returns>与注册类型关联的类型信息对象的引用。</returns>
-	template <typename T>
-	inline const TypeInfo& RegisterType()
-	{
-		auto& globalData = GetGlobalData();
-		auto& typeInfoMap = globalData.TypeInfoMap;
-		auto& nameToTypeIdMap = globalData.NameToTypeIdMap;
 
-		constexpr TypeId hash = TypeId::Create<T>();
-
-		const auto it = typeInfoMap.find(hash);
-		if (it == typeInfoMap.end())
-		{
-			auto& createdTypeInfo = typeInfoMap.emplace(
-				hash,
-				TypeInfo::Create<T>()
-			).first->second;
-
-			nameToTypeIdMap.emplace(TypeName<T>(), hash);
-			return createdTypeInfo;
-		}
-		return it->second;
-	}
 	template <typename T>
 	struct AutoRegisterTypeOnce
 	{
 	private:
-		struct AutoRegisterTypeOnce_Internal
-		{
-			AutoRegisterTypeOnce_Internal()
-			{
-				RegisterType<T>();
-			}
-		};
-		inline static AutoRegisterTypeOnce_Internal StaticRegisterType{};
+		inline static AutoRegisterType<T> StaticRegister{};
 	};
 
 
@@ -223,8 +268,8 @@ namespace mirror
 		auto& parentInfo = const_cast<TypeInfo&>(RegisterType<Parent>());
 		auto& childInfo = const_cast<TypeInfo&>(RegisterType<Child>());
 
-		assert(parentInfo.ChildClasses.end() == std::ranges::find(parentInfo.ChildClasses, TypeId::Create<Child>()));
-		assert(childInfo.BaseClasses.end() == std::ranges::find_if(childInfo.BaseClasses, [](BaseClassInfo info) { return info.BaseId == TypeId::Create<Parent>(); }));
+		if (parentInfo.ChildClasses.end() != std::ranges::find(parentInfo.ChildClasses, TypeId::Create<Child>()))return;
+		if (childInfo.BaseClasses.end() != std::ranges::find_if(childInfo.BaseClasses, [](BaseClassInfo info) { return info.BaseId == TypeId::Create<Parent>(); }))return;
 
 		if constexpr (std::is_default_constructible_v<Child>)
 		{
@@ -253,13 +298,34 @@ namespace mirror
 		inline static AutoRegisterChildOnce_Internal StaticRegisterChild{};
 	};
 
+	template<typename T>
+	inline EnumInfo EnumInfo::Create()
+	{
+		EnumInfo info{};
+		info.Name = TypeName<T>();
+		return info;
+	}
 
+	template<typename T>
+	struct AutoRegisterEnumItem
+	{
+		AutoRegisterEnumItem(std::string_view name, uint64_t value)
+		{
+			if constexpr (std::is_enum_v<T>)
+			{
+				EnumItem newItem{};
+				newItem.Name = name;
+				newItem.Value = value;
 
-	//bool TypeConvert::IsNumericType(TypeId& from)
-	//{
-	//	return from.IsOneOf<int, float, double,
-	//		uint8_t, uint16_t, uint32_t, uint64_t,
-	//		int8_t, int16_t, int32_t, int64_t>();
-	//}
+				TypeId id = TypeId::Create<T>();
 
+				auto& map = GetGlobalData().EnumInfoMap;
+				auto info = map.find(id);
+				if (info!= map.end()&&!info->second.GetItem(name.data()))
+				{
+					info->second.Items.emplace_back(std::move(newItem));
+				}
+			}
+		}
+	};
 }

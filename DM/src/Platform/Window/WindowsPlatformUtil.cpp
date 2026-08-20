@@ -1,10 +1,8 @@
 ﻿#include "DMPCH.h"
 #ifdef DM_PLATFORM_WINDOWS
-
 #include<commdlg.h>
-#include <Tool/Util/PlatformUtils.h>
-#include <Tool/Util/Util.h>
-
+#include <Foundation/Util/PlatformUtils.h>
+#include <Foundation/Util/Util.h>
 #include <string.h>
 namespace DM
 {
@@ -18,14 +16,12 @@ namespace DM
 		ofn.hwndOwner = nullptr;
 		ofn.lpstrFile = szFile;
 		ofn.nMaxFile = sizeof(szFile);
-		if (GetCurrentDirectoryA(256, currentDir))
-			ofn.lpstrInitialDir = currentDir;
+		if (GetCurrentDirectoryA(256, currentDir))ofn.lpstrInitialDir = currentDir;
 		ofn.lpstrFilter = filter;
 		ofn.nFilterIndex = 1;
 		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
-		if (GetOpenFileNameA(&ofn) == TRUE)
-			return ofn.lpstrFile;
+		if (GetOpenFileNameA(&ofn) == TRUE)return ofn.lpstrFile;
 
 		return std::string();
 	}

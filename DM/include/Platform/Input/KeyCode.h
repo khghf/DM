@@ -1,7 +1,7 @@
-#pragma once
+﻿#pragma once
 namespace DM
 {
-	typedef enum class KeyCode:uint16_t
+	enum class KeyCode:uint16_t
 	{
 		//From glfw3.h
 		Mouse_Left		= 0,
@@ -129,8 +129,7 @@ namespace DM
 		RightAlt        = 346,
 		RightSuper		= 347,
 		Menu            = 348,
-	}Key;
-
+	};
 }
 //From glfw3.h
 //#define DM_KEY_SPACE              32

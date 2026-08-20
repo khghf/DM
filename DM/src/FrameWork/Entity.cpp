@@ -1,6 +1,6 @@
-#include "DMPCH.h"
-#include<Framework/Entity.h>
-#include<Framework/World.h>
+﻿#include "DMPCH.h"
+#include<Framework/Base/Entity.h>
+#include<Framework/Base/World.h>
 #include<entt/entt.hpp>
 #include<Framework/Component/Component.h>
 namespace DM
@@ -13,7 +13,7 @@ namespace DM
 	}
 
 
-	void Entity::Update(float DeltaTime)
+	void Entity::UpdateData(float DeltaTime)
 	{
 	}
 	void Entity::Destroy()

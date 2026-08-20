@@ -1,14 +1,14 @@
 ﻿#include <EditorStyle.h>
 #include<imgui.h>
 #include<string>
-#include<Config.h>
+#include<Core/AssetManagent/AssetMgr.h>
 namespace DM
 {
 	void EditorStyle::SetDefaultStyle()
 	{
 		ImGuiIO&io=ImGui::GetIO();
-		std::string Neuton_Bold = Config::AssetFont() + "/Neuton/Neuton-Bold.ttf";
-		std::string Neuton_Regular = Config::AssetFont() + "/Neuton/Neuton-Regular.ttf";
+		std::string Neuton_Bold = AssetRootDir + "/Font/Neuton/Neuton-Bold.ttf";
+		std::string Neuton_Regular = AssetRootDir + "/Font/Neuton/Neuton-Regular.ttf";
 		io.Fonts->AddFontFromFileTTF(Neuton_Bold.c_str(), 20.f);
 		io.FontDefault = io.Fonts->AddFontFromFileTTF(Neuton_Regular.c_str(), 20.f);
 		SetupImGuiDarkLuxuryTheme();

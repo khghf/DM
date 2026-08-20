@@ -1,6 +1,6 @@
-#pragma once
-#include<Core/Math/Vector.h>
-#include<Core/Math/Matrix.h>
+﻿#pragma once
+#include<Foundation/Math/Vector.h>
+#include<Foundation/Math/Matrix.h>
 namespace DM
 {
 	class Event;

@@ -1,70 +1,64 @@
-#pragma once
-#include"RHITypes.h"
-#include<Core/MMM/Reference.h>
-#include<Core/Math/Vector.h>
-
-namespace DM
-{
-	// 前向声明现有接口类
-	class VertexArray;
-	class VertexBuffer;
-	class IndexBuffer;
-	class Shader;
-	class Texture2D;
-	class FrameBuffer;
-	class UniformBuffer;
-	class RendererAPI;
-	struct FrameBufferSpecification;
-}
-
+﻿#pragma once
+#include"Core/RHI/RHITypes.h"
 namespace DM::RHI
 {
-	// ============================================================
-	// RHIDevice - 集中式设备管理 & 资源工厂
-	//
-	// 职责:
-	//   1. 管理底层 RendererAPI 实例 (OpenGL / future Vulkan / DX12)
-	//   2. 提供所有 RHI 资源的统一创建入口
-	//   3. 隔离顶层渲染代码与平台 #include 依赖
-	// ============================================================
+	class RHIRenderPass;
+	class RHISwapchain;
+	class RHIBuffer;
+	class RHIShader;
+	class RHIShaderProgram;
+	class RHIPipeline;
+	class RHICommandList;
+	class RHITexture;
 	class DM_API RHIDevice
 	{
 	public:
-		static RHIDevice& Get();
+		static void Init(const RHIDeviceDesc& desc);
+		static void ShutDown();
+		static RHIDevice* Get() { return m_Inst; };
 
-		void Init();
-		void Shutdown();
+		virtual ~RHIDevice()=default;
+		virtual void BeginFrame() = 0;
+		virtual void EndFrame() = 0;
+		/// <summary>
+		/// 阻塞主线程直到GPU空闲下来(这时GPU没有引用任何资源可以在之后安全释放申请的资源)
+		/// </summary>
+		virtual void WaitGPUIdle() = 0;
 
-		// ---- 驱动查询 ----
-		EDriver GetDriver() const { return m_Driver; }
+		virtual RHISwapchain*		CreateSwapchain(const RHISwapchainDesc& desc) = 0;
+		virtual RHIRenderPass*		CreateRenderPass(const RHIRenderPassDesc& desc) = 0;
+		virtual RHIShader*			CreateShader(const RHIShaderDesc& desc) = 0;
+		virtual RHIShaderProgram*	CreateShaderProgram(const RHIShaderProgramDesc& desc) =0;
+		virtual RHIPipeline*		CreatePipeline(const RHIPipelineDesc& desc) = 0;
 
-		// ---- 视口 / 清屏 / 提交 ----
-		void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
-		void SetClearColor(const Vector4& color);
-		void Clear();
-		void DrawIndexed(const SPtr<VertexArray>& vertexArray, uint32_t indexCount = 0);
+		virtual RHIBuffer*			CreateVertexBuffer(const RHIVertexBufferDesc& desc) = 0;
+		virtual RHIBuffer*			CreateIndexBuffer(const RHIIndexBufferDesc& desc) = 0;
+		virtual RHIBuffer*			CreateUniformBuffer(const RHIUniformBufferDesc& desc) = 0;
+		virtual RHITexture*			CreateTexture(const RHITextureDesc& desc) = 0;
+		virtual RHITexture*			CreateTexture(const RHITextureDesc& desc,const void*data) = 0;
+		virtual RHICommandList*		CreateCommandList() = 0;
 
-		// ---- 资源工厂 (替代各接口类中散落的 static Create) ----
-		SPtr<VertexBuffer> CreateVertexBuffer(uint32_t sizeBytes);
-		SPtr<VertexBuffer> CreateVertexBuffer(float* vertices, uint32_t count);
-		SPtr<IndexBuffer>  CreateIndexBuffer(uint32_t* indices, uint32_t count);
-		SPtr<VertexArray>  CreateVertexArray();
-		SPtr<Shader>       CreateShader(const std::string_view& name, const std::string_view& vsSrc, const std::string_view& fsSrc);
-		SPtr<Shader>       CreateShader(const std::string_view& filepath);
-		SPtr<Texture2D>    CreateTexture2D(const std::string_view& filepath);
-		SPtr<Texture2D>    CreateTexture2D(uint32_t width, uint32_t height);
-		SPtr<FrameBuffer>  CreateFrameBuffer(const FrameBufferSpecification& spec);
-		SPtr<UniformBuffer> CreateUniformBuffer(uint32_t size, uint32_t binding);
+		void* GetWindowHandle()const { return m_WindowHandle; }
 
-	private:
+
+		virtual uint8_t	GetMaxFlightFrameCount()const { return 1; }
+		/// <summary>
+		/// 获取CPU当前正在渲染的帧的索引。
+		/// </summary>
+		/// <returns>当前 CPU 处理帧的索引，返回值为一个 8 位无符号整数。</returns>
+		virtual uint8_t GetCpuProcessFrameIndex()const { return 0; }
+		/// <summary>
+		/// 获取GPU当前正在处理的帧的索引。
+		/// </summary>
+		/// <returns>GPU 进程的帧索引，返回值类型为 uint8_t。</returns>
+		virtual uint8_t GetGpuProcessFrameIndex()const { return 0; }
+
+
+
+	protected:
 		RHIDevice() = default;
-		~RHIDevice();
-		RHIDevice(const RHIDevice&) = delete;
-		RHIDevice& operator=(const RHIDevice&) = delete;
-
-		EDriver m_Driver = EDriver::OpenGL;
-		RendererAPI* m_ApiImpl = nullptr;           // 平台 API 实例 (OpenGlRendererAPI)
-		bool m_bInitialized = false;
+		static RHIDevice* m_Inst;
+		void* m_WindowHandle;
 	};
 
 } // namespace DM::RHI

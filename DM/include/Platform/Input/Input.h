@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include<Core/Math/Vector.h>
+#include<Foundation/Math/Vector.h>
 #include<Platform/Input/KeyCode.h>
 #include<Platform/Input/MouseButtonCode.h>
 #include<Platform/Input/IInput.h>
@@ -16,8 +16,8 @@ namespace DM
 		// Engine 在创建窗口后注入原生窗口指针。
 		void SetNativeWindow(void* window) { m_NativeWindow = window; }
 
-		virtual bool IsKeyPressed(Key code) override;
-		virtual bool IsKeyReleased(Key code) override;
+		virtual bool IsKeyPressed(KeyCode code) override;
+		virtual bool IsKeyReleased(KeyCode code) override;
 		virtual bool IsMouseButtonPressed(MouseButton code) override;
 		virtual Vector2 GetMousePosition() override;
 
@@ -25,7 +25,7 @@ namespace DM
 		virtual void EndFrame() override {}
 
 		// 临时静态桥接（旧代码兼容，待所有调用方迁移后移除）
-		static Input* s_Instance;
+		static Input* m_Inst;
 	private:
 		void* m_NativeWindow = nullptr;
 	};

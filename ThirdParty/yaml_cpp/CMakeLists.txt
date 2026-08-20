@@ -20,4 +20,3 @@ set_target_properties(yaml-cpp PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY
         "${CMAKE_SOURCE_DIR}/bin/$<CONFIG>-${DM_PLATFORM_SUFFIX}/yaml_cpp"
 )
-message(STATUS "${CMAKE_SOURCE_DIR}/bin/$<CONFIG>-${DM_PLATFORM_SUFFIX}/$<IF:$<BOOL:${BUILD_SHARED_LIBS}>,${ApplicationName},yaml_cpp>")

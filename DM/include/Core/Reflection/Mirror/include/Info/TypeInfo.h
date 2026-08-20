@@ -8,11 +8,14 @@
 #include<algorithm>
 #include"../Tool/TypeTrait.h"
 #include"../Tool/TypeHash.h"
+#include"../../ThirdPart/rapidjson/include/rapidjson/document.h"
+
 namespace mirror
 {
 	struct TypeInfo;
 	struct MemberInfo;
 	class FunctionId;
+	struct EnumInfo;
 	class TypeId final
 	{
 	public:
@@ -32,6 +35,7 @@ namespace mirror
 		static constexpr TypeId Create();
 	public:
 		const TypeInfo&			GetInfo()const;
+		const EnumInfo&			GetEnumInfo()const;
 		constexpr uint64_t		GetId()const						{ return m_ID; }
 		constexpr uint64_t		GetHash()const						{ return m_ID; }
 		const MemberInfo*		GetMemberInfo(size_t offset)const;
@@ -50,8 +54,6 @@ namespace mirror
 
 		template<typename...T>
 		constexpr bool IsOneOf()const;
-
-	private:
 	private:
 		uint64_t m_ID{};
 	};
@@ -86,14 +88,23 @@ namespace mirror
 
 		std::vector<TypeId>			ChildClasses{ };	//派生类(可无)
 
-		const void* VTable{ };
+		const void* VTable=nullptr;
+
+		const EnumInfo* EnumInfoPtr = nullptr;
 
 		template <typename T>
 		static TypeInfo Create();
 
 		FunctionId GetFunctionId(std::string name) const;
 		const MemberInfo* GetMemberInfo(std::string name) const;
-		
+
+		/// <summary>
+		/// 获取枚举信息(需要是枚举类型否则不会填充该信息)
+		/// </summary>
+		/// <returns></returns>
+		//const EnumInfo*GetEnumInfo()const;
+
+
 		/*
 		用于在给定地址就地构造类型的函数指针。
 		@addressForConstruct 用于构造的地址
@@ -129,18 +140,65 @@ namespace mirror
 		/*
 		 用于将给定类型的实例以 json 格式序列化到流中的函数指针
 		 */
-		void (*JSonSerializer)		(rapidjson::Value&, const void*, RapidJsonAllocator&) {};
+		void (*JsonSerializer)		(rapidjson::Value*, const void*, RapidJsonAllocator*) {};
 		/*
 		使用 json 格式的流初始化类型实例的函数指针
 		 */
-		void (*JSonDeserializer)	(rapidjson::Value&, void*) {};
+		void (*JsonDeserializer)	(rapidjson::Value*, void*) {};
 		/*
 		  将给定类型的实例以二进制格式序列化到流中的函数指针
 		 */
-		void (*BinarySerializer)	(std::ostream&, const void*) {};
+		void (*BinarySerializer)	(std::ostream*, const void*) {};
 		/*
 		 将给定类型的实例以二进制格式序列化到流中的函数指针
 		 */
-		void (*BinaryDeserializer)	(std::istream&, void*) {};
+		void (*BinaryDeserializer)	(std::istream*, void*) {};
+
+	private:
+		//EnumInfo*GetEnumInfo_Internal()const;
+	};
+
+	struct EnumItem
+	{
+		std::string_view Name;
+		uint64_t Value;
+	};
+
+	struct EnumInfo
+	{
+		//using underType=std::underlying_type_t<T>;
+
+		std::string_view Name;
+		std::vector<EnumItem>Items;
+		template<typename T>
+		static EnumInfo Create();
+
+		const EnumItem* GetItem(const std::string& name)
+		{
+			for (const auto& it : Items)
+			{
+				if (strcmp(name.data(),it.Name.data())==0)return &it;
+			}
+			return nullptr;
+		}
+
+		uint64_t GetItemValue(const std::string& name)
+		{
+			if (auto item = GetItem(name))
+			{
+				return item->Value;
+			}
+			return 0;
+		}
+
 	};
 }
+
+template <>
+struct std::hash<mirror::TypeId>
+{
+	std::size_t operator()(const mirror::TypeId& id) const noexcept
+	{
+		return static_cast<size_t>(id.GetId());
+	}
+};

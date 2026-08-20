@@ -1,5 +1,5 @@
-#include"DMPCH.h"
-#include <Framework/Object.h>
+﻿#include"DMPCH.h"
+#include <Core/Object.h>
 namespace DM
 {
 	Object::Object()
@@ -7,7 +7,7 @@ namespace DM
 		EnableUpdate(true);
 	}
 
-	void Object::Update(float DeltaTime)
+	void Object::UpdateData(float DeltaTime)
 	{
 	}
 

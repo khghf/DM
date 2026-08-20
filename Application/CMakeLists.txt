@@ -10,7 +10,7 @@ add_executable(${TARGET_NAME} ${HEADERS} ${SOURCES})
 
 set_target_properties(${TARGET_NAME} PROPERTIES
     FOLDER "Engine"
-    OUTPUT_NAME "${GameName}"
+    OUTPUT_NAME "${ApplicationName}"
     RUNTIME_OUTPUT_DIRECTORY
         "${CMAKE_SOURCE_DIR}/bin/$<CONFIG>-${DM_PLATFORM_SUFFIX}/${ApplicationName}"
     VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"

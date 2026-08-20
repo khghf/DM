@@ -34,5 +34,3 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}
                 "imgui/imstb_truetype.h"
                 "imgui/imgui_demo.cpp")
 
-# ImGui 的头文件在 imgui/ 目录, 包含路径需要在根 CMakeLists 中配置
-# 这里不额外设置 include 目录, 因为 IncludeDir_IMGUI 已全局定义

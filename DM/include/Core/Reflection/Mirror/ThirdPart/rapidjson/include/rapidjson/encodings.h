@@ -1,4 +1,4 @@
-// Tencent is pleased to support the open source community by making RapidJSON available.
+﻿// Tencent is pleased to support the open source community by making RapidJSON available.
 // 
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
 //
@@ -609,7 +609,7 @@ enum UTFType {
 };
 
 //! Dynamically select encoding according to stream's runtime-specified UTF encoding type.
-/*! \note This class can be used with AutoUTFInputtStream and AutoUTFOutputStream, which provides GetType().
+/*! \note This class can be used with AutoUTFInputtStream and AutoUTFOutputStream, which provides GetAssetType().
 */
 template<typename CharType>
 struct AutoUTF {
@@ -623,28 +623,28 @@ struct AutoUTF {
     static RAPIDJSON_FORCEINLINE void Encode(OutputStream& os, unsigned codepoint) {
         typedef void (*EncodeFunc)(OutputStream&, unsigned);
         static const EncodeFunc f[] = { RAPIDJSON_ENCODINGS_FUNC(Encode) };
-        (*f[os.GetType()])(os, codepoint);
+        (*f[os.GetAssetType()])(os, codepoint);
     }
 
     template<typename OutputStream>
     static RAPIDJSON_FORCEINLINE void EncodeUnsafe(OutputStream& os, unsigned codepoint) {
         typedef void (*EncodeFunc)(OutputStream&, unsigned);
         static const EncodeFunc f[] = { RAPIDJSON_ENCODINGS_FUNC(EncodeUnsafe) };
-        (*f[os.GetType()])(os, codepoint);
+        (*f[os.GetAssetType()])(os, codepoint);
     }
 
     template <typename InputStream>
     static RAPIDJSON_FORCEINLINE bool Decode(InputStream& is, unsigned* codepoint) {
         typedef bool (*DecodeFunc)(InputStream&, unsigned*);
         static const DecodeFunc f[] = { RAPIDJSON_ENCODINGS_FUNC(Decode) };
-        return (*f[is.GetType()])(is, codepoint);
+        return (*f[is.GetAssetType()])(is, codepoint);
     }
 
     template <typename InputStream, typename OutputStream>
     static RAPIDJSON_FORCEINLINE bool Validate(InputStream& is, OutputStream& os) {
         typedef bool (*ValidateFunc)(InputStream&, OutputStream&);
         static const ValidateFunc f[] = { RAPIDJSON_ENCODINGS_FUNC(Validate) };
-        return (*f[is.GetType()])(is, os);
+        return (*f[is.GetAssetType()])(is, os);
     }
 
 #undef RAPIDJSON_ENCODINGS_FUNC

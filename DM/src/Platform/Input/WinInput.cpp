@@ -4,19 +4,19 @@
 #include<Platform/Input/Input.h>
 namespace DM
 {
-	Input* Input::s_Instance = nullptr;
+	Input* Input::m_Inst = nullptr;
 
 	Input::Input() = default;
 	Input::~Input() = default;
 
-	bool Input::IsKeyPressed(Key code)
+	bool Input::IsKeyPressed(KeyCode code)
 	{
 		if (!m_NativeWindow) return false;
 		auto state = glfwGetKey(static_cast<GLFWwindow*>(m_NativeWindow), (int)code);
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool Input::IsKeyReleased(Key code)
+	bool Input::IsKeyReleased(KeyCode code)
 	{
 		if (!m_NativeWindow) return false;
 		auto state = glfwGetKey(static_cast<GLFWwindow*>(m_NativeWindow), (int)code);

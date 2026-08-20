@@ -1,12 +1,9 @@
-#pragma once
+﻿#pragma once
 #include <chrono>
 #include <Core/Core.h>
 
 namespace DM
 {
-	// 时钟系统（L2 Core 层基础服务）。
-	// 提供：可变帧间隔、固定步长、时间缩放、高精度时间戳。
-	// 物理系统等需要固定步长循环可调用 ShouldStepFixed()。
 	class DM_API Clock
 	{
 	public:

@@ -1,4 +1,4 @@
-// Tencent is pleased to support the open source community by making RapidJSON available.
+﻿// Tencent is pleased to support the open source community by making RapidJSON available.
 //
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
 //
@@ -132,7 +132,7 @@ public:
 
     //! Reset error code.
     void Clear() { Set(kParseErrorNone); }
-    //! Update error code and offset.
+    //! UpdateData error code and offset.
     void Set(ParseErrorCode code, size_t offset = 0) { code_ = code; offset_ = offset; }
 
 private:

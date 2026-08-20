@@ -1,4 +1,4 @@
-//     __ _____ _____ _____
+﻿//     __ _____ _____ _____
 //  __|  |   __|     |   | |  JSON for Modern C++
 // |  |  |__   |  |  | | | |  version 3.12.0
 // |_____|_____|_____|_|___|  https://github.com/nlohmann/json
@@ -3550,7 +3550,7 @@ NLOHMANN_JSON_NAMESPACE_END
 
     /// @brief a minimal map-like container that preserves insertion order
     /// @sa https://json.nlohmann.me/api/ordered_map/
-    template<class Key, class T, class IgnoredLess, class Allocator>
+    template<class KeyEvent, class T, class IgnoredLess, class Allocator>
     struct ordered_map;
 
     /// @brief specialization that maintains the insertion order of object keys
@@ -5276,10 +5276,10 @@ auto from_json(BasicJsonType&& j, TupleRelated&& t)
     return from_json_tuple_impl(std::forward<BasicJsonType>(j), std::forward<TupleRelated>(t), priority_tag<3> {});
 }
 
-template < typename BasicJsonType, typename Key, typename Value, typename Compare, typename Allocator,
+template < typename BasicJsonType, typename KeyEvent, typename Value, typename Compare, typename Allocator,
            typename = enable_if_t < !std::is_constructible <
-                                        typename BasicJsonType::string_t, Key >::value >>
-inline void from_json(const BasicJsonType& j, std::map<Key, Value, Compare, Allocator>& m)
+                                        typename BasicJsonType::string_t, KeyEvent >::value >>
+inline void from_json(const BasicJsonType& j, std::map<KeyEvent, Value, Compare, Allocator>& m)
 {
     if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
     {
@@ -5292,14 +5292,14 @@ inline void from_json(const BasicJsonType& j, std::map<Key, Value, Compare, Allo
         {
             JSON_THROW(type_error::create(302, concat("type must be array, but is ", p.type_name()), &j));
         }
-        m.emplace(p.at(0).template get<Key>(), p.at(1).template get<Value>());
+        m.emplace(p.at(0).template get<KeyEvent>(), p.at(1).template get<Value>());
     }
 }
 
-template < typename BasicJsonType, typename Key, typename Value, typename Hash, typename KeyEqual, typename Allocator,
+template < typename BasicJsonType, typename KeyEvent, typename Value, typename Hash, typename KeyEqual, typename Allocator,
            typename = enable_if_t < !std::is_constructible <
-                                        typename BasicJsonType::string_t, Key >::value >>
-inline void from_json(const BasicJsonType& j, std::unordered_map<Key, Value, Hash, KeyEqual, Allocator>& m)
+                                        typename BasicJsonType::string_t, KeyEvent >::value >>
+inline void from_json(const BasicJsonType& j, std::unordered_map<KeyEvent, Value, Hash, KeyEqual, Allocator>& m)
 {
     if (JSON_HEDLEY_UNLIKELY(!j.is_array()))
     {
@@ -5312,7 +5312,7 @@ inline void from_json(const BasicJsonType& j, std::unordered_map<Key, Value, Has
         {
             JSON_THROW(type_error::create(302, concat("type must be array, but is ", p.type_name()), &j));
         }
-        m.emplace(p.at(0).template get<Key>(), p.at(1).template get<Value>());
+        m.emplace(p.at(0).template get<KeyEvent>(), p.at(1).template get<Value>());
     }
 }
 
@@ -19741,13 +19741,13 @@ NLOHMANN_JSON_NAMESPACE_BEGIN
 
 /// ordered_map: a minimal map-like container that preserves insertion order
 /// for use within nlohmann::basic_json<ordered_map>
-template <class Key, class T, class IgnoredLess = std::less<Key>,
-          class Allocator = std::allocator<std::pair<const Key, T>>>
-              struct ordered_map : std::vector<std::pair<const Key, T>, Allocator>
+template <class KeyEvent, class T, class IgnoredLess = std::less<KeyEvent>,
+          class Allocator = std::allocator<std::pair<const KeyEvent, T>>>
+              struct ordered_map : std::vector<std::pair<const KeyEvent, T>, Allocator>
 {
-    using key_type = Key;
+    using key_type = KeyEvent;
     using mapped_type = T;
-    using Container = std::vector<std::pair<const Key, T>, Allocator>;
+    using Container = std::vector<std::pair<const KeyEvent, T>, Allocator>;
     using iterator = typename Container::iterator;
     using const_iterator = typename Container::const_iterator;
     using size_type = typename Container::size_type;

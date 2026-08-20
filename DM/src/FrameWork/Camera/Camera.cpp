@@ -1,8 +1,8 @@
 ﻿#include "DMPCH.h"
 #include<Framework/Camera/Camera.h>
 #include<glm/gtc/matrix_transform.hpp>
-#include<Core/EventSystem/EventMgr.h>
-#include<Core/EventSystem/Event/WindowEvent.h>
+#include<Core/EventBus/EventMgr.h>
+#include<Core/EventBus/Event/WindowEvent.h>
 namespace DM
 {
 	Camera::Camera():
@@ -10,7 +10,7 @@ namespace DM
 		m_ProjectionViewMatrix(Matrix4(1.f)), m_Position(Vector3(0.f)),
 		m_Rotation(Vector3(0.f, -90.f, 0.f))
 	{
-		EventMgr::GetInst()->Register<WindowResize>([this](Event* const e) {this->OnWindowResize(e); });
+		EventMgr::Get()->Register<WindowResize>([this](Event* const e) {this->OnWindowResize(e); });
 	}
 	void Camera::UpdateData()
 	{

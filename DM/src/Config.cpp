@@ -3,7 +3,7 @@
 #include<json/json.hpp>
 #include<string_view>
 #include<fstream>
-#include"Tool/Util/Util.h"
+//#include"Tool/Util/Util.h"
 namespace DM
 {
 	static std::string ConfigFilePathAbs = "";//配置文件绝对路径
@@ -23,18 +23,22 @@ namespace DM
 			LOG_CORE_WARN("Config file not found: {}, using defaults", configFilePath);
 			// 填充默认值，避免后续 js["key"] 访问时抛出 nlohmann::json::type_error
 			js = {
-				{"Assets", {
-					{"Folder", "Assets"},
-					{"Shader", "Assets/Shader"},
-					{"Texture", "Assets/Texture"},
-					{"Font", "Assets/Font"},
-					{"Icon", "Assets/Icon"},
-					{"Save", "Assets/Save"}
-				}},
-				{"Cache", {
-					{"Folder", "Cache"},
-					{"Shader", "Cache/Shader"}
-				}}
+				{"Assets", 
+					{
+						{"Folder", "Assets"},
+						{"Shader", "Assets/Shader"},
+						{"Texture", "Assets/Texture"},
+						{"Font", "Assets/Font"},
+						{"Icon", "Assets/Icon"},
+						{"Save", "Assets/Save"}
+					}
+				},
+				{"Cache", 
+					{
+						{"Folder", "Cache"},
+						{"Shader", "Cache/Shader"}
+					}
+				}
 			};
 		}
 

@@ -1,18 +1,17 @@
-#include "DMPCH.h"
-#include<Framework/World.h>
+﻿#include "DMPCH.h"
+#include<Framework/Base/World.h>
 #include<Framework/Component/Component.h>
 
-#include<Framework/Entity.h>
+#include<Framework/Base/Entity.h>
 
 
 namespace DM
 {
-    World::World()
-    {
-    }
-    World::~World()
-    {
-    }
+	REGISTER_TYPE(World);
+
+	World::~World()
+	{
+	}
 	Entity World::CreateEntity()
 	{
         Entity en{ m_Registry.create(),this };

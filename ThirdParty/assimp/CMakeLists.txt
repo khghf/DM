@@ -1,0 +1,10 @@
+﻿set(ASSIMP_BUILD_TESTS OFF FORCE)
+set(ASSIMP_INSTALL OFF FORCE)
+add_subdirectory(assimp)
+set_target_properties(assimp PROPERTIES
+FOLDER ${ThirdPartyName}
+RUNTIME_OUTPUT_DIRECTORY
+	"${CMAKE_SOURCE_DIR}/bin/$<CONFIG>-${DM_PLATFORM_SUFFIX}/${ApplicationName}"
+ARCHIVE_OUTPUT_DIRECTORY
+	"${CMAKE_SOURCE_DIR}/bin/$<CONFIG>-${DM_PLATFORM_SUFFIX}/assimp"
+)

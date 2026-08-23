@@ -9,9 +9,10 @@ namespace DM::RHI
 	public:
 		RHIShaderProgram()=default;
 		~RHIShaderProgram()=default;
-		virtual EResourceType GetAssetType() const override { return EResourceType::ShaderProgram; }
-		virtual std::vector<RHIDescriptorSet*>	GenDescriptorSets()const = 0;
+		virtual EResourceType GetResourceType() const override { return EResourceType::ShaderProgram; }
 		virtual RHIDescriptorSetGroup*			GenDescriptorSetGroup()const = 0;
+		virtual std::vector<RHIDescriptorSet*>	GenDescriptorSets()const = 0;
+		virtual RHIDescriptorSet*				GenDescriptorSet(uint32_t set)const = 0;
 	private:
 
 	};

@@ -23,10 +23,14 @@ namespace DM::RHI
 
 	public:
 
-		virtual std::vector<RHIDescriptorSet*>	GenDescriptorSets()const override;
 		virtual RHIDescriptorSetGroup*			GenDescriptorSetGroup()const override;
+		virtual std::vector<RHIDescriptorSet*>	GenDescriptorSets()const override;
+		virtual RHIDescriptorSet*				GenDescriptorSet(uint32_t set)const override;
 
 	private:
+		Descriptor GenDescriptor(const ShaderReflection::UniformBuffer& info)const;
+		Descriptor GenDescriptor(const ShaderReflection::TextureBinding& info)const;
+
 		VulkanDevice* m_Device;
 
 		VkPipelineVertexInputStateCreateInfo				m_vkVertexInput;

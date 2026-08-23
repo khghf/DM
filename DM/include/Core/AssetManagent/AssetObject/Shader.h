@@ -12,7 +12,7 @@ namespace DM
 		friend class ShaderLoader;
 	public:
 		~Shader();
-		virtual EAssetType GetAssetType()const override { return GetAssetType_Static(); }
+		virtual EAssetType GetResourceType()const override { return GetAssetType_Static(); }
 		static EAssetType GetAssetType_Static() { return EAssetType::Unknown; }
 
 		RHI::RHIShader* GetRHIResource()const { return m_RHISHader; }

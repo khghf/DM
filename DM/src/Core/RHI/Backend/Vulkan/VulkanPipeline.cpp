@@ -26,11 +26,10 @@ namespace DM::RHI
 		//********************视口+裁剪********************//
 		//这里将帧缓冲、纹理坐标原点从左上角设置为右下角，翻转NDC的y轴
 		//如果是动态参数(在下面我将其设置成了动态参数)则需要在每次调用设置视口命令前更改所以这里就不需要初始其值
-		VkExtent2D extent{};
-		VkViewport viewport{};
-		VkRect2D scissor{};
+		VkExtent2D	extent{};
+		VkViewport	viewport{};
+		VkRect2D	scissor{};
 		VkPipelineViewportStateCreateInfo viewportState{};
-
 		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 		viewportState.viewportCount = 1;
 		viewportState.pViewports = &viewport;
@@ -46,9 +45,9 @@ namespace DM::RHI
 		// VK_FALSE = 允许深度值超出范围(会被丢弃)
 		// 需要启用扩展才能设为 VK_TRUE
 		rasterizer.depthClampEnable = VK_FALSE;
-		rasterizer.rasterizerDiscardEnable = VK_FALSE; //是否丢弃光栅化
-		rasterizer.polygonMode = ToVkPolygonMode(desc.FillMode); //多边形填充模式
-		rasterizer.cullMode = ToVkCullMode(desc.CullMode);//面剔除模式
+		rasterizer.rasterizerDiscardEnable = VK_FALSE; 
+		rasterizer.polygonMode =ToVkPolygonMode(desc.FillMode); 
+		rasterizer.cullMode =	ToVkCullMode(desc.CullMode);
 		// frontFace：正面定义
 		// VK_FRONT_FACE_CLOCKWISE = 顺时针顶点顺序为正面
 		// VK_FRONT_FACE_COUNTER_CLOCKWISE = 逆时针为正面
@@ -100,7 +99,8 @@ namespace DM::RHI
 		
 
 		//********************配置动态参数********************//
-		std::vector<VkDynamicState> dynamicStates = {
+		std::vector<VkDynamicState> dynamicStates = 
+		{
 			VK_DYNAMIC_STATE_VIEWPORT,   // 视口参数动态
 			VK_DYNAMIC_STATE_SCISSOR     // 剪刀参数动态
 		};

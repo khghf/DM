@@ -150,7 +150,7 @@ public:
         current_ = takeFunc_(*is_);
     }
 
-    UTFType GetAssetType() const { return type_; }
+    UTFType GetResourceType() const { return type_; }
     bool HasBOM() const { return hasBOM_; }
 
     Ch Peek() const { return current_; }
@@ -255,7 +255,7 @@ public:
             PutBOM();
     }
 
-    UTFType GetAssetType() const { return type_; }
+    UTFType GetResourceType() const { return type_; }
 
     void Put(Ch c) { putFunc_(*os_, c); }
     void Flush() { os_->Flush(); } 

@@ -31,6 +31,7 @@ namespace DM::RHI
 		virtual RHIShaderProgram*	CreateShaderProgram(const RHIShaderProgramDesc& desc) =0;
 		virtual RHIPipeline*		CreatePipeline(const RHIPipelineDesc& desc) = 0;
 
+		virtual RHIBuffer*			CreateBuffer(const RHIBufferDesc& desc) = 0;
 		virtual RHIBuffer*			CreateVertexBuffer(const RHIVertexBufferDesc& desc) = 0;
 		virtual RHIBuffer*			CreateIndexBuffer(const RHIIndexBufferDesc& desc) = 0;
 		virtual RHIBuffer*			CreateUniformBuffer(const RHIUniformBufferDesc& desc) = 0;
@@ -41,7 +42,7 @@ namespace DM::RHI
 		void* GetWindowHandle()const { return m_WindowHandle; }
 
 
-		virtual uint8_t	GetMaxFlightFrameCount()const { return 1; }
+		virtual uint8_t	GetConcurrentFrameCount()const { return 1; }
 		/// <summary>
 		/// 获取CPU当前正在渲染的帧的索引。
 		/// </summary>

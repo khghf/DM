@@ -129,81 +129,6 @@ namespace DM::RHI
 		return nullptr;
 	}
 
-	/*void VulkanShaderProgram::BindUbo(RHIBuffer* ubo, const std::string& name) const
-	{
-		VulkanUniformBuffer* vkUbo = static_cast<VulkanUniformBuffer*>(ubo);
-
-		if (const auto*info = FindUboInfo(name))
-		{
-			const auto&it = m_vkSetLayouts.find(info->set);
-			if (it != m_vkSetLayouts.end())
-			{
-				vkUbo->UpdataDescriptorSet(&it->second,m_vkDescriptorSets.at(info->set));
-				return;
-			}
-		}
-		DM_CORE_ASSERT(false, "{}", "Bind UBO failed. Please check whether the passed name is correct.");
-	}
-
-	void VulkanShaderProgram::BindTexture(RHITexture* texture, const std::string& name) const
-	{
-		VulkanTexture* vkTex = static_cast<VulkanTexture*>(texture);
-
-		if (const auto* info = FindTexInfo(name))
-		{
-			const auto& it = m_vkSetLayouts.find(info->set);
-			if (it != m_vkSetLayouts.end())
-			{
-				vkTex->UpdataDescriptorSet(&it->second, m_vkDescriptorSets.at(info->set));
-				return;
-			}
-		}
-		DM_CORE_ASSERT(false, "{}", "Bind texture failed. Please check whether the passed name is correct.");
-	}*/
-
-	std::vector<RHIDescriptorSet*> VulkanShaderProgram::GenDescriptorSets() const
-	{
-		std::vector<RHIDescriptorSet*>result;
-		result.reserve(m_vkSetLayouts.size());
-
-		std::unordered_map<uint32_t, std::vector<Descriptor>>set_Descriptors{};
-
-		for (const auto& in : m_Reflection.uniformBuffers)
-		{
-			Descriptor desc{};
-			desc.arraySize = in.arraySize;
-			desc.m_binding = in.binding;
-			desc.m_Name = in.name;
-			desc.m_Type = in.type; 
-			desc.m_Set = in.set;
-
-			set_Descriptors[in.set].push_back(desc);
-		}
-		for (const auto& in : m_Reflection.textures)
-		{
-			Descriptor desc{};
-			desc.arraySize = in.arraySize;
-			desc.m_binding = in.binding;
-			desc.m_Name = in.name;
-			desc.m_Type = in.type;
-			desc.m_Set = in.set;
-
-			set_Descriptors[in.set].push_back(desc);
-		}
-
-
-		for (const auto& [set, vkSetLayout] : m_vkSetLayouts)
-		{
-			RHIDescriptorSetDesc setDesc{};
-			setDesc.Descriptors = set_Descriptors[set];
-
-			VulkanDescriptorSet* vulkanSet = new VulkanDescriptorSet(m_Device, setDesc, &vkSetLayout);
-			result.emplace_back(vulkanSet);
-		}
-
-		return result;
-	}
-
 	RHIDescriptorSetGroup* VulkanShaderProgram::GenDescriptorSetGroup() const
 	{
 		RHIDescriptorSetGroup* group{};
@@ -212,29 +137,8 @@ namespace DM::RHI
 
 		std::unordered_map<uint32_t, std::vector<Descriptor>>set_Descriptors{};
 
-		for (const auto& in : m_Reflection.uniformBuffers)
-		{
-			Descriptor desc{};
-			desc.arraySize = in.arraySize;
-			desc.m_binding = in.binding;
-			desc.m_Name = in.name;
-			desc.m_Type = in.type;
-			desc.m_Set = in.set;
-
-			set_Descriptors[in.set].push_back(desc);
-		}
-		for (const auto& in : m_Reflection.textures)
-		{
-			Descriptor desc{};
-			desc.arraySize = in.arraySize;
-			desc.m_binding = in.binding;
-			desc.m_Name = in.name;
-			desc.m_Type = in.type;
-			desc.m_Set = in.set;
-
-			set_Descriptors[in.set].push_back(desc);
-		}
-
+		for (const auto& in : m_Reflection.uniformBuffers)	set_Descriptors[in.set].push_back(GenDescriptor(in));
+		for (const auto& in : m_Reflection.textures)		set_Descriptors[in.set].emplace_back(GenDescriptor(in));
 
 		for (const auto& [set, vkSetLayout] : m_vkSetLayouts)
 		{
@@ -249,4 +153,80 @@ namespace DM::RHI
 
 		return group;
 	}
+
+
+	std::vector<RHIDescriptorSet*> VulkanShaderProgram::GenDescriptorSets() const
+	{
+		std::vector<RHIDescriptorSet*>result;
+		result.reserve(m_vkSetLayouts.size());
+
+		std::unordered_map<uint32_t, std::vector<Descriptor>>set_Descriptors{};
+
+		for (const auto& in : m_Reflection.uniformBuffers)	set_Descriptors[in.set].emplace_back(GenDescriptor(in));
+		for (const auto& in : m_Reflection.textures)		set_Descriptors[in.set].emplace_back(GenDescriptor(in));
+
+		for (const auto& [set, vkSetLayout] : m_vkSetLayouts)
+		{
+			RHIDescriptorSetDesc setDesc{};
+			setDesc.Descriptors = set_Descriptors[set];
+
+			VulkanDescriptorSet* vulkanSet = new VulkanDescriptorSet(m_Device, setDesc, &vkSetLayout);
+			result.emplace_back(vulkanSet);
+		}
+
+		return result;
+	}
+
+
+	RHIDescriptorSet* VulkanShaderProgram::GenDescriptorSet(uint32_t set) const
+	{
+		RHIDescriptorSet* result{};
+
+		std::vector<Descriptor> descriptors{};
+
+		for (const auto& in : m_Reflection.uniformBuffers)
+		{
+			if (in.set != set)continue;
+			descriptors.emplace_back(GenDescriptor(in));
+		}
+
+		for (const auto& in : m_Reflection.textures)
+		{
+			if (in.set != set)continue;
+			descriptors.emplace_back(GenDescriptor(in));
+		}
+
+		if (auto it = m_vkSetLayouts.find(set); it != m_vkSetLayouts.end())
+		{
+			RHIDescriptorSetDesc setDesc{};
+			setDesc.Descriptors = descriptors;
+
+			result = new VulkanDescriptorSet(m_Device, setDesc, &it->second);
+		}
+
+		return result;
+	}
+
+	Descriptor VulkanShaderProgram::GenDescriptor(const ShaderReflection::UniformBuffer& info)const
+	{
+		Descriptor desc{};
+		desc.arraySize	= info.arraySize;
+		desc.m_binding	= info.binding;
+		desc.m_Name		= info.name;
+		desc.m_Type		= info.type;
+		desc.m_Set		= info.set;
+		return desc;
+	}
+
+	Descriptor VulkanShaderProgram::GenDescriptor(const ShaderReflection::TextureBinding& info)const
+	{
+		Descriptor desc{};
+		desc.arraySize	= info.arraySize;
+		desc.m_binding	= info.binding;
+		desc.m_Name		= info.name;
+		desc.m_Type		= info.type;
+		desc.m_Set		= info.set;
+		return desc;
+	}
+
 }

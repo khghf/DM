@@ -44,18 +44,19 @@ namespace DM
 
 		RHI::RHIDeviceDesc desc;
 		desc.WindowHandle = m_Window->GetNativeWindow();
+
 		RHI::RHIDevice::Init(desc);
 
 		DM_CORE_ASSERT(RHI::RHIDevice::Get(), "{}", "Failed to create RHIDevice");
 
-		m_Renderer = CreateUPtr<TriangleRenderer>();
+		m_Renderer		= CreateUPtr<TriangleRenderer>();
+		m_Input			= CreateUPtr<Input>();
+		m_Clock			= CreateUPtr<Clock>();
+		m_LayerStack	= CreateUPtr<LayerStack>();
+		m_GameInst		= CreateUPtr<GameInst>();
 
-
-		m_Input = UPtr<Input>(new Input());
 		Input::m_Inst = static_cast<Input*>(m_Input.get());
 		static_cast<Input*>(m_Input.get())->SetNativeWindow(m_Window->GetNativeWindow());
-		m_Clock = UPtr<Clock>(new Clock());
-		m_LayerStack = UPtr<LayerStack>(new LayerStack());
 		return;
 	}
 
@@ -100,13 +101,13 @@ namespace DM
 		{
 			m_Renderer->BeginFrame();
 
-			m_Renderer->UpdateData(deltaTime);
+			m_Renderer->Update(deltaTime);
 
-			m_LayerStack->UpdateData(deltaTime);
+			m_LayerStack->Update(deltaTime);
 
 			m_Renderer->EndFrame();
 
-			//m_Window->UpdateData(deltaTime);
+			//m_Window->Update(deltaTime);
 		}
 		OnFrameEnd();
 	}
@@ -120,8 +121,8 @@ namespace DM
 	void Engine::HandleEvent(Event* const e)
 	{
 
-		if (e->GetAssetType() == EEventType::WindowResize)OnWindowResize(e);
-		if (e->GetAssetType() == EEventType::WindowClose)Close();
+		if (e->GetResourceType() == EEventType::WindowResize)OnWindowResize(e);
+		if (e->GetResourceType() == EEventType::WindowClose)Close();
 
 
 		PassEvent(e);

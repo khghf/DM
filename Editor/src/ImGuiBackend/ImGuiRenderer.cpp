@@ -26,13 +26,13 @@ namespace DM
 		auto engineSwapchain = engineRenderer->GetSwapchain();
 
 
-		ERHIFormat format = engineRenderer->GetSwapchain()->GetFormat();
+		EFormat format = engineRenderer->GetSwapchain()->GetFormat();
 
 
 		std::vector<AttachmentDesc>attachmentDesc{};
 
 		attachmentDesc.emplace_back(format, ERHIAttachmentUsage::ColorTarget);
-		attachmentDesc.emplace_back(ERHIFormat::Unknown, ERHIAttachmentUsage::DepthTarget);//创建深度附件时会自动选择合适的格式
+		attachmentDesc.emplace_back(EFormat::Unknown, ERHIAttachmentUsage::DepthTarget);//创建深度附件时会自动选择合适的格式
 
 
 		RHIRenderPassDesc renderDesc{};

@@ -28,7 +28,8 @@ namespace DM
         static SPtr<T>      LoadAsset( std::string_view  path);
     protected:
         static bool FileExist(std::string_view path);
-
+        static bool CheckSourceFileModified(AssetPack* pack);
+        static bool CheckSourceFileModified(std::string_view sourceFilePath);
     private:
         AssetMgr()=default;
 
@@ -52,14 +53,21 @@ namespace DM
         if (assetId)
         {
             //查询缓存
-            if (asset = cache->GetAsset<T>(assetId ))
+            if (asset = cache->GetAsset<T>(assetId )) return asset;
+            
+            if (CheckSourceFileModified(path.data()))
             {
-                return asset;
+                AssetPack* assetPack = AssetImporter::Import(path);
+                std::string packPath = AssetUtil::SerializePack(assetPack);//序列化到磁盘
+                asset = std::static_pointer_cast<T>(AssetLoader::Load(assetPack));
+            }
+            else
+            {
+                //Id有效直接加载资产包
+                std::string assetPath = database->GetAssetPathByGuid(assetId);
+                asset = std::static_pointer_cast<T>(AssetLoader::Load(assetPath));
             }
 
-            //Id有效直接加载资产包
-            std::string assetPath=database->GetAssetPathByGuid(assetId);
-            asset = std::static_pointer_cast<T>(AssetLoader::Load(assetPath));
         }
         else
         {

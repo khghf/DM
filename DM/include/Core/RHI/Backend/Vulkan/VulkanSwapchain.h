@@ -18,7 +18,7 @@ namespace DM::RHI
 		virtual void		GetExtent(uint32_t& width, uint32_t& height) const override { width = m_vkExtent.width; height = m_vkExtent.height; }
 		virtual uint32_t	GetCurrentImageIndex() const override { return m_CurrentIndex; }
 		virtual uint32_t	GetImageCount()const override { return m_ImageCount; }
-		virtual ERHIFormat	GetFormat()const override { return ToRHIFormat(m_vkSwapchainFormat); }
+		virtual EFormat	GetFormat()const override { return ToRHIFormat(m_vkSwapchainFormat); }
 
 		virtual void		Present()override;
 		virtual uint32_t	AcquireNextImage() override;

@@ -30,7 +30,7 @@ namespace DM
 
 
  		inline static constexpr EEventType		GetStaticType()		{ return EEventType::Event;}
-		virtual EEventType						GetAssetType()const		{ return GetStaticType(); }
+		virtual EEventType						GetResourceType()const		{ return GetStaticType(); }
 		inline static constexpr EEventCategory	GetStaticCategory()	{ return EEventCategory::None; }
 		virtual EEventCategory					GetCategory()const	{ return GetStaticCategory(); }
 

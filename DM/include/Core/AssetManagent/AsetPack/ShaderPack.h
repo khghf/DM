@@ -5,7 +5,7 @@ namespace DM
 {
 	struct DM_API ShaderPack:public AssetPack
 	{
-		virtual EAssetType GetAssetType() const override { return EAssetType::Shader; }
+		virtual EAssetType GetResourceType() const override { return EAssetType::Shader; }
 
 		enum ShaderType
 		{

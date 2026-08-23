@@ -10,7 +10,7 @@ namespace DM
 		Entity() = default;
 		Entity(entt::entity entityHandle, World * context);
 		~Entity()=default;
-		virtual void UpdateData(float DeltaTime)override;
+		virtual void Update(float DeltaTime)override;
 		virtual void Destroy()override;
 		virtual void OnDestroy()override;
 
@@ -43,17 +43,5 @@ namespace DM
 	private:
 		entt::entity m_Handle{ entt::null };
 		World* m_Context = nullptr;
-	};
-
-	class DM_API ScriptableEntity
-	{
-	public:
-		virtual ~ScriptableEntity() = default;
-	protected:
-		virtual void OnCreate() {};
-		virtual void OnUpdate(float deltaTime) {};
-		virtual void OnDestroy() {};
-	private:
-		Entity m_Entity;
 	};
 }

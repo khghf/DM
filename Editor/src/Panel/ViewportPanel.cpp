@@ -67,6 +67,31 @@ namespace DM
 		ImGui::Begin("ViewPort", 0, ImGuiWindowFlags_NoTitleBar);
 		{
 			UpdataViewPortData();
+
+			ImGui::SetNextWindowPos(ImVec2(
+				ImGui::GetWindowPos().x + 10.0f,
+				ImGui::GetWindowPos().y + 10.0f
+			));
+			ImGui::SetNextWindowSize(ImVec2(200.0f, 100.0f));
+
+			ImGui::Begin("##ViewportInfo",
+				nullptr,
+				ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoResize |
+				ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_NoScrollbar |
+				ImGuiWindowFlags_NoSavedSettings |
+				ImGuiWindowFlags_NoInputs |           // 不拦截鼠标
+				ImGuiWindowFlags_NoBackground |       // 透明背景！
+				ImGuiWindowFlags_NoDecoration);       // 无边框
+			{
+				ImGui::TextColored(ImVec4(1, 1, 1, 0.8f), "FPS: %.1f", ImGui::GetIO().Framerate);
+				ImGui::TextColored(ImVec4(1, 1, 1, 0.8f), "Frame Time: %.3f ms", 1000.0f / ImGui::GetIO().Framerate);
+			}
+			ImGui::End();
+
+
+
 #ifdef  ENABLE_VULKAN_API
 			auto renderer = Engine::GetRenderer();
 			auto device = static_cast<RHI::VulkanDevice*>(RHI::GetDevice());
@@ -88,15 +113,21 @@ namespace DM
 			ImGui::Image(m_ViewPortTextureRef, imvec, { 0,0 }, { 1,1 });
 #endif //  ENABLE_VULKAN_API
 
+
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DRAG_ITEM"))
 				{
-					const char* data = static_cast<const char*>(payload->Data);
+					std::string path= static_cast<const char*>(payload->Data);
 
-					if (FileSystem::Exists(data))
+					if (FileSystem::Exists(path))
 					{
-						SPtr<World> world = AssetMgr::LoadAsset<World>(data);
+
+						if (FileSystem::GetExtension(path) == ".world")
+						{
+
+						}
+						SPtr<World> world = AssetMgr::LoadAsset<World>(path);
 
 						Editor::Get()->ChangeEditorWorld(world);
 

@@ -10,7 +10,6 @@ namespace DM::RHI
 	class VulkanBuffer;
 	extern uint8_t CURRENT_CPU_PROCESSES_FRAME_INDEX;
 
-	/// <summary>Vulkan 命令列表实现。</summary>
 	class DM_API VulkanCommandList : public RHICommandList
 	{
 	public:
@@ -24,8 +23,8 @@ namespace DM::RHI
 
 		virtual void BindPipeline(RHIPipeline* pipeline) override;
 
+		virtual void BindDescriptorSet(RHIShaderProgram* shaderProgram, RHIDescriptorSet* set)override;
 		virtual void BindDescriptorSetGroup(RHIShaderProgram* shaderProgram,RHIDescriptorSetGroup* group) override;
-
 
 
 		virtual void BindVertexBuffer(RHIBuffer* buffer,uint32_t binding) override;
@@ -34,6 +33,7 @@ namespace DM::RHI
 		virtual void Draw(uint32_t vertexCount, uint32_t instanceCount) override;
 		virtual void DrawIndex(uint32_t indexCount, uint32_t instanceCount) override;
 		virtual void Submit()override;
+
 		/// <summary>
 		/// 获取一个空闲的命令缓冲区。
 		/// </summary>
@@ -41,11 +41,11 @@ namespace DM::RHI
 		VkCommandBuffer* GetIdleCommandBuffer() const;
 
 	private:
-		// ---- 成员变量 ----
-		VulkanDevice*    m_Device;        // 所属设备（借引用）
-		VkCommandPool    m_CommandPool;   // 这条缓冲是从哪个池子分配的（销毁时要回池子里释放）
-		std::vector<VkCommandBuffer>  m_CommandBuffers; // 真正的录制缓冲（所有 vkCmd* 都写在它里面）
-		//VulkanSwapchain* m_Swapchain;     // 当前帧的目标交换链（Begin 时记下，用来开 RenderPass）
+		VulkanDevice*					m_Device;
+		//@todo 移到vulkanDevice
+		VkCommandPool					m_CommandPool;   
+
+		std::vector<VkCommandBuffer>	m_CommandBuffers; 
 	};
 
 } // namespace DM::RHI

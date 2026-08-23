@@ -13,9 +13,9 @@ namespace DM::RHI
 	public:
 		VulkanVertexBuffer(VulkanDevice* device,const RHIVertexBufferDesc&desc);
 		~VulkanVertexBuffer()override;
-		virtual EResourceType GetAssetType() const { return EResourceType::VertexBuffer; }
+		virtual EResourceType GetResourceType() const { return EResourceType::VertexBuffer; }
 
-		virtual void UpdateData(const void* data, size_t size) override {};
+		virtual void Update(const void* data, size_t size) override {};
 	private:
 	private:
 		bool HasUploadData = false;

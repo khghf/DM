@@ -1,11 +1,19 @@
-﻿#pragma once
+﻿// AssetMetaDatabase.h
+#pragma once
 #include "AssetObject/AssetObject.h"
 #include <unordered_map>
 #include <shared_mutex>
+#include <filesystem>
+#include <vector>
+#include <utility>
+#include <atomic>
 #include "AssetManagmentConfig.h"
 
 namespace DM
 {
+    /// <summary>
+    /// 资产记录
+    /// </summary>
     struct AssetRecord
     {
         std::string AssetPackPath;          // 资产包路径(引擎内部 .asset 文件路径)
@@ -80,7 +88,6 @@ namespace DM
             const std::string& sourceFileContentHash,
             uint64_t lastModifyTime, EAssetType type);
 
-
         /// <summary>
         /// 删除指定 GUID 的记录(同时清理索引)
         /// </summary>
@@ -148,8 +155,24 @@ namespace DM
         /// </summary>
         bool IsDirty() const { return m_IsDataDirty; }
 
-    private:
+        /// <summary>
+        /// 路径规范化(统一分隔符 + 消除 . 和 ..)
+        /// </summary>
+        static std::filesystem::path NormalizePath(std::string_view path);
 
+        /// <summary>
+        /// 获取所有已注册资产记录的快照(GUID + 记录)
+        /// 用于以数据库为唯一数据源遍历已注册资源
+        /// </summary>
+        std::vector<std::pair<AssetID, AssetRecord>> GetAllRecords() const;
+
+        /// <summary>
+        /// 数据修改次数(每次增删改递增)
+        /// 用于外部(如内容面板)感知数据库变更并自动刷新
+        /// </summary>
+        uint64_t GetModifyCount() const { return m_ModifyCount.load(std::memory_order_relaxed); }
+
+    private:
         /// <summary>
         /// 添加反向索引(路径->GUID、内容哈希->GUID)
         /// </summary>
@@ -165,16 +188,17 @@ namespace DM
         /// </summary>
         void RebuildIndexes();
 
-
-
         std::unordered_map<KeyEvent, AssetRecord> m_GuidToRecord;          // 主表：GUID -> 记录
-        std::unordered_map<std::string, KeyEvent> m_SourceFilePathToGuid;  // 索引：路径 -> GUID
+        std::unordered_map<std::filesystem::path, KeyEvent> m_SourceFilePathToGuid;  // 索引：路径 -> GUID
         std::unordered_map<std::string, KeyEvent> m_ContentHashToGuid;     // 索引：内容哈希 -> GUID
 
-        mutable std::shared_mutex m_Mutex;  
-        bool m_IsDataDirty = false;         
+        mutable std::shared_mutex m_Mutex;
 
-        std::string m_DatabaseFileName = "AssetDatabase.txt"; 
+        bool m_IsDataDirty = false;
+
+        std::atomic<uint64_t> m_ModifyCount{ 0 };  // 数据修改计数(增删改时递增)
+
+        std::string m_DatabaseFileName = "AssetDatabase.txt";
     };
 
     REGISTER_TYPE(AssetMetaDatabase);

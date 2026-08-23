@@ -13,7 +13,7 @@ namespace DM
 	}
 
 
-	void Entity::UpdateData(float DeltaTime)
+	void Entity::Update(float DeltaTime)
 	{
 	}
 	void Entity::Destroy()

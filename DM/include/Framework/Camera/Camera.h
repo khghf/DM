@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include<Foundation/Math/Vector.h>
 #include<Foundation/Math/Matrix.h>
+#include<Core/Core.h>
 namespace DM
 {
 	class Event;
@@ -14,11 +15,11 @@ namespace DM
 	public:
 		Camera();
 		virtual void	OnUpdate(float deletaTime) = 0;
-		virtual void	AddRotation(const Vector3& rotation)	{ m_Rotation += rotation;UpdateData(); }
-		virtual void	AddPosition(const Vector3& offset)		{ m_Position += offset;UpdateData(); }
+		virtual void	AddRotation(const Vector3& rotation)	{ m_Rotation += rotation;Update(); }
+		virtual void	AddPosition(const Vector3& offset)		{ m_Position += offset;Update(); }
 		
-		virtual void	SetRotation(const Vector3& rotation)	{ m_Rotation = rotation;UpdateData(); }
-		virtual void	SetPosition(const Vector3& position)	{ m_Position = position; UpdateData(); }
+		virtual void	SetRotation(const Vector3& rotation)	{ m_Rotation = rotation;Update(); }
+		virtual void	SetPosition(const Vector3& position)	{ m_Position = position; Update(); }
 		virtual void	SetFOV(const float& fov)				{ m_FOV = fov;OnFovUpdate(); }
 		virtual void	SetProjection(const float& aspectRatio)=0;
 		virtual Vector3 GetRotation()const						{ return m_Rotation; }
@@ -34,7 +35,7 @@ namespace DM
 		virtual void OnFovUpdate() = 0;
 		virtual void OnWindowResize(Event* const e) = 0;
 	private:
-		void UpdateData();
+		void Update();
 	protected:
 		Matrix4 m_ProjectionMatrix;
 		Matrix4 m_ViewMatrix;

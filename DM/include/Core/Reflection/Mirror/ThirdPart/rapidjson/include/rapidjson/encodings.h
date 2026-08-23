@@ -609,7 +609,7 @@ enum UTFType {
 };
 
 //! Dynamically select encoding according to stream's runtime-specified UTF encoding type.
-/*! \note This class can be used with AutoUTFInputtStream and AutoUTFOutputStream, which provides GetAssetType().
+/*! \note This class can be used with AutoUTFInputtStream and AutoUTFOutputStream, which provides GetResourceType().
 */
 template<typename CharType>
 struct AutoUTF {
@@ -623,28 +623,28 @@ struct AutoUTF {
     static RAPIDJSON_FORCEINLINE void Encode(OutputStream& os, unsigned codepoint) {
         typedef void (*EncodeFunc)(OutputStream&, unsigned);
         static const EncodeFunc f[] = { RAPIDJSON_ENCODINGS_FUNC(Encode) };
-        (*f[os.GetAssetType()])(os, codepoint);
+        (*f[os.GetResourceType()])(os, codepoint);
     }
 
     template<typename OutputStream>
     static RAPIDJSON_FORCEINLINE void EncodeUnsafe(OutputStream& os, unsigned codepoint) {
         typedef void (*EncodeFunc)(OutputStream&, unsigned);
         static const EncodeFunc f[] = { RAPIDJSON_ENCODINGS_FUNC(EncodeUnsafe) };
-        (*f[os.GetAssetType()])(os, codepoint);
+        (*f[os.GetResourceType()])(os, codepoint);
     }
 
     template <typename InputStream>
     static RAPIDJSON_FORCEINLINE bool Decode(InputStream& is, unsigned* codepoint) {
         typedef bool (*DecodeFunc)(InputStream&, unsigned*);
         static const DecodeFunc f[] = { RAPIDJSON_ENCODINGS_FUNC(Decode) };
-        return (*f[is.GetAssetType()])(is, codepoint);
+        return (*f[is.GetResourceType()])(is, codepoint);
     }
 
     template <typename InputStream, typename OutputStream>
     static RAPIDJSON_FORCEINLINE bool Validate(InputStream& is, OutputStream& os) {
         typedef bool (*ValidateFunc)(InputStream&, OutputStream&);
         static const ValidateFunc f[] = { RAPIDJSON_ENCODINGS_FUNC(Validate) };
-        return (*f[is.GetAssetType()])(is, os);
+        return (*f[is.GetResourceType()])(is, os);
     }
 
 #undef RAPIDJSON_ENCODINGS_FUNC

@@ -52,39 +52,39 @@ namespace DM::RHI
 	REGISTER_MEMBER(ShaderReflection::PushConstant, size);
 	REGISTER_MEMBER(ShaderReflection::PushConstant, members);
 
-	ERHIFormat SPIRTypeToRHIFormat(const spirv_cross::SPIRType& type)
+	EFormat SPIRTypeToRHIFormat(const spirv_cross::SPIRType& type)
 	{
 		switch (type.basetype)
 		{
 		case spirv_cross::SPIRType::Float:
 			switch (type.vecsize)
 			{
-			case 1: return ERHIFormat::Float;
-			case 2: return ERHIFormat::Float2;
-			case 3: return ERHIFormat::Float3;
-			case 4: return ERHIFormat::Float4;
+			case 1: return EFormat::Float;
+			case 2: return EFormat::Float2;
+			case 3: return EFormat::Float3;
+			case 4: return EFormat::Float4;
 			}
 			break;
 		case spirv_cross::SPIRType::Int:
 			switch (type.vecsize)
 			{
-			case 1: return ERHIFormat::Int;
-			case 2: return ERHIFormat::Int2;
-			case 3: return ERHIFormat::Int3;
-			case 4: return ERHIFormat::Int4;
+			case 1: return EFormat::Int;
+			case 2: return EFormat::Int2;
+			case 3: return EFormat::Int3;
+			case 4: return EFormat::Int4;
 			}
 			break;
 		case spirv_cross::SPIRType::UInt:
 			switch (type.vecsize)
 			{
-			case 1: return ERHIFormat::Uint;
-			case 2: return ERHIFormat::Uint2;
-			case 3: return ERHIFormat::Uint3;
-			case 4: return ERHIFormat::Uint4;
+			case 1: return EFormat::Uint;
+			case 2: return EFormat::Uint2;
+			case 3: return EFormat::Uint3;
+			case 4: return EFormat::Uint4;
 			}
 			break;
 		}
-		return ERHIFormat::Unknown;
+		return EFormat::Unknown;
 	}
 
 

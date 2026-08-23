@@ -740,7 +740,7 @@ public:
     */
     template <typename SourceAllocator>
     GenericValue(const GenericValue<Encoding,SourceAllocator>& rhs, Allocator& allocator, bool copyConstStrings = false) {
-        switch (rhs.GetAssetType()) {
+        switch (rhs.GetResourceType()) {
         case kObjectType:
             DoCopyMembers(rhs, allocator, copyConstStrings);
             break;
@@ -1024,10 +1024,10 @@ public:
     template <typename SourceAllocator>
     bool operator==(const GenericValue<Encoding, SourceAllocator>& rhs) const {
         typedef GenericValue<Encoding, SourceAllocator> RhsType;
-        if (GetAssetType() != rhs.GetAssetType())
+        if (GetResourceType() != rhs.GetResourceType())
             return false;
 
-        switch (GetAssetType()) {
+        switch (GetResourceType()) {
         case kObjectType: // Warning: O(n^2) inner-loop
             if (data_.o.size != rhs.data_.o.size)
                 return false;           
@@ -1108,7 +1108,7 @@ public:
     //!@name Type
     //@{
 
-    Type GetAssetType()  const { return static_cast<Type>(data_.f.flags & kTypeMask); }
+    Type GetResourceType()  const { return static_cast<Type>(data_.f.flags & kTypeMask); }
     bool IsNull()   const { return data_.f.flags == kNullFlag; }
     bool IsFalse()  const { return data_.f.flags == kFalseFlag; }
     bool IsTrue()   const { return data_.f.flags == kTrueFlag; }
@@ -1946,7 +1946,7 @@ public:
     */
     template <typename Handler>
     bool Accept(Handler& handler) const {
-        switch(GetAssetType()) {
+        switch(GetResourceType()) {
         case kNullType:     return handler.Null();
         case kFalseType:    return handler.Bool(false);
         case kTrueType:     return handler.Bool(true);
@@ -1975,7 +1975,7 @@ public:
             return handler.String(GetString(), GetStringLength(), (data_.f.flags & kCopyFlag) != 0);
     
         default:
-            RAPIDJSON_ASSERT(GetAssetType() == kNumberType);
+            RAPIDJSON_ASSERT(GetResourceType() == kNumberType);
             if (IsDouble())         return handler.Double(data_.n.d);
             else if (IsInt())       return handler.Int(data_.n.i.i);
             else if (IsUint())      return handler.Uint(data_.n.u.u);
@@ -2377,7 +2377,7 @@ private:
 
     template <typename SourceAllocator>
     void DoCopyMembers(const GenericValue<Encoding,SourceAllocator>& rhs, Allocator& allocator, bool copyConstStrings) {
-        RAPIDJSON_ASSERT(rhs.GetAssetType() == kObjectType);
+        RAPIDJSON_ASSERT(rhs.GetResourceType() == kObjectType);
 
         data_.f.flags = kObjectFlag;
         SizeType count = rhs.data_.o.size;

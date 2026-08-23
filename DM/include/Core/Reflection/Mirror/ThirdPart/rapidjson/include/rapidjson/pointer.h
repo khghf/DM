@@ -544,7 +544,7 @@ public:
         RAPIDJSON_ASSERT(IsValid());
         ValueType* v = &root;
         for (const Token *t = tokens_; t != tokens_ + tokenCount_; ++t) {
-            switch (v->GetAssetType()) {
+            switch (v->GetResourceType()) {
                 case kObjectType:
                 {
                     // See if we have an id, and if so resolve with the current base
@@ -602,7 +602,7 @@ public:
         RAPIDJSON_ASSERT(IsValid());
         ValueType* v = &root;
         for (const Token *t = tokens_; t != tokens_ + tokenCount_; ++t) {
-            switch (v->GetAssetType()) {
+            switch (v->GetResourceType()) {
             case kObjectType:
                 {
                     typename ValueType::MemberIterator m = v->FindMember(GenericValue<EncodingType>(GenericStringRef<Ch>(t->name, t->length)));
@@ -838,7 +838,7 @@ public:
         ValueType* v = &root;
         const Token* last = tokens_ + (tokenCount_ - 1);
         for (const Token *t = tokens_; t != last; ++t) {
-            switch (v->GetAssetType()) {
+            switch (v->GetResourceType()) {
             case kObjectType:
                 {
                     typename ValueType::MemberIterator m = v->FindMember(GenericValue<EncodingType>(GenericStringRef<Ch>(t->name, t->length)));
@@ -857,7 +857,7 @@ public:
             }
         }
 
-        switch (v->GetAssetType()) {
+        switch (v->GetResourceType()) {
         case kObjectType:
             return v->EraseMember(GenericStringRef<Ch>(last->name, last->length));
         case kArrayType:

@@ -59,40 +59,40 @@ namespace DM
 
 		auto* device = RHI::RHIDevice::Get();
 
-		std::vector<RHI::Vertex>rhiVertex{};
-		std::vector<uint32_t>rhiIndex{};
+		//std::vector<RHI::Vertex>rhiVertex{};
+		//std::vector<uint32_t>rhiIndex{};
 
-		std::vector<RHI::VertexProperty>vertexPro{};
-		vertexPro.reserve(3);
-		for (const auto& mesh : modelPack->m_Meshs)
-		{
-			for (const auto& vertex : mesh.vertices)
-			{
-				vertexPro.emplace_back(std::initializer_list{ vertex.Position.x, vertex.Position.y, vertex.Position.z });
-				vertexPro.emplace_back(std::initializer_list{ vertex.Normal.x, vertex.Normal.y, vertex.Normal.z });
-				vertexPro.emplace_back(std::initializer_list{ vertex.TexCoords.x, vertex.TexCoords.y });
+		//std::vector<RHI::VertexProperty>vertexPro{};
+		//vertexPro.reserve(3);
+		//for (const auto& mesh : modelPack->m_Meshs)
+		//{
+		//	for (const auto& vertex : mesh.vertices)
+		//	{
+		//		vertexPro.emplace_back(std::initializer_list{ vertex.Position.x, vertex.Position.y, vertex.Position.z });
+		//		vertexPro.emplace_back(std::initializer_list{ vertex.Normal.x, vertex.Normal.y, vertex.Normal.z });
+		//		vertexPro.emplace_back(std::initializer_list{ vertex.TexCoords.x, vertex.TexCoords.y });
 
 
-				//这里踩的坑：由于顶点相关的结构内部使用的内存池分配内存，在对象析构时会还给内存池，这里扩容时会先构造新元素然后析构旧元素，由于我没有实现拷贝、移动构造函数
-				//从而导致内存被意外回收，谨记对于使用内存池的类一定要实现相应构造函数转移资源
-				rhiVertex.emplace_back(vertexPro);
-				vertexPro.clear();
-			}
-			rhiIndex.insert(rhiIndex.end(), mesh.indices.begin(), mesh.indices.end());
-		}
+		//		//这里踩的坑：由于顶点相关的结构内部使用的内存池分配内存，在对象析构时会还给内存池，这里扩容时会先构造新元素然后析构旧元素，由于我没有实现拷贝、移动构造函数
+		//		//从而导致内存被意外回收，谨记对于使用内存池的类一定要实现相应构造函数转移资源
+		//		rhiVertex.emplace_back(vertexPro);
+		//		vertexPro.clear();
+		//	}
+		//	rhiIndex.insert(rhiIndex.end(), mesh.indices.begin(), mesh.indices.end());
+		//}
 
-		RHI::VertexSet vSet{ std::move(rhiVertex) };
-		RHI::VertexLayout vertexLayout{
-			{"inPosition",	RHI::ERHIFormat::Float3},
-			{"inNormal",	RHI::ERHIFormat::Float3},
-			{"inTexCoords",	RHI::ERHIFormat::Float2},
-		};
+		//RHI::VertexSet vSet{ std::move(rhiVertex) };
+		//RHI::VertexLayout vertexLayout{
+		//	{"inPosition",	RHI::EFormat::Float3},
+		//	{"inNormal",	RHI::EFormat::Float3},
+		//	{"inTexCoords",	RHI::EFormat::Float2},
+		//};
 
-		RHI::RHIVertexBufferDesc vDesc{ vSet,vertexLayout };
-		model->m_Vertices = device->CreateVertexBuffer(vDesc);
+		//RHI::RHIVertexBufferDesc vDesc{ vSet,vertexLayout };
+		//model->m_Vertices = device->CreateVertexBuffer(vDesc);
 
-		RHI::RHIIndexBufferDesc indexDesc{ std::move(rhiIndex) };
-		model->m_Indices = device->CreateIndexBuffer(indexDesc);
+		//RHI::RHIIndexBufferDesc indexDesc{ std::move(rhiIndex) };
+		//model->m_Indices = device->CreateIndexBuffer(indexDesc);
 
 		model->m_RefedTexture = std::move(modelPack->m_Textures);
 

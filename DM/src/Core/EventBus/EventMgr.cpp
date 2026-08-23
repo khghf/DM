@@ -14,8 +14,8 @@ namespace DM
 	{
 		e->bHandled = false;
 		Disptchers[EEventType::Event].Disptch(e);
-		const auto& it = Disptchers.find(e->GetAssetType());
-		if (it == Disptchers.end()|| e->GetAssetType()== EEventType::Event)return;
+		const auto& it = Disptchers.find(e->GetResourceType());
+		if (it == Disptchers.end()|| e->GetResourceType()== EEventType::Event)return;
 		it->second.Disptch(e);
 	}
 }

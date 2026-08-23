@@ -17,7 +17,7 @@ namespace DM
 		void DisptchSpecifiedEvent(LambdaType&&Lam)
 		{
 			DisptchTarget.Bind(std::forward<LambdaType>(Lam));
-			if (SpecifiedEvent::GetStaticType() == m_e->GetAssetType())
+			if (SpecifiedEvent::GetStaticType() == m_e->GetResourceType())
 			{
 				DisptchTarget.Execute(m_e);
 			}
@@ -29,7 +29,7 @@ namespace DM
 		void DisptchSpecifiedEvent(void(*Fun)(Event*const))
 		{
 			DisptchTarget.Bind(Fun);
-			if (SpecifiedEvent::GetStaticType() == m_e->GetAssetType())
+			if (SpecifiedEvent::GetStaticType() == m_e->GetResourceType())
 			{
 				DisptchTarget.Execute(m_e);
 			}

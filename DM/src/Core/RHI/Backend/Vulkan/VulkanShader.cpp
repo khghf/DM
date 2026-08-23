@@ -13,7 +13,7 @@ namespace DM::RHI
 
 		VkShaderModuleCreateInfo ci{};
 		ci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		ci.codeSize = desc.CodeSize;
+		ci.codeSize = desc.CodeBytes;
 		ci.pCode = reinterpret_cast<const uint32_t*>(desc.Code); // SPIR-V 以 4 字节为单位的单元
 		VK_CHECK(vkCreateShaderModule(m_Device->GetvkDevice(), &ci, nullptr, &m_Module));
 	}

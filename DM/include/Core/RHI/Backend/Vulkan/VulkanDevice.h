@@ -71,6 +71,7 @@ namespace DM::RHI
 		virtual RHIShaderProgram*	CreateShaderProgram(const RHIShaderProgramDesc& desc) override;
 		virtual RHIPipeline*		CreatePipeline(const RHIPipelineDesc& desc) override;
 
+		virtual RHIBuffer*			CreateBuffer(const RHIBufferDesc& desc)override;
 		virtual RHIBuffer*			CreateVertexBuffer(const RHIVertexBufferDesc& desc) override;
 		virtual RHIBuffer*			CreateIndexBuffer(const RHIIndexBufferDesc& desc) override;
 		virtual RHIBuffer*			CreateUniformBuffer(const RHIUniformBufferDesc& desc)override;
@@ -79,9 +80,9 @@ namespace DM::RHI
 
 		virtual RHICommandList* CreateCommandList() override;
 
-		virtual uint8_t	GetMaxFlightFrameCount()const { return MAX_FRAMES_IN_FLIGHT; }
-		virtual uint8_t GetCpuProcessFrameIndex()const override { return (CURRENT_CPU_PROCESSES_FRAME_INDEX + MAX_FRAMES_IN_FLIGHT - 1) % MAX_FRAMES_IN_FLIGHT; }
-		virtual uint8_t GetGpuProcessFrameIndex()const override { return CURRENT_CPU_PROCESSES_FRAME_INDEX; }
+		virtual uint8_t	GetConcurrentFrameCount()const { return MAX_FRAMES_IN_FLIGHT; }
+		virtual uint8_t GetCpuProcessFrameIndex()const override { return CURRENT_CPU_PROCESSES_FRAME_INDEX;}
+		virtual uint8_t GetGpuProcessFrameIndex()const override { return m_bIsFirstRenderFrame ? CURRENT_CPU_PROCESSES_FRAME_INDEX : (CURRENT_CPU_PROCESSES_FRAME_INDEX + MAX_FRAMES_IN_FLIGHT - 1) % MAX_FRAMES_IN_FLIGHT; }
 
 
 		VkInstance			GetvkInstance()				const { return m_vkInstance; }

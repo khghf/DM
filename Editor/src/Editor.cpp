@@ -97,6 +97,8 @@ namespace DM
 		m_EditorWorld = world;
 		m_ActiveWorld = world;
 		std::ranges::for_each(m_Panels, [&](Panel* panel) {panel->SetContext(m_ActiveWorld); });
+
+		Engine::Get()->GetGameInst().SetCurWorld(m_ActiveWorld);
 	}
 
 	void Editor::OnSceneChanged()

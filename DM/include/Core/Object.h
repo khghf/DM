@@ -7,14 +7,13 @@
 #include<Core/Log.h>
 namespace DM
 {
-	class Component;
 	class DM_API Object
 	{
 	public:
 		Object();
 		virtual~Object()=default;
 	public:
-		virtual void UpdateData(float DeltaTime);
+		virtual void Update(float DeltaTime);
 		virtual void Destroy();
 		virtual void OnDestroy();
 

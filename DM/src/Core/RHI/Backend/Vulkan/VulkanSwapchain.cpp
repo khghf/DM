@@ -83,11 +83,11 @@ namespace DM::RHI
 			ci.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		}
 
-		ci.preTransform = swapChainSupport.capabilities.currentTransform;            // 不额外旋转
+		ci.preTransform = swapChainSupport.capabilities.currentTransform; 
 		ci.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // 不透明合成
 		ci.presentMode = presentMode;
-		ci.clipped = VK_TRUE;          // 被窗口遮挡的部分可以不画(优化)
-		ci.oldSwapchain = VK_NULL_HANDLE; // 重建时填旧的；这里首次创建为 null
+		ci.clipped = VK_TRUE;				// 被窗口遮挡的部分可以不画
+		ci.oldSwapchain = VK_NULL_HANDLE;	// 重建时填旧的,这里首次创建为 null
 
 		VK_CHECK(vkCreateSwapchainKHR(m_Device->GetvkDevice(), &ci, nullptr, &m_vkSwapchain));
 
@@ -173,6 +173,8 @@ namespace DM::RHI
 		//	// 值 0x7FFFFFFF = 32 位有符号整数的最大值
 		//	VK_PRESENT_MODE_MAX_ENUM_KHR = 0x7FFFFFFF
 		//} VkPresentModeKHR;
+
+
 		return modes[0];
 	}
 	
@@ -230,7 +232,7 @@ namespace DM::RHI
 		}
 		return m_CurrentIndex;
 	}
-
+	//@todo 移到commandlist中
 	void VulkanSwapchain::Submit(VkCommandBuffer*cmd)
 	{
 		// 提交要"等图像可用后再开始画"，画完"举起渲染完成信号量"。

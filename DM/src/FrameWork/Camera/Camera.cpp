@@ -12,7 +12,7 @@ namespace DM
 	{
 		EventMgr::Get()->Register<WindowResize>([this](Event* const e) {this->OnWindowResize(e); });
 	}
-	void Camera::UpdateData()
+	void Camera::Update()
 	{
 		const float& pitch = m_Rotation.x;
 		const float& yaw = m_Rotation.y;

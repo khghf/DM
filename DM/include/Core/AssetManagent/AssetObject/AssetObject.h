@@ -11,7 +11,7 @@ namespace DM
 
 		AssetID GetAssetId()const { return m_AssetId; }
 
-		virtual EAssetType GetAssetType()const = 0;
+		virtual EAssetType GetResourceType()const = 0;
 
 		static EAssetType GetAssetType_Static() { return EAssetType::Unknown; }
 

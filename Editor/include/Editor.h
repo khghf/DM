@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include<Core/Layer/Layer.h>
 #include<Core/AssetManagent/AssetMgr.h>
-#include"Core/Serializer.h"
 #include<filesystem>
 #include<Defines.h>
 #include"Panel/ViewportPanel.h"

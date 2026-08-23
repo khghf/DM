@@ -7,8 +7,12 @@ namespace DM::RHI
 	class RHISwapchain; 
 	class RHIRenderPass;
 	class RHIFramebuffer;
+	class RHIDescriptorSet;
 	class RHIDescriptorSetGroup;
-
+	/// <summary>
+	/// [笔记]命令缓冲与命令池。对于命令的执行opengl使用的是即时模式调用即执行，vulkan则使用命令缓冲来记录命令然后统一提交给GPU执行，
+	/// 命令池管理命令缓冲，命令池需要绑定一个队列之后所有分配出来的命令缓冲只能记录该队列能执行的命令
+	/// </summary>
 	class DM_API RHICommandList : public RHIResource
 	{
 	public:
@@ -23,6 +27,7 @@ namespace DM::RHI
 
 		virtual void BindPipeline(RHIPipeline* pipeline) = 0;
 
+		virtual void BindDescriptorSet(RHIShaderProgram* shaderProgram, RHIDescriptorSet* set) = 0;
 		virtual void BindDescriptorSetGroup(RHIShaderProgram*shaderProgram,RHIDescriptorSetGroup* group) = 0;
 
 
@@ -41,7 +46,7 @@ namespace DM::RHI
 		virtual void Submit()=0;
 
 		
-		EResourceType GetAssetType() const override { return EResourceType::CommandList; }
+		EResourceType GetResourceType() const override { return EResourceType::CommandList; }
 
 	protected:
 		RHICommandList() = default;

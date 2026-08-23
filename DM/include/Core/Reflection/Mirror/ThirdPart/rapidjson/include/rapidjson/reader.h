@@ -2073,7 +2073,7 @@ private:
         case IterativeParsingMemberDelimiterState:
         case IterativeParsingElementDelimiterState:
             is.Take();
-            // UpdateData member/element count.
+            // Update member/element count.
             *stack_.template Top<SizeType>() = *stack_.template Top<SizeType>() + 1;
             return dst;
 

@@ -14,7 +14,7 @@ namespace DM
 	public:
 		Model();
 		~Model();
-		virtual EAssetType GetAssetType()const override { return GetAssetType_Static(); };
+		virtual EAssetType GetResourceType()const override { return GetAssetType_Static(); };
 		static EAssetType GetAssetType_Static() { return EAssetType::Model; }
 	private:
 		RHI::RHIBuffer* m_Vertices=nullptr;

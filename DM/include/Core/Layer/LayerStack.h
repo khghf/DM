@@ -16,7 +16,7 @@ namespace DM
 		void PushLayer(Layer* layer);
 		void PopLayer(Layer* layer);
 
-		void UpdateData(float deltaTime);
+		void Update(float deltaTime);
 		//void Render();
 
 		std::vector<Layer*>::iterator begin() { return m_Layers.begin(); }

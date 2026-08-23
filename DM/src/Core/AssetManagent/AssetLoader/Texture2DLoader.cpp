@@ -1,4 +1,5 @@
 ﻿#include<Core/AssetManagent/AssetLoader/Texture2DLoader.h>
+#include<Core/AssetManagent/AssetImporter/Texture2DImporter.h>
 #include<Core/AssetManagent/AsetPack/TexturePack.h>
 #include<Core/AssetManagent/AssetObject/Texture2D.h>
 #include<Core/RHI/RHI.h>
@@ -6,12 +7,13 @@ namespace DM
 {
 	SPtr<AssetObject>Texture2DLoader::Load(std::string_view path)
 	{
-		TexturePack pack{};
-		AssetUtil::Deserialize(&pack, path);
-		return Load(&pack);
+		TexturePack*pack=new TexturePack();
+		AssetUtil::Deserialize(pack, path);
+		return Load(pack);
 	}
 	SPtr<AssetObject>Texture2DLoader::Load(AssetPack* pack)
 	{
+		
 		Texture2D* tex = new Texture2D();
 		TexturePack* texPack = static_cast<TexturePack*>(pack);
 
@@ -22,6 +24,8 @@ namespace DM
 		desc.Height = tex->m_Height;
 
 		tex->m_RHITexture = RHI::RHIDevice::Get()->CreateTexture(desc, texPack->m_Data.data());
+
+
 		return CreateSPtr_Raw<Texture2D>(tex);
 	}
 	REGISTER_LOAD_PATH(EAssetType::Texture2D, Texture2DLoader::Load);

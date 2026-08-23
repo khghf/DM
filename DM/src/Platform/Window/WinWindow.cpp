@@ -25,7 +25,7 @@ namespace DM
 		glfwTerminate();
 	}
 
-	void AppWindow::UpdateData(float DeltaTime)
+	void AppWindow::Update(float DeltaTime)
 	{
 		glfwSwapBuffers(glWindow);
 	}

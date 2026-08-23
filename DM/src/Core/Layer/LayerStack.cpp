@@ -41,7 +41,7 @@ namespace DM
 		}
 	}
 	
-	void LayerStack::UpdateData(float DeletaTime)
+	void LayerStack::Update(float DeletaTime)
 	{
 		for (const auto layer : m_Layers)
 		{

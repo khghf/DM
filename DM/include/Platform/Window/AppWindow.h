@@ -21,7 +21,7 @@ namespace DM
 	public:
 		AppWindow(const WindowProps& Props);
 		~AppWindow();
-		void UpdateData(float DeltaTime) ;
+		void Update(float DeltaTime) ;
 		static UPtr<AppWindow> Create(const WindowProps& Props = WindowProps());
 		bool ShouldClose() ;
 

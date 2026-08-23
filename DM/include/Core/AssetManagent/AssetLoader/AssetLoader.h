@@ -25,8 +25,6 @@ namespace DM
 			static std::unordered_map<EAssetType, Loader_Pack> registry;
 			return registry;
 		}
-	protected:
-		static bool CheckSourceFileModified(AssetPack* pack);
 	private:
 
 

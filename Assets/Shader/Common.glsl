@@ -31,8 +31,6 @@
 #endif
 
 
-#define STD140 layout(std140)
-
 #ifdef API_VULKAN
     #define INPUT_ATTACHMENT(set, binding, index) \
         layout(set = set, binding = binding, input_attachment_index = index) uniform subpassInput

@@ -2,19 +2,7 @@
     "m_GuidToRecord": [
         {
             "First": {
-                "m_ID": "266ff2b112808badef18e40718062f98bd0b61879f98dba6265d25aa802ad6c6"
-            },
-            "Second": {
-                "AssetPackPath": "Assets/Shader/Texture.vs.dasset",
-                "SourceFilePath": "Assets/Shader/Texture.vs",
-                "SourceFileContentHash": "9477194bd48e6e547b861dfedb11acea17bcfb9a6cf9830d1a89931eedcd76a6",
-                "LastModifyTime": 13431684452,
-                "AssetType": 1
-            }
-        },
-        {
-            "First": {
-                "m_ID": "1eb2878ee7e421c14042d9c56bfb47e34f53a476177c7da66d9789c52a12323f"
+                "m_ID": "49bb898f57cf47debb1446765db780e29d7eae9a50f4b3a3b92df0734a2e04e7"
             },
             "Second": {
                 "AssetPackPath": "./Assets/Icon/Folder.png.dasset",
@@ -26,31 +14,43 @@
         },
         {
             "First": {
-                "m_ID": "513fa60c54540515b95a1ba833be9fbe313d3e2c99b65450a52f726910baba33"
+                "m_ID": "31f574e355de6135666acc78a76db7a1280108070c6f7f5fdbceff2afa6f7cd8"
             },
             "Second": {
-                "AssetPackPath": "Assets/Shader/Texture.fs.dasset",
-                "SourceFilePath": "Assets/Shader/Texture.fs",
-                "SourceFileContentHash": "9fdb80f7a3705a08eb737385d9520de7ca333e31fdd965fa2c52b1d289359e51",
-                "LastModifyTime": 13430819047,
+                "AssetPackPath": "Assets/Shader/BuiltIn.vert.dasset",
+                "SourceFilePath": "Assets/Shader/BuiltIn.vert",
+                "SourceFileContentHash": "9b64c9ba7bbb0aa0f0ab46e28a90362f0a0e47dd618dbca954fcf52e83241feb",
+                "LastModifyTime": 13431880365,
                 "AssetType": 1
             }
         },
         {
             "First": {
-                "m_ID": "da8da0adc09ddbb7867bc3ea7b1da56833085a8da03241f25029da0db9c43c35"
+                "m_ID": "05f6f4a7e38cb38c724bfd8a5dfff8d097005c906899621c31e2265148ed8fa0"
             },
             "Second": {
-                "AssetPackPath": "Assets/Texture/Container/container_diffuse.png.dasset",
-                "SourceFilePath": "Assets/Texture/Container/container_diffuse.png",
-                "SourceFileContentHash": "fd9c9421005719d75aab1e4494314436d9c197bd3ce2b823e75cccc4d02f44a1",
-                "LastModifyTime": 13377326062,
-                "AssetType": 2
+                "AssetPackPath": "./Assets/NewWorld(1).world",
+                "SourceFilePath": "./Assets/NewWorld(1).world",
+                "SourceFileContentHash": "",
+                "LastModifyTime": 1787472686,
+                "AssetType": 4
             }
         },
         {
             "First": {
-                "m_ID": "d8843c5d7aa2a51d24a321abf839d82d339d93baef5ef96f78ff50b44590e6e7"
+                "m_ID": "00f83ea8df2a6c9c28499c1c0ecab7c5cf5526214ab9d1db8810b278fc91bec5"
+            },
+            "Second": {
+                "AssetPackPath": "Assets/Shader/BuiltIn.frag.dasset",
+                "SourceFilePath": "Assets/Shader/BuiltIn.frag",
+                "SourceFileContentHash": "55504a45a63abd92980b0c58d7dd0c23ab506e64cc0d9722d0189d31a2d8cf00",
+                "LastModifyTime": 13431880661,
+                "AssetType": 1
+            }
+        },
+        {
+            "First": {
+                "m_ID": "861dfe1fb148afa3e17316feafdd4433311d253b973fc7c64f350cf72a481902"
             },
             "Second": {
                 "AssetPackPath": "./Assets/Icon/File.png.dasset",
@@ -58,6 +58,18 @@
                 "SourceFileContentHash": "fc9abf52dc7e25f44686c41cdc66768dfdf829c93449e6adff7c986dbacaaff2",
                 "LastModifyTime": 13428136100,
                 "AssetType": 2
+            }
+        },
+        {
+            "First": {
+                "m_ID": "fd24f210e9c7e99c45e47223ffb3ff2589e569a43c78eab9667f70ac8c753cf2"
+            },
+            "Second": {
+                "AssetPackPath": "./Assets/NewWorld.world",
+                "SourceFilePath": "./Assets/NewWorld.world",
+                "SourceFileContentHash": "",
+                "LastModifyTime": 1787472681,
+                "AssetType": 4
             }
         }
     ]

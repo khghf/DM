@@ -12,12 +12,12 @@ namespace DM
 		std::string extension = AssetUtil::GetExtension(sourceFilePath);
 		RHI::EShaderStage stage = RHI::EShaderStage::Unknown;
 
-		if (extension==".vs")		{ stage = RHI::EShaderStage::Vertex;				pack->m_ShaderStage = ShaderPack::Vertex; }
-		else if(extension==".fs")	{ stage = RHI::EShaderStage::Fragment;				pack->m_ShaderStage = ShaderPack::Fragment; }
-		else if(extension==".gs")	{ stage = RHI::EShaderStage::Geometry;				pack->m_ShaderStage = ShaderPack::Geometry; }
-		else if(extension==".cs")	{ stage = RHI::EShaderStage::Compute;				pack->m_ShaderStage = ShaderPack::Compute; }
-		else if(extension==".tcs")	{ stage = RHI::EShaderStage::TessellationControl;	pack->m_ShaderStage = ShaderPack::TessellationControl; }
-		else if(extension==".tes")	{ stage = RHI::EShaderStage::TessellationEvaluation;pack->m_ShaderStage = ShaderPack::TessellationEvaluation; }
+		if (extension==".vert")		{ stage = RHI::EShaderStage::Vertex;				pack->m_ShaderStage = ShaderPack::Vertex; }
+		else if(extension==".frag")	{ stage = RHI::EShaderStage::Fragment;				pack->m_ShaderStage = ShaderPack::Fragment; }
+		else if(extension==".geom")	{ stage = RHI::EShaderStage::Geometry;				pack->m_ShaderStage = ShaderPack::Geometry; }
+		else if(extension==".comp")	{ stage = RHI::EShaderStage::Compute;				pack->m_ShaderStage = ShaderPack::Compute; }
+		else if(extension==".tesc")	{ stage = RHI::EShaderStage::TessellationControl;	pack->m_ShaderStage = ShaderPack::TessellationControl; }
+		else if(extension==".tese")	{ stage = RHI::EShaderStage::TessellationEvaluation;pack->m_ShaderStage = ShaderPack::TessellationEvaluation; }
 
 		RHI::CompiledShader result=compiler.CompileGLSLFileToSPV(sourceFilePath.data(), stage);
 

@@ -1,4 +1,4 @@
-﻿#include<Framework/GameInst.h>
+﻿#include<Core/GameInst.h>
 namespace DM
 {
 	GameInst::GameInst()
@@ -7,5 +7,6 @@ namespace DM
 	GameInst::~GameInst()
 	{
 	}
+	
 }
 

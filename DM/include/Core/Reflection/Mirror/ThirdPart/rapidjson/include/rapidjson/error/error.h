@@ -132,7 +132,7 @@ public:
 
     //! Reset error code.
     void Clear() { Set(kParseErrorNone); }
-    //! UpdateData error code and offset.
+    //! Update error code and offset.
     void Set(ParseErrorCode code, size_t offset = 0) { code_ = code; offset_ = offset; }
 
 private:

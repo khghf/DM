@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include<Core/AssetManagent/AssetObject/AssetObject.h>
+#include<entt/entt.hpp>
 namespace DM
 {
 	class Entity;
@@ -25,9 +26,11 @@ namespace DM
 		constexpr static std::string_view s_FileExtension = "world";
 
 
-		virtual EAssetType GetAssetType()const { return GetAssetType_Static(); }
-		static EAssetType GetAssetType_Static() { return EAssetType::World; }
-		virtual std::string GetExtension() { return ".world"; }
+		virtual EAssetType		GetResourceType()const { return GetAssetType_Static(); }
+		static EAssetType		GetAssetType_Static() { return EAssetType::World; }
+		virtual std::string		GetExtension()const		 { return ".world"; }
+
+		const entt::registry&	GetEnttRegistry()const { return m_Registry; }
 	private:
 		entt::registry m_Registry;
 	};

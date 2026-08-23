@@ -25,6 +25,7 @@ namespace DM::RHI
 	enum class EResourceType : uint8_t
 	{
 		Unknown,
+		Buffer,
 		VertexBuffer,
 		Indexbuffer,
 		UniformBuffer,
@@ -41,7 +42,7 @@ namespace DM::RHI
 	/// <summary>
 	/// 合并了像素格式和顶点属性格式，提供统一的格式描述。
 	/// </summary>
-	enum class ERHIFormat : uint8_t
+	enum class EFormat : uint8_t
 	{
 		Unknown,  
 
@@ -86,61 +87,61 @@ namespace DM::RHI
 	};
 
 	
-	inline uint32_t GetRHIFormatByteSize(ERHIFormat format)
+	inline uint32_t GetRHIFormatByteSize(EFormat format)
 	{
 		switch (format)
 		{
 			// 1 字节
-		case ERHIFormat::R8_UNorm:
+		case EFormat::R8_UNorm:
 			return 1;
 
 			// 2 字节
-		case ERHIFormat::R8G8_UNorm:
+		case EFormat::R8G8_UNorm:
 			return 2;
 
 			// 3 字节
-		case ERHIFormat::R8G8B8_UNorm:
+		case EFormat::R8G8B8_UNorm:
 			return 3;
 
 			// 4 字节
-		case ERHIFormat::R8G8B8A8_UNorm:
-		case ERHIFormat::B8G8R8A8_UNorm:
-		case ERHIFormat::R32_Float:
-		case ERHIFormat::R32_Int:
-		case ERHIFormat::D24_UNorm_S8_UInt:
-		case ERHIFormat::D32_Float:
-		case ERHIFormat::Float:
-		case ERHIFormat::Int:
-		case ERHIFormat::Uint:
+		case EFormat::R8G8B8A8_UNorm:
+		case EFormat::B8G8R8A8_UNorm:
+		case EFormat::R32_Float:
+		case EFormat::R32_Int:
+		case EFormat::D24_UNorm_S8_UInt:
+		case EFormat::D32_Float:
+		case EFormat::Float:
+		case EFormat::Int:
+		case EFormat::Uint:
 			return 4;
 
 			// 8 字节
-		case ERHIFormat::R32G32_Float:
-		case ERHIFormat::Float2:
-		case ERHIFormat::Int2:
-		case ERHIFormat::Uint2:
+		case EFormat::R32G32_Float:
+		case EFormat::Float2:
+		case EFormat::Int2:
+		case EFormat::Uint2:
 			return 8;
 
 			// 12 字节
-		case ERHIFormat::R32G32B32_Float:
-		case ERHIFormat::Float3:
-		case ERHIFormat::Int3:
-		case ERHIFormat::Uint3:
+		case EFormat::R32G32B32_Float:
+		case EFormat::Float3:
+		case EFormat::Int3:
+		case EFormat::Uint3:
 			return 12;
 
 			// 16 字节
-		case ERHIFormat::R32G32B32A32_Float:
-		case ERHIFormat::Float4:
-		case ERHIFormat::Int4:
-		case ERHIFormat::Uint4:
+		case EFormat::R32G32B32A32_Float:
+		case EFormat::Float4:
+		case EFormat::Int4:
+		case EFormat::Uint4:
 			return 16;
 
 			// 36 字节
-		case ERHIFormat::Mat3:
+		case EFormat::Mat3:
 			return 36;
 
 			// 64 字节
-		case ERHIFormat::Mat4:
+		case EFormat::Mat4:
 			return 64;
 
 		default:
@@ -149,24 +150,24 @@ namespace DM::RHI
 	}
 
 	
-	inline bool IsPixelFormat(ERHIFormat format)
+	inline bool IsPixelFormat(EFormat format)
 	{
-		return format >= ERHIFormat::R8_UNorm && format <= ERHIFormat::R32_Int;
+		return format >= EFormat::R8_UNorm && format <= EFormat::R32_Int;
 	}
 
 	
-	inline bool IsVertexFormat(ERHIFormat format)
+	inline bool IsVertexFormat(EFormat format)
 	{
-		return format >= ERHIFormat::Float && format <= ERHIFormat::Mat4;
+		return format >= EFormat::Float && format <= EFormat::Mat4;
 	}
 
 
 	
 	enum class EPrimitiveTopology : uint8_t
 	{
-		TriangleList,  // 每 3 个顶点组成一个独立三角形。最常用、最直观。(demo 用这个)
-		TriangleStrip, // 三角形带：v0v1v2 一个三角，v1v2v3 又一个……相邻三角共享边，省顶点。
-		LineList,      // 每 2 个顶点一条独立线段。
+		TriangleList,  // 每3个顶点组成一个独立三角形。最常用、最直观。(demo 用这个)
+		TriangleStrip, // 三角形带：v0v1v2 一个三角，v1v2v3 又一个……相邻三角共享边。
+		LineList,      // 每2个顶点一条独立线段。
 		LineStrip,     // 线带：相邻线段共享端点。
 		PointList,     // 每个顶点画成一个点。
 	};
@@ -220,7 +221,7 @@ namespace DM::RHI
 		TessellationControl,	
 		TessellationEvaluation,
 	};
-	enum class ERHITextureType : uint8_t
+	enum class ETextureType : uint8_t
 	{
 		Unknown,        // 未知/未指定类型
 
@@ -249,13 +250,19 @@ namespace DM::RHI
 		DepthStencil,   // 深度模板纹理(专门用于深度/模板测试)
 	};
 
-
-	struct RHIBufferDesc
+	enum class EBufferType : uint8_t
 	{
-		uint32_t m_SizeBytes = 0;   
-		bool     m_bDynamic = false; 
+		VertexBuffer,            // 顶点缓冲
+		IndexBuffer,             // 索引缓冲
+		UniformBuffer,           // UBO
+		DynamicUniformBuffer,    // 动态 UBO
+		StorageBuffer,           // SSBO
+		DynamicStorageBuffer,    // 动态 SSBO
+		IndirectBuffer,          // 间接绘制参数
+		StagingBuffer,           // 暂存缓冲
 	};
-
+	
+	/*
 	/// <summary>
 	/// 表示单一顶点属性
 	/// </summary>
@@ -311,7 +318,7 @@ namespace DM::RHI
 		void* Data = nullptr;
 		uint32_t m_SizeBytes = 0;
 	};
-
+	
 	/// <summary>
 	/// 表示一个顶点(顶点是由多个顶点属性组合而成的)
 	/// </summary>
@@ -435,7 +442,6 @@ namespace DM::RHI
 		void* Data = nullptr;
 		uint32_t m_SizeBytes = 0;
 	};
-
 	/// <summary>
 	/// 描述顶点的属性布局
 	/// </summary>
@@ -444,12 +450,11 @@ namespace DM::RHI
 		struct VertexLayoutInner
 		{
 			std::string propertyName;
-			ERHIFormat format = ERHIFormat::Unknown;
+			EFormat format = EFormat::Unknown;
 			uint32_t binding = 0;//数据来源(例：对应着不同的缓冲区)
 			uint32_t location = 0;// 但着色器需要按顺序声明
 			uint32_t offset; // 无需填写会自动计算
 		};
-
 		VertexLayout(std::initializer_list<VertexLayoutInner> layout)
 		{
 			Layout.reserve(layout.size());
@@ -468,22 +473,34 @@ namespace DM::RHI
 		std::vector<VertexLayoutInner> Layout;
 		uint32_t VertexStride = 0;
 	};
+	*/
+	
+
+
+	struct RHIBufferDesc
+	{
+		EBufferType Type;
+		uint32_t SizeBytes{};
+	};
 
 	struct RHIVertexBufferDesc
 	{
-		RHIVertexBufferDesc(const VertexSet& vertexSet, const VertexLayout& layout)
+		/*RHIVertexBufferDesc(const VertexSet& vertexSet, const VertexLayout& layout)
 			: Vertices(vertexSet), Layout(layout)
 		{
 
-		}
-		VertexSet Vertices;
-		VertexLayout Layout;
-		uint8_t BufferCount = 1;
+		}*/
+		//VertexSet Vertices;
+		//VertexLayout Layout;
+		//uint8_t BufferCount = 1;
+
+		uint32_t SizeBytes{};
+
 	};
 
 	struct RHIIndexBufferDesc
 	{
-		RHIIndexBufferDesc(const std::vector<uint32_t>&indices)
+		/*RHIIndexBufferDesc(const std::vector<uint32_t>&indices)
 		{
 			Indices = indices;
 		}
@@ -492,27 +509,28 @@ namespace DM::RHI
 			Indices = std::move(indices);
 		}
 		std::vector<uint32_t> Indices;
-		uint8_t BufferCount = 1;
+		uint8_t BufferCount = 1;*/
+
+		uint32_t SizeBytes{};
 	};
 
 	struct RHIUniformBufferDesc
 	{
+		EBufferType Type;
 		uint32_t	m_SizeBytes;
 		bool		m_bDynamic;
-		//uint32_t	m_Bindings;
 	};
 
 
 	struct RHITextureDesc
 	{
-		ERHITextureType Type = ERHITextureType::Texture2D;  // 纹理类型
-		uint32_t Width = 0;                                 // 宽(像素)
-		uint32_t Height = 0;                                // 高(像素)
+		ETextureType Type = ETextureType::Texture2D;  
+		uint32_t Width = 0;                                 
+		uint32_t Height = 0;                                
 		uint32_t Depth = 1;                                 // 深度(仅3D纹理使用)
 		uint32_t ArrayLayers = 1;                           // 数组层数(仅数组纹理使用)
 		uint32_t MipLevels = 1;                             // Mipmap 级别数
-		ERHIFormat Format = ERHIFormat::R8G8B8A8_UNorm;		// 像素格式
-
+		EFormat Format = EFormat::R8G8B8A8_UNorm;		// 像素格式
 
 		//ERHITextureUsage Usage = ERHITextureUsage::Sampled;// 纹理用途
 	};
@@ -535,7 +553,7 @@ namespace DM::RHI
 
 		ShadowMap,            // 阴影贴图
 		SSAOMap,              // 环境光遮蔽
-		BloomTarget,          // Bloom 中间目标
+		BloomTarget,          // Bloom中间目标
 
 		
 		Transient,            // 临时附件(渲染完丢弃，不写回内存)
@@ -560,9 +578,8 @@ namespace DM::RHI
 
 	struct AttachmentDesc
 	{
-		ERHIFormat Format = ERHIFormat::Unknown;
+		EFormat Format = EFormat::Unknown;
 		ERHIAttachmentUsage Usage = ERHIAttachmentUsage::Unknown;
-		//RHITexture* Texture = nullptr;
 	};
 
 	struct RHIFramebufferDesc
@@ -576,7 +593,7 @@ namespace DM::RHI
 	struct RHIRenderPassDesc
 	{
 		ESampleMode SampleMode = ESampleMode::x4;
-		ERHIFormat	Format;
+		EFormat	Format;
 		bool		EnableDepth = true;
 		std::vector<AttachmentDesc> Attachments;
 	};
@@ -607,7 +624,7 @@ namespace DM::RHI
 		struct VertexInput
 		{
 			uint32_t location;
-			ERHIFormat format;
+			EFormat format;
 			uint32_t offset;
 			uint32_t size;
 			std::string name;
@@ -700,7 +717,7 @@ namespace DM::RHI
 	{
 		EShaderStage Stage = EShaderStage::Vertex;
 		const uint32_t* Code = nullptr; // SPIR-V 字节(uint32数组),可用ShaderCompiler从着色器代码文件编译
-		size_t CodeSize = 0;			// 字节数
+		size_t CodeBytes = 0;			
 		const char* EntryPoint = "main";
 		ShaderReflection Reflection;
 	};
@@ -765,14 +782,14 @@ namespace DM::RHI
 
 	struct RHIPipelineDesc
 	{
-		RHIShaderProgram* ShaderProgram;
-		EPrimitiveTopology Topology = EPrimitiveTopology::TriangleList;
-		ECullMode CullMode = ECullMode::Back;
-		EPolygonMode FillMode = EPolygonMode::Fill;
-		ECompareFunc DepthCompare = ECompareFunc::Less;
-		bool DepthTest = true;
-		bool DepthWrite = true;
-		RHIRenderPass* RenderPass = nullptr;
+		EPrimitiveTopology	Topology =		EPrimitiveTopology::TriangleList;
+		ECullMode			CullMode =		ECullMode::Back;
+		EPolygonMode		FillMode =		EPolygonMode::Fill;
+		ECompareFunc		DepthCompare =	ECompareFunc::Less;
+		bool				DepthTest = true;
+		bool				DepthWrite = true;
+		RHIShaderProgram*	ShaderProgram;
+		RHIRenderPass*		RenderPass = nullptr;
 	};
 	
 

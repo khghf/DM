@@ -10,7 +10,7 @@ namespace DM::RHI
 
 		/// <summary>获取资源类型。</summary>
 		/// <returns>资源类型枚举。</returns>
-		virtual EResourceType GetAssetType() const=0;
+		virtual EResourceType GetResourceType() const=0;
 
 	protected:
 		RHIResource() = default;

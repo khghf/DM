@@ -13,20 +13,12 @@ namespace DM
 	}
 	SPtr<AssetObject>ShaderLoader::Load(AssetPack* pack)
 	{
-		if (CheckSourceFileModified(pack))
-		{
-			std::string sourceFilePath = pack->GetMeta().m_SourceFilePath;
-			delete pack;
-			pack=ShaderImporter::Import(sourceFilePath);
-			AssetUtil::SerializePack(pack);
-		}
-
 		Shader* shader = new Shader();
 		ShaderPack* shaderPack = static_cast<ShaderPack*>(pack);
 
 		RHI::RHIShaderDesc desc{};
 		desc.Code = shaderPack->m_Code.data();
-		desc.CodeSize = shaderPack->m_Code.size() * sizeof(uint32_t);
+		desc.CodeBytes = shaderPack->m_Code.size() * sizeof(uint32_t);
 		desc.Reflection = shaderPack->m_Reflection;
 		switch (shaderPack->m_ShaderStage)
 		{

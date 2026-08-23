@@ -10,8 +10,8 @@ namespace DM::RHI
 		VulkanUniformBuffer(VulkanDevice*device,const RHIUniformBufferDesc&desc);
 		~VulkanUniformBuffer();
 
-		virtual void UpdateData(const void* data, size_t size) override;
-		virtual EResourceType GetAssetType() const { return EResourceType::UniformBuffer; }
+		virtual void Update(const void* data, size_t size) override;
+		virtual EResourceType GetResourceType() const { return EResourceType::UniformBuffer; }
 
 	private:
 		bool m_bDynamic;

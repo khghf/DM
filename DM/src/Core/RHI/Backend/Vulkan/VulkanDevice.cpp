@@ -108,6 +108,11 @@ namespace DM::RHI
 	}
 
 
+	RHIBuffer* VulkanDevice::CreateBuffer(const RHIBufferDesc& desc)
+	{
+		return new VulkanBuffer(this,desc);
+	}
+
 	RHIBuffer* VulkanDevice::CreateVertexBuffer(const RHIVertexBufferDesc& desc)
 	{
 		return new VulkanVertexBuffer(this, desc);

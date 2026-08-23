@@ -7,7 +7,7 @@ namespace DM::RHI
 	public:
 		RHIFramebuffer()=default;
 		~RHIFramebuffer()=default;
-		virtual EResourceType GetAssetType() const { return EResourceType::Framebuffer; };
+		virtual EResourceType GetResourceType() const { return EResourceType::Framebuffer; };
 
 		virtual void Resize(const uint32_t& width, const uint32_t& height) = 0;
 

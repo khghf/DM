@@ -12,11 +12,13 @@ namespace DM
 
 	SPtr<AssetObject>WorldLoader::Load(AssetPack* pack)
 	{
+		
 		WorldPack* worldPack = static_cast<WorldPack*>(pack);
 		World* world = new World();
 
 		world->m_Name = worldPack->m_WorldName;
 
+		delete pack;
 		return CreateSPtr_Raw<World>(world);
 	}
 	REGISTER_LOAD_PATH(EAssetType::World, WorldLoader::Load);

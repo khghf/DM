@@ -4,13 +4,15 @@
 
 namespace DM::RHI
 {
+	/// <summary>
+	/// [笔记]渲染管线。opengl采用全局状态机的模式来管理状态，绑定着色程序的方式来执行渲染流程，而vulkan则将状态和着色器都打包成一个渲染管线
+	/// </summary>
 	class DM_API RHIPipeline : public RHIResource
 	{
 	public:
 		virtual ~RHIPipeline() = default;
 
-		/// <summary>资源类型为管线（覆写基类）。</summary>
-		EResourceType GetAssetType() const override { return EResourceType::Pipeline; }
+		EResourceType GetResourceType() const override { return EResourceType::Pipeline; }
 	protected:
 		RHIPipeline() = default;
 	};

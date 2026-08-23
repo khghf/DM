@@ -8,7 +8,7 @@ namespace DM::RHI
 		RHITexture()=default;
 		~RHITexture()=default;
 
-		virtual EResourceType GetAssetType() const { return EResourceType::Texture; }
+		virtual EResourceType GetResourceType() const { return EResourceType::Texture; }
 	private:
 
 	};

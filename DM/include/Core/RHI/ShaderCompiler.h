@@ -16,19 +16,10 @@ namespace DM::RHI
     /// </summary>
     struct CompiledShader
     {
-        /// <summary>
-        /// SPIR-V 字节码
-        /// </summary>
         std::vector<uint32_t> spirv;
-
-        /// <summary>
-        /// 编译错误信息（失败时有内容）
-        /// </summary>
+     
         std::string errorLog;
-
-        /// <summary>
-        /// 是否编译成功
-        /// </summary>
+     
         bool success = false;
     };
 

@@ -9,6 +9,7 @@
 #include<Core/RHI/Backend/Vulkan/Buffer/VulkanIndexBuffer.h>
 #include<Core/RHI/Backend/Vulkan/VulkanRenderPass.h>
 #include<Core/RHI/Backend/Vulkan/VulkanFramebuffer.h>
+#include<Core/RHI/Backend/Vulkan/VulkanDescriptorSet.h>
 #include<Core/RHI/Backend/Vulkan/VulkanDescriptorSetGroup.h>
 namespace DM::RHI
 {
@@ -18,26 +19,30 @@ namespace DM::RHI
         //创建命令池
         VkCommandPoolCreateInfo poolCI{};
         poolCI.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        poolCI.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-        //  命令池标志，决定命令缓冲区的行为
-        // 可用标志：
-        // VK_COMMAND_POOL_CREATE_TRANSIENT_BIT 
-        //    命令缓冲区短期使用(每帧重新录制) 
-        //    提示驱动优化内存分配策略                                
-        // 
-        // VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT
-        //    允许单个命令缓冲区独立重置
-        //    vkResetCommandBuffer() 可以单独重置
-        //    如果不设置，只能 vkResetCommandPool() 重置整个池        
-        // VK_COMMAND_POOL_CREATE_PROTECTED_BIT                         
-        //    用于受保护内容（DRM/加密内容） 
 
-        poolCI.queueFamilyIndex = m_Device->GetvkGraphicsQueueFamily(); // 命令缓冲从"图形族"的池分配
+        //  命令池标志，决定命令缓冲区的行为
+      // 可用标志：
+      // VK_COMMAND_POOL_CREATE_TRANSIENT_BIT 
+      //    命令缓冲区短期使用(每帧重新录制) 
+      //    提示驱动优化内存分配策略                                
+      // 
+      // VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT
+      //    允许单个命令缓冲区独立重置
+      //    vkResetCommandBuffer() 可以单独重置
+      //    如果不设置，只能 vkResetCommandPool() 重置整个池        
+      // VK_COMMAND_POOL_CREATE_PROTECTED_BIT                         
+      //    用于受保护内容（DRM/加密内容） 
+        poolCI.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+      
+
         // 绑定到图形队列族
-        // 如果使用多个队列族(图形+传输)，需要为每个族创建独立的命令池
-        // 例如：
-        // - m_GraphicsCommandPool	(绑定到 GraphicsFamily)
-        // - m_TransferCommandPool  (绑定到 TransferFamily)
+       // 如果使用多个队列族(图形+传输)，需要为每个族创建独立的命令池
+       // 例如：
+       // - m_GraphicsCommandPool	(绑定到 GraphicsFamily)
+       // - m_TransferCommandPool  (绑定到 TransferFamily)
+        poolCI.queueFamilyIndex = m_Device->GetvkGraphicsQueueFamily(); 
+       
+
         VK_CHECK(vkCreateCommandPool(m_Device->GetvkDevice(), &poolCI, nullptr, &m_CommandPool));
 		// 从命令池分配1条 PRIMARY 缓冲(可单独提交)。
         m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
@@ -119,6 +124,15 @@ namespace DM::RHI
 
 
 	}
+
+    void VulkanCommandList::BindDescriptorSet(RHIShaderProgram* shaderProgram, RHIDescriptorSet* set)
+    {
+        VulkanShaderProgram* vkShaderProgram = static_cast<VulkanShaderProgram*>(shaderProgram);
+        VulkanDescriptorSet* vkSet = static_cast<VulkanDescriptorSet*>(set);
+        std::vector<VkDescriptorSet>vkSets{ vkSet->GetvkDescriptorSet() };
+
+        vkCmdBindDescriptorSets(*GetIdleCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, vkShaderProgram->m_vkPipelineLayout, vkSet->GetSetId(), vkSets.size(), vkSets.data(), 0, nullptr);
+    }
 
     void VulkanCommandList::BindDescriptorSetGroup(RHIShaderProgram* shaderProgram, RHIDescriptorSetGroup* group)
     {

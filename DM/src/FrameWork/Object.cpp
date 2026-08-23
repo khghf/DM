@@ -7,7 +7,7 @@ namespace DM
 		EnableUpdate(true);
 	}
 
-	void Object::UpdateData(float DeltaTime)
+	void Object::Update(float DeltaTime)
 	{
 	}
 

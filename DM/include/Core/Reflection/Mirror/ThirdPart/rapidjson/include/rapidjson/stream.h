@@ -133,7 +133,7 @@ public:
     const Ch* Peek4() const { return is_.Peek4(); }
 
     // wrapper for AutoUTFInputStream
-    UTFType GetAssetType() const { return is_.GetAssetType(); }
+    UTFType GetResourceType() const { return is_.GetResourceType(); }
     bool HasBOM() const { return is_.HasBOM(); }
 
 protected:

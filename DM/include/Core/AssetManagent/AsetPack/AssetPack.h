@@ -138,7 +138,7 @@ namespace DM
 		const AssetMetaInfo& GetMeta() const { return m_Meta; }
 
 		// 获取类型
-		virtual EAssetType GetAssetType() const = 0;
+		virtual EAssetType GetResourceType() const = 0;
 		virtual std::string GetExtension() const { return ".dasset"; }
 
 		// 检查是否有效
@@ -147,7 +147,7 @@ namespace DM
 		AssetMetaInfo GenerateMetaInfo(std::string_view sourceFilePath)const
 		{
 			AssetMetaInfo metaInfo{};
-			metaInfo.m_Type = GetAssetType();
+			metaInfo.m_Type = GetResourceType();
 			metaInfo.m_SourceFileContentHash = AssetUtil::Sha256FileContent(sourceFilePath);
 			metaInfo.m_SourceFilePath = sourceFilePath.data();
 			metaInfo.m_SourceFileLastModifyTime = AssetUtil::GetFileLastModifyTimeStamp(metaInfo.m_SourceFilePath);

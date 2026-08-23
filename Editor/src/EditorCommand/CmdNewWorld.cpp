@@ -2,6 +2,7 @@
 #include<Editor.h>
 #include<Panel/ContentBrowserPanel.h>
 #include<Core/AssetManagent/AssetImporter/WorldImporter.h>
+#include<Core/AssetManagent/AsetPack/WorldPack.h>
 #include<Core/AssetManagent/AssetMetaDatabase.h>
 namespace DM
 {
@@ -14,7 +15,7 @@ namespace DM
 		saveDir;
 		std::string savePath{};
 
-		AssetPack* pack = WorldImporter::Import("");
+		AssetPack* pack =static_cast<WorldPack*>(WorldImporter::Import(""));
 
 		savePath = saveDir + "/NewWorld" + pack->GetExtension();
 
@@ -22,7 +23,6 @@ namespace DM
 		NewWorld_Internal(saveDir, savePath, pack,1);
 		const auto& record = AssetMetaDatabase::Get()->GetRecordByGuid(pack->GetGUID());
 		m_Path = record->AssetPackPath;
-
 		delete pack;
 	}
 
@@ -45,6 +45,8 @@ namespace DM
 			AssetMetaInfo metaInfo = pack->GetMeta();
 			metaInfo.m_SourceFilePath = savePath;
 			AssetPackSetter::SetMetaInfo(pack, metaInfo);
+			WorldPack* worldPack = static_cast<WorldPack*>(pack);
+			worldPack->m_WorldName = FileSystem::GetFileName(savePath);
 			AssetUtil::SerializePack(pack, savePath);
 		}
 	}

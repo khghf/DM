@@ -3108,7 +3108,7 @@ VmaAllocatorCreateInfo::pVulkanFunctions. Other members can be null.
     #if __cplusplus >= 201703L || _MSVC_LANG >= 201703L // C++17
         #define VMA_USE_STL_SHARED_MUTEX 1
     // Visual studio defines __cplusplus properly only when passed additional parameter: /Zc:__cplusplus
-    // Otherwise it is always 199711L, despite shared_mutex works since Visual Studio 2015 UpdateData 2.
+    // Otherwise it is always 199711L, despite shared_mutex works since Visual Studio 2015 Update 2.
     #elif defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 190023918 && __cplusplus == 199711L && _MSVC_LANG >= 201703L
         #define VMA_USE_STL_SHARED_MUTEX 1
     #else
@@ -6681,7 +6681,7 @@ public:
         VkDeviceSize size);
     void Destroy(VmaAllocator allocator);
 
-    ALLOCATION_TYPE GetAssetType() const { return (ALLOCATION_TYPE)m_Type; }
+    ALLOCATION_TYPE GetResourceType() const { return (ALLOCATION_TYPE)m_Type; }
     VkDeviceSize GetAlignment() const { return m_Alignment; }
     VkDeviceSize GetSize() const { return m_Size; }
     void* GetUserData() const { return m_pUserData; }
@@ -6776,22 +6776,22 @@ struct VmaDedicatedAllocationListItemTraits
 
     static ItemType* GetPrev(const ItemType* item)
     {
-        VMA_HEAVY_ASSERT(item->GetAssetType() == VmaAllocation_T::ALLOCATION_TYPE_DEDICATED);
+        VMA_HEAVY_ASSERT(item->GetResourceType() == VmaAllocation_T::ALLOCATION_TYPE_DEDICATED);
         return item->m_DedicatedAllocation.m_Prev;
     }
     static ItemType* GetNext(const ItemType* item)
     {
-        VMA_HEAVY_ASSERT(item->GetAssetType() == VmaAllocation_T::ALLOCATION_TYPE_DEDICATED);
+        VMA_HEAVY_ASSERT(item->GetResourceType() == VmaAllocation_T::ALLOCATION_TYPE_DEDICATED);
         return item->m_DedicatedAllocation.m_Next;
     }
     static ItemType*& AccessPrev(ItemType* item)
     {
-        VMA_HEAVY_ASSERT(item->GetAssetType() == VmaAllocation_T::ALLOCATION_TYPE_DEDICATED);
+        VMA_HEAVY_ASSERT(item->GetResourceType() == VmaAllocation_T::ALLOCATION_TYPE_DEDICATED);
         return item->m_DedicatedAllocation.m_Prev;
     }
     static ItemType*& AccessNext(ItemType* item)
     {
-        VMA_HEAVY_ASSERT(item->GetAssetType() == VmaAllocation_T::ALLOCATION_TYPE_DEDICATED);
+        VMA_HEAVY_ASSERT(item->GetResourceType() == VmaAllocation_T::ALLOCATION_TYPE_DEDICATED);
         return item->m_DedicatedAllocation.m_Next;
     }
 };
@@ -11199,7 +11199,7 @@ VkResult VmaDeviceMemoryBlock::BindBufferMemory(
     VkBuffer hBuffer,
     const void* pNext)
 {
-    VMA_ASSERT(hAllocation->GetAssetType() == VmaAllocation_T::ALLOCATION_TYPE_BLOCK &&
+    VMA_ASSERT(hAllocation->GetResourceType() == VmaAllocation_T::ALLOCATION_TYPE_BLOCK &&
         hAllocation->GetBlock() == this);
     VMA_ASSERT(allocationLocalOffset < hAllocation->GetSize() &&
         "Invalid allocationLocalOffset. Did you forget that this offset is relative to the beginning of the allocation, not the whole memory block?");
@@ -11216,7 +11216,7 @@ VkResult VmaDeviceMemoryBlock::BindImageMemory(
     VkImage hImage,
     const void* pNext)
 {
-    VMA_ASSERT(hAllocation->GetAssetType() == VmaAllocation_T::ALLOCATION_TYPE_BLOCK &&
+    VMA_ASSERT(hAllocation->GetResourceType() == VmaAllocation_T::ALLOCATION_TYPE_BLOCK &&
         hAllocation->GetBlock() == this);
     VMA_ASSERT(allocationLocalOffset < hAllocation->GetSize() &&
         "Invalid allocationLocalOffset. Did you forget that this offset is relative to the beginning of the allocation, not the whole memory block?");
@@ -11319,7 +11319,7 @@ void VmaAllocation_T::Destroy(VmaAllocator allocator)
 {
     FreeName(allocator);
 
-    if (GetAssetType() == ALLOCATION_TYPE_DEDICATED)
+    if (GetResourceType() == ALLOCATION_TYPE_DEDICATED)
     {
         vma_delete(allocator, m_DedicatedAllocation.m_ExtraData);
     }
@@ -11438,7 +11438,7 @@ void* VmaAllocation_T::GetMappedData() const
 
 void VmaAllocation_T::BlockAllocMap()
 {
-    VMA_ASSERT(GetAssetType() == ALLOCATION_TYPE_BLOCK);
+    VMA_ASSERT(GetResourceType() == ALLOCATION_TYPE_BLOCK);
     VMA_ASSERT(IsMappingAllowed() && "Mapping is not allowed on this allocation! Please use one of the new VMA_ALLOCATION_CREATE_HOST_ACCESS_* flags when creating it.");
 
     if (m_MapCount < 0xFF)
@@ -11453,7 +11453,7 @@ void VmaAllocation_T::BlockAllocMap()
 
 void VmaAllocation_T::BlockAllocUnmap()
 {
-    VMA_ASSERT(GetAssetType() == ALLOCATION_TYPE_BLOCK);
+    VMA_ASSERT(GetResourceType() == ALLOCATION_TYPE_BLOCK);
 
     if (m_MapCount > 0)
     {
@@ -11467,7 +11467,7 @@ void VmaAllocation_T::BlockAllocUnmap()
 
 VkResult VmaAllocation_T::DedicatedAllocMap(VmaAllocator hAllocator, void** ppData)
 {
-    VMA_ASSERT(GetAssetType() == ALLOCATION_TYPE_DEDICATED);
+    VMA_ASSERT(GetResourceType() == ALLOCATION_TYPE_DEDICATED);
     VMA_ASSERT(IsMappingAllowed() && "Mapping is not allowed on this allocation! Please use one of the new VMA_ALLOCATION_CREATE_HOST_ACCESS_* flags when creating it.");
 
     EnsureExtraData(hAllocator);
@@ -11503,7 +11503,7 @@ VkResult VmaAllocation_T::DedicatedAllocMap(VmaAllocator hAllocator, void** ppDa
 
 void VmaAllocation_T::DedicatedAllocUnmap(VmaAllocator hAllocator)
 {
-    VMA_ASSERT(GetAssetType() == ALLOCATION_TYPE_DEDICATED);
+    VMA_ASSERT(GetResourceType() == ALLOCATION_TYPE_DEDICATED);
 
     if (m_MapCount > 0)
     {
@@ -12564,7 +12564,7 @@ VkResult VmaDefragmentationContext_T::DefragmentPassEnd(VmaDefragmentationPassMo
     moveInfo.pMoves = VMA_NULL;
     m_Moves.clear();
 
-    // UpdateData stats
+    // Update stats
     m_GlobalStats.allocationsMoved += m_PassStats.allocationsMoved;
     m_GlobalStats.bytesFreed += m_PassStats.bytesFreed;
     m_GlobalStats.bytesMoved += m_PassStats.bytesMoved;
@@ -14698,7 +14698,7 @@ void VmaAllocator_T::FreeMemory(
             FillAllocation(allocation, VMA_ALLOCATION_FILL_PATTERN_DESTROYED);
 #endif
 
-            switch(allocation->GetAssetType())
+            switch(allocation->GetResourceType())
             {
             case VmaAllocation_T::ALLOCATION_TYPE_BLOCK:
                 {
@@ -14850,7 +14850,7 @@ void VmaAllocator_T::GetAllocationInfo2(VmaAllocation hAllocation, VmaAllocation
 {
     GetAllocationInfo(hAllocation, &pAllocationInfo->allocationInfo);
 
-    switch (hAllocation->GetAssetType())
+    switch (hAllocation->GetResourceType())
     {
     case VmaAllocation_T::ALLOCATION_TYPE_BLOCK:
         pAllocationInfo->blockSize = hAllocation->GetBlock()->m_pMetadata->GetSize();
@@ -15155,7 +15155,7 @@ VkResult VmaAllocator_T::BindVulkanImage(
 
 VkResult VmaAllocator_T::Map(VmaAllocation hAllocation, void** ppData)
 {
-    switch(hAllocation->GetAssetType())
+    switch(hAllocation->GetResourceType())
     {
     case VmaAllocation_T::ALLOCATION_TYPE_BLOCK:
         {
@@ -15179,7 +15179,7 @@ VkResult VmaAllocator_T::Map(VmaAllocation hAllocation, void** ppData)
 
 void VmaAllocator_T::Unmap(VmaAllocation hAllocation)
 {
-    switch(hAllocation->GetAssetType())
+    switch(hAllocation->GetResourceType())
     {
     case VmaAllocation_T::ALLOCATION_TYPE_BLOCK:
         {
@@ -15203,7 +15203,7 @@ VkResult VmaAllocator_T::BindBufferMemory(
     const void* pNext)
 {
     VkResult res = VK_ERROR_UNKNOWN_COPY;
-    switch(hAllocation->GetAssetType())
+    switch(hAllocation->GetResourceType())
     {
     case VmaAllocation_T::ALLOCATION_TYPE_DEDICATED:
         res = BindVulkanBuffer(hAllocation->GetMemory(), allocationLocalOffset, hBuffer, pNext);
@@ -15228,7 +15228,7 @@ VkResult VmaAllocator_T::BindImageMemory(
     const void* pNext)
 {
     VkResult res = VK_ERROR_UNKNOWN_COPY;
-    switch(hAllocation->GetAssetType())
+    switch(hAllocation->GetResourceType())
     {
     case VmaAllocation_T::ALLOCATION_TYPE_DEDICATED:
         res = BindVulkanImage(hAllocation->GetMemory(), allocationLocalOffset, hImage, pNext);
@@ -15352,7 +15352,7 @@ VkResult VmaAllocator_T::CopyAllocationToMemory(
 
 void VmaAllocator_T::FreeDedicatedMemory(VmaAllocation allocation)
 {
-    VMA_ASSERT(allocation && allocation->GetAssetType() == VmaAllocation_T::ALLOCATION_TYPE_DEDICATED);
+    VMA_ASSERT(allocation && allocation->GetResourceType() == VmaAllocation_T::ALLOCATION_TYPE_DEDICATED);
 
     const uint32_t memTypeIndex = allocation->GetMemoryTypeIndex();
     VmaPool parentPool = allocation->GetParentPool();
@@ -15451,7 +15451,7 @@ bool VmaAllocator_T::GetFlushOrInvalidateRange(
         outRange.pNext = VMA_NULL;
         outRange.memory = allocation->GetMemory();
 
-        switch(allocation->GetAssetType())
+        switch(allocation->GetResourceType())
         {
         case VmaAllocation_T::ALLOCATION_TYPE_DEDICATED:
             outRange.offset = VmaAlignDown(offset, nonCoherentAtomSize);
@@ -18575,7 +18575,7 @@ for(;;)
         vkDestroyImage(device, resData->img, nullptr);
     }
 
-    // UpdateData appropriate descriptors to point to the new places...
+    // Update appropriate descriptors to point to the new places...
 
     res = vmaEndDefragmentationPass(allocator, defragCtx, &pass);
     if(res == VK_SUCCESS)

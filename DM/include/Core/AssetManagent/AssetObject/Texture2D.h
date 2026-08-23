@@ -22,7 +22,7 @@ namespace DM
 	private:
 		Texture2D(const TexturePack*pack);
 
-		virtual EAssetType GetAssetType()const override { return Texture2D::GetAssetType_Static(); }
+		virtual EAssetType GetResourceType()const override { return Texture2D::GetAssetType_Static(); }
 		static EAssetType GetAssetType_Static() { return EAssetType::Texture2D; }
 	private:
 		uint32_t m_Width;

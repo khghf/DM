@@ -23,12 +23,12 @@ namespace DM
         {".gltf",ModelImporter::Import},
 
 
-        {".vs",ShaderImporter::Import},
-        {".fs",ShaderImporter::Import},
-        {".gs",ShaderImporter::Import},
-        {".cs",ShaderImporter::Import},
-        {".tcs",ShaderImporter::Import},
-        {".tes",ShaderImporter::Import},
+        {".vert",ShaderImporter::Import},
+        {".frag",ShaderImporter::Import},
+        {".geom",ShaderImporter::Import},
+        {".comp",ShaderImporter::Import},
+        {".tecs",ShaderImporter::Import},
+        {".tese",ShaderImporter::Import},
 
         {".world",WorldImporter::Import},
     };

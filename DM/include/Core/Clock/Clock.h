@@ -14,8 +14,7 @@ namespace DM
 			, m_Last(std::chrono::steady_clock::now())
 		{
 		}
-
-		// 每帧开始调用，返回本帧的可变 delta time（已乘时间缩放）。
+		
 		float Tick()
 		{
 			auto now = std::chrono::steady_clock::now();
@@ -23,10 +22,10 @@ namespace DM
 			m_Last = now;
 			float dt = diff.count() * m_TimeScale;
 			m_Accumulator += dt;
+			m_FramRate = dt / 1.f;
 			return dt;
 		}
 
-		// 固定步长循环：物理系统等在返回 true 时执行一次固定步长更新。
 		bool ShouldStepFixed()
 		{
 			if (m_Accumulator >= m_FixedDt)
@@ -37,14 +36,11 @@ namespace DM
 			return false;
 		}
 
-		// 取一次固定步长（供调用方使用）。
-		float FixedDt() const { return m_FixedDt; }
+		float		FixedDt() const { return m_FixedDt; }
 
-		// 设置时间缩放（0 暂停，>1 加速）。
-		void SetTimeScale(float scale) { m_TimeScale = scale; }
-		float GetTimeScale() const { return m_TimeScale; }
-
-		// 高精度时间戳（秒）。
+		void		SetTimeScale(float scale) { m_TimeScale = scale; }
+		float		GetTimeScale() const	{ return m_TimeScale; }
+		uint32_t	GetFrameRate()const { return m_FramRate; }
 		static double Now()
 		{
 			auto now = std::chrono::steady_clock::now();
@@ -52,9 +48,10 @@ namespace DM
 		}
 
 	private:
-		float m_FixedDt;
-		float m_Accumulator;
-		float m_TimeScale;
+		float		m_FixedDt;
+		float		m_Accumulator;
+		float		m_TimeScale;
+		uint32_t	m_FramRate;
 		std::chrono::steady_clock::time_point m_Last;
 	};
 }

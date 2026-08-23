@@ -11,8 +11,8 @@ namespace DM::RHI
 	public:
 		VulkanIndexBuffer(VulkanDevice*device,const RHIIndexBufferDesc&desc);
 		~VulkanIndexBuffer();
-		virtual EResourceType GetAssetType() const { return EResourceType::Indexbuffer; }
-		virtual void UpdateData(const void* data, size_t size) override {};
+		virtual EResourceType GetResourceType() const { return EResourceType::Indexbuffer; }
+		virtual void Update(const void* data, size_t size) override {};
 	protected:
 	private:
 

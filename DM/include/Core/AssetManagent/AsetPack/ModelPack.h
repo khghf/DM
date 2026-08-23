@@ -45,7 +45,7 @@ namespace DM
 
 	struct DM_API ModelPack :public AssetPack
 	{
-		virtual EAssetType GetAssetType() const override { return EAssetType::Model; }
+		virtual EAssetType GetResourceType() const override { return EAssetType::Model; }
 
 		std::vector<Mesh>m_Meshs;
 		std::vector<SPtr<AssetObject>>m_Textures;

@@ -2161,13 +2161,13 @@ public:
 
     // Changed by PR #1393
     void CreateSchemaRecursive(const SchemaType** schema, const PointerType& pointer, const ValueType& v, const ValueType& document, const UriType& id) {
-        if (v.GetAssetType() == kObjectType) {
+        if (v.GetResourceType() == kObjectType) {
             UriType newid = UriType(CreateSchema(schema, pointer, v, document, id), allocator_);
 
             for (typename ValueType::ConstMemberIterator itr = v.MemberBegin(); itr != v.MemberEnd(); ++itr)
                 CreateSchemaRecursive(0, pointer.Append(itr->name, allocator_), itr->value, document, newid);
         }
-        else if (v.GetAssetType() == kArrayType)
+        else if (v.GetResourceType() == kArrayType)
             for (SizeType i = 0; i < v.Size(); i++)
                 CreateSchemaRecursive(0, pointer.Append(i, allocator_), v[i], document, id);
     }
@@ -2326,10 +2326,10 @@ public:
         ValueType* resval = 0;
         UriType tempuri = UriType(finduri, allocator_);
         UriType localuri = UriType(baseuri, allocator_);
-        if (doc.GetAssetType() == kObjectType) {
+        if (doc.GetResourceType() == kObjectType) {
             // Establish the base URI of this object
             typename ValueType::ConstMemberIterator m = doc.FindMember(SchemaType::GetIdString());
-            if (m != doc.MemberEnd() && m->value.GetAssetType() == kStringType) {
+            if (m != doc.MemberEnd() && m->value.GetResourceType() == kStringType) {
                 localuri = UriType(m->value, allocator_).Resolve(baseuri, allocator_);
             }
             // See if it matches
@@ -2341,15 +2341,15 @@ public:
             }
             // No match, continue looking
             for (m = doc.MemberBegin(); m != doc.MemberEnd(); ++m) {
-                if (m->value.GetAssetType() == kObjectType || m->value.GetAssetType() == kArrayType) {
+                if (m->value.GetResourceType() == kObjectType || m->value.GetResourceType() == kArrayType) {
                     resval = FindId(m->value, finduri, resptr, localuri, full, here.Append(m->name.GetString(), m->name.GetStringLength(), allocator_));
                 }
                 if (resval) break;
             }
-        } else if (doc.GetAssetType() == kArrayType) {
+        } else if (doc.GetResourceType() == kArrayType) {
             // Continue looking
             for (typename ValueType::ConstValueIterator v = doc.BeginRenderPass(); v != doc.EndRenderPass(); ++v) {
-                if (v->GetAssetType() == kObjectType || v->GetAssetType() == kArrayType) {
+                if (v->GetResourceType() == kObjectType || v->GetResourceType() == kArrayType) {
                     resval = FindId(*v, finduri, resptr, localuri, full, here.Append(i, allocator_));
                 }
                 if (resval) break;

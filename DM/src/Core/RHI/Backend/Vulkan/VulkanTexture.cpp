@@ -4,20 +4,20 @@
 #include<stb_image.h>
 namespace DM::RHI
 {
-	static uint8_t ToSTBFormat(ERHIFormat rhiFormat)
+	static uint8_t ToSTBFormat(EFormat rhiFormat)
 	{
 		switch (rhiFormat)
 		{
-		case DM::RHI::ERHIFormat::R8_UNorm:
+		case DM::RHI::EFormat::R8_UNorm:
 			return STBI_grey;
 			break;
-		case DM::RHI::ERHIFormat::R8G8B8_UNorm:
+		case DM::RHI::EFormat::R8G8B8_UNorm:
 			return STBI_rgb;
 			break;
-		case DM::RHI::ERHIFormat::R8G8B8A8_UNorm:
+		case DM::RHI::EFormat::R8G8B8A8_UNorm:
 			return STBI_rgb_alpha;
 			break;
-		case DM::RHI::ERHIFormat::B8G8R8A8_UNorm:
+		case DM::RHI::EFormat::B8G8R8A8_UNorm:
 			return STBI_rgb_alpha;
 		default:
 			return 0;

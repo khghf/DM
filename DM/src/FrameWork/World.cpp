@@ -1,6 +1,8 @@
 ﻿#include "DMPCH.h"
 #include<Framework/Base/World.h>
 #include<Framework/Component/Component.h>
+#include<Framework/Component/TransformComponent.h>
+#include<Framework/Component/SpriteComponent.h>
 
 #include<Framework/Base/Entity.h>
 

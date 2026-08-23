@@ -57,7 +57,7 @@ namespace DM
 				std::string_view sourceFilePath{ texturePath };
 				std::string packPath=AssetUtil::SerializePack(pack, sourceFilePath);
 
-				AssetMetaDatabase::Get()->AddNewAssetPack(pack->GetGUID(), packPath, pack->GetMeta().m_SourceFilePath, pack->GetMeta().m_SourceFileContentHash, pack->GetMeta().m_SourceFileLastModifyTime, pack->GetAssetType());
+				AssetMetaDatabase::Get()->AddNewAssetPack(pack->GetGUID(), packPath, pack->GetMeta().m_SourceFilePath, pack->GetMeta().m_SourceFileContentHash, pack->GetMeta().m_SourceFileLastModifyTime, pack->GetResourceType());
 
 				loadedPacks.emplace_back(static_cast<TexturePack*>(pack));
 				textureId.emplace_back(pack->GetGUID());

@@ -1,14 +1,14 @@
 ﻿#pragma once
-#include<Core/Core.h>
 #include<Foundation/MMM/Reference.h>
+#include<Core/Core.h>
 namespace DM
 {
 	class World;
-	class DM_API GameInst
+
+	class DM_API GameStatic
 	{
 	public:
-		GameInst();
-		~GameInst();
-	private:
+		static WPtr<World>GetCurWorld();
 	};
+
 }

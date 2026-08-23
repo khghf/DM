@@ -4,91 +4,91 @@
 
 namespace DM::RHI
 {
-	inline VkFormat ToVkFormat(ERHIFormat format)
+	inline VkFormat ToVkFormat(EFormat format)
 	{
 		switch (format)
 		{
 			// ============ 纹理/像素格式 ============
-		case ERHIFormat::R8_UNorm:           return VK_FORMAT_R8_UNORM;
-		case ERHIFormat::R8G8_UNorm:         return VK_FORMAT_R8G8_UNORM;
-		case ERHIFormat::R8G8B8_UNorm:       return VK_FORMAT_R8G8B8_UNORM;
-		case ERHIFormat::R8G8B8A8_UNorm:     return VK_FORMAT_R8G8B8A8_UNORM;
-		case ERHIFormat::B8G8R8A8_UNorm:     return VK_FORMAT_B8G8R8A8_UNORM;
-		case ERHIFormat::R32_Float:          return VK_FORMAT_R32_SFLOAT;
-		case ERHIFormat::R32G32_Float:       return VK_FORMAT_R32G32_SFLOAT;
-		case ERHIFormat::R32G32B32_Float:    return VK_FORMAT_R32G32B32_SFLOAT;
-		case ERHIFormat::R32G32B32A32_Float: return VK_FORMAT_R32G32B32A32_SFLOAT;
-		case ERHIFormat::D24_UNorm_S8_UInt:  return VK_FORMAT_D24_UNORM_S8_UINT;
-		case ERHIFormat::D32_Float:          return VK_FORMAT_D32_SFLOAT;
-		case ERHIFormat::R32_Int:            return VK_FORMAT_R32_SINT;
+		case EFormat::R8_UNorm:           return VK_FORMAT_R8_UNORM;
+		case EFormat::R8G8_UNorm:         return VK_FORMAT_R8G8_UNORM;
+		case EFormat::R8G8B8_UNorm:       return VK_FORMAT_R8G8B8_UNORM;
+		case EFormat::R8G8B8A8_UNorm:     return VK_FORMAT_R8G8B8A8_UNORM;
+		case EFormat::B8G8R8A8_UNorm:     return VK_FORMAT_B8G8R8A8_UNORM;
+		case EFormat::R32_Float:          return VK_FORMAT_R32_SFLOAT;
+		case EFormat::R32G32_Float:       return VK_FORMAT_R32G32_SFLOAT;
+		case EFormat::R32G32B32_Float:    return VK_FORMAT_R32G32B32_SFLOAT;
+		case EFormat::R32G32B32A32_Float: return VK_FORMAT_R32G32B32A32_SFLOAT;
+		case EFormat::D24_UNorm_S8_UInt:  return VK_FORMAT_D24_UNORM_S8_UINT;
+		case EFormat::D32_Float:          return VK_FORMAT_D32_SFLOAT;
+		case EFormat::R32_Int:            return VK_FORMAT_R32_SINT;
 
 			// ============ 顶点属性格式 - 浮点 ============
-		case ERHIFormat::Float:              return VK_FORMAT_R32_SFLOAT;
-		case ERHIFormat::Float2:             return VK_FORMAT_R32G32_SFLOAT;
-		case ERHIFormat::Float3:             return VK_FORMAT_R32G32B32_SFLOAT;
-		case ERHIFormat::Float4:             return VK_FORMAT_R32G32B32A32_SFLOAT;
+		case EFormat::Float:              return VK_FORMAT_R32_SFLOAT;
+		case EFormat::Float2:             return VK_FORMAT_R32G32_SFLOAT;
+		case EFormat::Float3:             return VK_FORMAT_R32G32B32_SFLOAT;
+		case EFormat::Float4:             return VK_FORMAT_R32G32B32A32_SFLOAT;
 
 			// ============ 顶点属性格式 - 有符号整数 ============
-		case ERHIFormat::Int:                return VK_FORMAT_R32_SINT;
-		case ERHIFormat::Int2:               return VK_FORMAT_R32G32_SINT;
-		case ERHIFormat::Int3:               return VK_FORMAT_R32G32B32_SINT;
-		case ERHIFormat::Int4:               return VK_FORMAT_R32G32B32A32_SINT;
+		case EFormat::Int:                return VK_FORMAT_R32_SINT;
+		case EFormat::Int2:               return VK_FORMAT_R32G32_SINT;
+		case EFormat::Int3:               return VK_FORMAT_R32G32B32_SINT;
+		case EFormat::Int4:               return VK_FORMAT_R32G32B32A32_SINT;
 
 			// ============ 顶点属性格式 - 无符号整数 ============
-		case ERHIFormat::Uint:               return VK_FORMAT_R32_UINT;
-		case ERHIFormat::Uint2:              return VK_FORMAT_R32G32_UINT;
-		case ERHIFormat::Uint3:              return VK_FORMAT_R32G32B32_UINT;
-		case ERHIFormat::Uint4:              return VK_FORMAT_R32G32B32A32_UINT;
+		case EFormat::Uint:               return VK_FORMAT_R32_UINT;
+		case EFormat::Uint2:              return VK_FORMAT_R32G32_UINT;
+		case EFormat::Uint3:              return VK_FORMAT_R32G32B32_UINT;
+		case EFormat::Uint4:              return VK_FORMAT_R32G32B32A32_UINT;
 
 			// ============ 顶点属性格式 - 矩阵 ============
 			// 注意：Vulkan 不直接支持矩阵格式，需要展开为向量
 			// 但为了完整性，这里映射到对应的向量格式
-		case ERHIFormat::Mat3:               return VK_FORMAT_R32G32B32A32_SFLOAT; // 3x3 展开为 vec4
-		case ERHIFormat::Mat4:               return VK_FORMAT_R32G32B32A32_SFLOAT; // 4x4 展开为 vec4
+		case EFormat::Mat3:               return VK_FORMAT_R32G32B32A32_SFLOAT; // 3x3 展开为 vec4
+		case EFormat::Mat4:               return VK_FORMAT_R32G32B32A32_SFLOAT; // 4x4 展开为 vec4
 
-		case ERHIFormat::Unknown:
+		case EFormat::Unknown:
 		default:                             return VK_FORMAT_R8G8B8A8_UNORM;
 		}
 	}
 
-	inline ERHIFormat ToRHIFormat(VkFormat format)
+	inline EFormat ToRHIFormat(VkFormat format)
 	{
 		switch (format)
 		{
 			// ============ 纹理/像素格式 ============
-		case VK_FORMAT_R8_UNORM:             return ERHIFormat::R8_UNorm;
-		case VK_FORMAT_R8G8_UNORM:           return ERHIFormat::R8G8_UNorm;
-		case VK_FORMAT_R8G8B8_UNORM:         return ERHIFormat::R8G8B8_UNorm;
-		case VK_FORMAT_R8G8B8A8_UNORM:       return ERHIFormat::R8G8B8A8_UNorm;
-		case VK_FORMAT_B8G8R8A8_UNORM:       return ERHIFormat::B8G8R8A8_UNorm;
-		case VK_FORMAT_R32_SFLOAT:           return ERHIFormat::R32_Float;
-		case VK_FORMAT_R32G32_SFLOAT:        return ERHIFormat::R32G32_Float;
-		case VK_FORMAT_R32G32B32_SFLOAT:     return ERHIFormat::R32G32B32_Float;
-		case VK_FORMAT_R32G32B32A32_SFLOAT:  return ERHIFormat::R32G32B32A32_Float;
-		case VK_FORMAT_D24_UNORM_S8_UINT:    return ERHIFormat::D24_UNorm_S8_UInt;
-		case VK_FORMAT_D32_SFLOAT:           return ERHIFormat::D32_Float;
-		case VK_FORMAT_R32_SINT:             return ERHIFormat::R32_Int;
+		case VK_FORMAT_R8_UNORM:             return EFormat::R8_UNorm;
+		case VK_FORMAT_R8G8_UNORM:           return EFormat::R8G8_UNorm;
+		case VK_FORMAT_R8G8B8_UNORM:         return EFormat::R8G8B8_UNorm;
+		case VK_FORMAT_R8G8B8A8_UNORM:       return EFormat::R8G8B8A8_UNorm;
+		case VK_FORMAT_B8G8R8A8_UNORM:       return EFormat::B8G8R8A8_UNorm;
+		case VK_FORMAT_R32_SFLOAT:           return EFormat::R32_Float;
+		case VK_FORMAT_R32G32_SFLOAT:        return EFormat::R32G32_Float;
+		case VK_FORMAT_R32G32B32_SFLOAT:     return EFormat::R32G32B32_Float;
+		case VK_FORMAT_R32G32B32A32_SFLOAT:  return EFormat::R32G32B32A32_Float;
+		case VK_FORMAT_D24_UNORM_S8_UINT:    return EFormat::D24_UNorm_S8_UInt;
+		case VK_FORMAT_D32_SFLOAT:           return EFormat::D32_Float;
+		case VK_FORMAT_R32_SINT:             return EFormat::R32_Int;
 
 			// ============ 顶点属性格式 - 浮点 ============
-		case VK_FORMAT_R32G32_SINT:          return ERHIFormat::Int2;
-		case VK_FORMAT_R32G32B32_SINT:       return ERHIFormat::Int3;
-		case VK_FORMAT_R32G32B32A32_SINT:    return ERHIFormat::Int4;
+		case VK_FORMAT_R32G32_SINT:          return EFormat::Int2;
+		case VK_FORMAT_R32G32B32_SINT:       return EFormat::Int3;
+		case VK_FORMAT_R32G32B32A32_SINT:    return EFormat::Int4;
 
 			// ============ 顶点属性格式 - 无符号整数 ============
-		case VK_FORMAT_R32_UINT:             return ERHIFormat::Uint;
-		case VK_FORMAT_R32G32_UINT:          return ERHIFormat::Uint2;
-		case VK_FORMAT_R32G32B32_UINT:       return ERHIFormat::Uint3;
-		case VK_FORMAT_R32G32B32A32_UINT:    return ERHIFormat::Uint4;
+		case VK_FORMAT_R32_UINT:             return EFormat::Uint;
+		case VK_FORMAT_R32G32_UINT:          return EFormat::Uint2;
+		case VK_FORMAT_R32G32B32_UINT:       return EFormat::Uint3;
+		case VK_FORMAT_R32G32B32A32_UINT:    return EFormat::Uint4;
 
 			// ============ 通用 sRGB 格式 ============
-		case VK_FORMAT_R8G8B8A8_SRGB:        return ERHIFormat::R8G8B8A8_UNorm;  // 近似
-		case VK_FORMAT_B8G8R8A8_SRGB:        return ERHIFormat::B8G8R8A8_UNorm;  // 近似
+		case VK_FORMAT_R8G8B8A8_SRGB:        return EFormat::R8G8B8A8_UNorm;  // 近似
+		case VK_FORMAT_B8G8R8A8_SRGB:        return EFormat::B8G8R8A8_UNorm;  // 近似
 
 		case VK_FORMAT_UNDEFINED:
-		default:                             return ERHIFormat::Unknown;
+		default:                             return EFormat::Unknown;
 		}
 	}
-	inline uint32_t FormatByteSize(ERHIFormat format)
+	inline uint32_t FormatByteSize(EFormat format)
 	{
 		return GetRHIFormatByteSize(format);
 	}
@@ -270,59 +270,88 @@ namespace DM::RHI
 		}
 	}
 
-	inline VkImageType ToVkImageType(ERHITextureType type)
+	inline VkImageType ToVkImageType(ETextureType type)
 	{
 		switch (type)
 		{
-		case ERHITextureType::Texture1D:
-		case ERHITextureType::Texture1DArray:
+		case ETextureType::Texture1D:
+		case ETextureType::Texture1DArray:
 			return VK_IMAGE_TYPE_1D;
 
-		case ERHITextureType::Texture2D:
-		case ERHITextureType::Texture2DArray:
-		case ERHITextureType::Texture2DMS:
-		case ERHITextureType::Texture2DMSArray:
-		case ERHITextureType::TextureCube:
-		case ERHITextureType::TextureCubeArray:
-		case ERHITextureType::RenderTarget:
-		case ERHITextureType::DepthStencil:
+		case ETextureType::Texture2D:
+		case ETextureType::Texture2DArray:
+		case ETextureType::Texture2DMS:
+		case ETextureType::Texture2DMSArray:
+		case ETextureType::TextureCube:
+		case ETextureType::TextureCubeArray:
+		case ETextureType::RenderTarget:
+		case ETextureType::DepthStencil:
 			return VK_IMAGE_TYPE_2D;
 
-		case ERHITextureType::Texture3D:
+		case ETextureType::Texture3D:
 			return VK_IMAGE_TYPE_3D;
 
-		case ERHITextureType::TextureBuffer:
-		case ERHITextureType::Unknown:
+		case ETextureType::TextureBuffer:
+		case ETextureType::Unknown:
 		default:
 			return VK_IMAGE_TYPE_2D;
 		}
 	}
 
-	inline VkImageViewType ToVkImageViewType(ERHITextureType type)
+	inline VkImageViewType ToVkImageViewType(ETextureType type)
 	{
 		switch (type)
 		{
-		case ERHITextureType::Texture1D:        return VK_IMAGE_VIEW_TYPE_1D;
-		case ERHITextureType::Texture1DArray:   return VK_IMAGE_VIEW_TYPE_1D_ARRAY;
+		case ETextureType::Texture1D:        return VK_IMAGE_VIEW_TYPE_1D;
+		case ETextureType::Texture1DArray:   return VK_IMAGE_VIEW_TYPE_1D_ARRAY;
 
-		case ERHITextureType::Texture2D:
-		case ERHITextureType::Texture2DMS:
-		case ERHITextureType::RenderTarget:
-		case ERHITextureType::DepthStencil:
+		case ETextureType::Texture2D:
+		case ETextureType::Texture2DMS:
+		case ETextureType::RenderTarget:
+		case ETextureType::DepthStencil:
 			return VK_IMAGE_VIEW_TYPE_2D;
 
-		case ERHITextureType::Texture2DArray:
-		case ERHITextureType::Texture2DMSArray:
+		case ETextureType::Texture2DArray:
+		case ETextureType::Texture2DMSArray:
 			return VK_IMAGE_VIEW_TYPE_2D_ARRAY;
 
-		case ERHITextureType::Texture3D:        return VK_IMAGE_VIEW_TYPE_3D;
-		case ERHITextureType::TextureCube:      return VK_IMAGE_VIEW_TYPE_CUBE;
-		case ERHITextureType::TextureCubeArray: return VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
+		case ETextureType::Texture3D:        return VK_IMAGE_VIEW_TYPE_3D;
+		case ETextureType::TextureCube:      return VK_IMAGE_VIEW_TYPE_CUBE;
+		case ETextureType::TextureCubeArray: return VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
 
-		case ERHITextureType::TextureBuffer:
-		case ERHITextureType::Unknown:
+		case ETextureType::TextureBuffer:
+		case ETextureType::Unknown:
 		default:
 			return VK_IMAGE_VIEW_TYPE_2D;
 		}
 	}
+
+	inline VkBufferUsageFlags ToVkBufferUsage(EBufferType type)
+{
+	switch (type)
+	{
+	case EBufferType::UniformBuffer:
+	case EBufferType::DynamicUniformBuffer:
+		return VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+
+	case EBufferType::StorageBuffer:
+	case EBufferType::DynamicStorageBuffer:
+		return VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+
+	case EBufferType::VertexBuffer:
+		return VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+
+	case EBufferType::IndexBuffer:
+		return VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+
+	case EBufferType::IndirectBuffer:
+		return VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
+
+	case EBufferType::StagingBuffer:
+		return VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+
+	default:
+		return 0;
+	}
+}
 } // namespace DM::RHI

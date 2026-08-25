@@ -10,7 +10,9 @@ namespace DM
 		std::string Title;
 		unsigned int Width = 1280;
 		unsigned int Height = 720;
-
+		int PosX = -1;        // 窗口上次位置(未记录过时为 -1，创建时不定位)
+		int PosY = -1;
+		bool Maximized = false;
 		bool VSync = false;
 
 		WindowProps() = default;
@@ -26,6 +28,16 @@ namespace DM
 		bool ShouldClose() ;
 
 		void* GetNativeWindow()const ;
+
+		/// <summary>
+		/// 窗口当前是否获得焦点(用于聚焦时触发资产目录扫描等)
+		/// </summary>
+		bool IsWindowFocused() const;
+
+		// 查询窗口当前状态(用于退出前持久化窗口大小/位置/最大化)
+		void GetWindowSize(int& width, int& height) const;
+		void GetWindowPos(int& x, int& y) const;
+		bool IsMaximized() const;
 
 		void SetVSync(bool bEnanle) ;
 		bool IsVSyncEnabled()const  { return bIsEnableVSync; }

@@ -1,10 +1,11 @@
 ﻿#include<Core/AssetManagent/AssetImporter/ModelImporter.h>
-#include<Core/AssetManagent/AssetImporter/Texture2DImporter.h>
+#include<Core/AssetManagent/AssetImporter/AssetImporter.h>
 #include<Core/AssetManagent/AssetLoader/Texture2DLoader.h>
 #include<Core/AssetManagent/AsetPack/ModelPack.h>
 #include<Core/AssetManagent/AsetPack/TexturePack.h>
 #include<Core/AssetManagent/AssetCache.h>
 #include<Core/AssetManagent/AssetMetaDatabase.h>
+#include<Core/Log.h>
 #include<assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -49,8 +50,14 @@ namespace DM
 
 			if (!skip)
 			{
-				//导入依赖的纹理资源
-				AssetPack* pack = Texture2DImporter::Import(texturePath);
+				//导入依赖的纹理资源(走统一入口，复用已存在 GUID 以稳定引用)
+				AssetPack* pack = AssetImporter::Import(texturePath);
+				if (!pack)
+				{
+					// 依赖纹理导入失败时跳过该纹理，避免空指针解引用
+					LOG_CORE_WARN("[ModelImporter]import dependency texture failed, skip: {}", texturePath);
+					continue;
+				}
 
 				metaInfo.m_Dependency.emplace_back(pack->GetGUID());
 
@@ -173,7 +180,12 @@ namespace DM
 		std::string filePath{ assetPath.data() };
 		const aiScene* scene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
-		DM_CORE_ASSERT(scene, "{}", "[struct ModelImporter]import asset failed");
+		if (!scene)
+		{
+			LOG_CORE_ERROR("[ModelImporter]import asset failed: {} - {}", filePath, importer.GetErrorString());
+			delete pack;
+			return nullptr;
+		}
 
 		std::vector<TexturePack*>dependencyPack;
 

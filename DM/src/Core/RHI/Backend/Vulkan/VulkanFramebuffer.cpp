@@ -2,6 +2,7 @@
 #include<Core/RHI/Backend/Vulkan/VulkanTypeMapping.h>
 #include<Core/RHI/Backend/Vulkan/VulkanDevice.h>
 #include<assert.h>
+#include<vk_mem_alloc.h>
 namespace DM::RHI
 {
 	VulkanFramebuffer::VulkanFramebuffer(VulkanDevice* device, const RHIFramebufferDesc& desc) 
@@ -77,7 +78,7 @@ namespace DM::RHI
 
 			auto& image		= m_Attachments[i].vkImage;
 			auto& imageView = m_Attachments[i].vkImageView;
-			auto& memory	= m_Attachments[i].vkMemory;
+			auto& memory	= m_Attachments[i].vmaAllocation;
 
 			switch (usage)
 			{
@@ -142,7 +143,7 @@ namespace DM::RHI
 		{
 			auto& image = m_ResolveAttachment.vkImage;
 			auto& imageView = m_ResolveAttachment.vkImageView;
-			auto& memory = m_ResolveAttachment.vkMemory;
+			auto& memory = m_ResolveAttachment.vmaAllocation;
 
 
 			assert(m_vkColorFormat != VK_FORMAT_UNDEFINED && "[VulkanFramebuffer]Multisampling was used,but no color attachment was added");
@@ -159,8 +160,8 @@ namespace DM::RHI
 	void VulkanFramebuffer::DestroyAttachment(const Attachment& inAttachment)
 	{
 		vkDestroyImageView(m_Device->GetvkDevice(), inAttachment.vkImageView, nullptr);
-		vkDestroyImage(m_Device->GetvkDevice(), inAttachment.vkImage, nullptr);
-		vkFreeMemory(m_Device->GetvkDevice(), inAttachment.vkMemory, nullptr);
+		if (inAttachment.vmaAllocation)
+			vmaDestroyImage(m_Device->GetVmaAllocator(), inAttachment.vkImage, inAttachment.vmaAllocation);
 	}
 
 	void VulkanFramebuffer::Resize(const uint32_t& width, const uint32_t& height)
@@ -172,21 +173,30 @@ namespace DM::RHI
 		m_Desc.Width = m_Witdh;
 		m_Desc.Height = m_Height;
 
-		//@todo 使用栅栏同步或延迟销毁
-		vkDeviceWaitIdle(m_Device->GetvkDevice());
-
-		for (auto& attachment : m_Attachments)
-		{
-			DestroyAttachment(attachment);
-		}
+		// 使用延迟销毁：把旧的附件/framebuffer 移交给 VMA 帧队列，
+		// 等待 GPU 完成当前帧的工作后自动释放，避免 vkDeviceWaitIdle 阻塞。
+		VulkanDevice* device = m_Device;
+		std::vector<Attachment> oldAttachments = std::move(m_Attachments);
+		Attachment oldResolve = m_ResolveAttachment;
+		VkFramebuffer oldFramebuffer = m_vkFramebuffer;
 		m_Attachments.clear();
-
-		DestroyAttachment(m_ResolveAttachment);
 		m_ResolveAttachment = {};
-
-		vkDestroyFramebuffer(m_Device->GetvkDevice(), m_vkFramebuffer, nullptr);
 		m_vkFramebuffer = VK_NULL_HANDLE;
-		
+
+		device->DeferFree([device, oldAttachments, oldResolve, oldFramebuffer]()
+		{
+			for (const auto& attachment : oldAttachments)
+			{
+				vkDestroyImageView(device->GetvkDevice(), attachment.vkImageView, nullptr);
+				if (attachment.vmaAllocation)
+					vmaDestroyImage(device->GetVmaAllocator(), attachment.vkImage, attachment.vmaAllocation);
+			}
+			vkDestroyImageView(device->GetvkDevice(), oldResolve.vkImageView, nullptr);
+			if (oldResolve.vmaAllocation)
+				vmaDestroyImage(device->GetVmaAllocator(), oldResolve.vkImage, oldResolve.vmaAllocation);
+			vkDestroyFramebuffer(device->GetvkDevice(), oldFramebuffer, nullptr);
+		});
+
 		CreatevkFramebuffer();
 	}
 }

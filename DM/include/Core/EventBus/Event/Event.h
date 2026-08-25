@@ -9,13 +9,15 @@ namespace DM
 		MouseClick,MousePress,MouseRelease,MouseMove,MouseScroll,
 		KeyClick,KeyPress,KeyRelease,KeyRepeat,KeyTyped,
 		WindowResize,WindowClose,
+		AssetDatabaseChanged,
 	};
 	enum class EEventCategory
 	{
 		None,
 		Mouse,
 		KeyEvent,
-		Window
+		Window,
+		Asset
 	};
 	struct DM_API  Event
 	{

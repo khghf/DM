@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include"Serialization_Json.h"
+#include"../../ThirdPart/rapidjson/include/rapidjson/encodedstream.h"
 #include<iostream>
 #include"../Tool/Util.h"
 
@@ -150,7 +151,11 @@ namespace mirror::Serialization
 		document.SetObject();
 
 		rapidjson::IStreamWrapper streamWrapper(*stream);
-		document.ParseStream(streamWrapper);
+		// EncodedInputStream 自动识别并跳过 UTF-8 BOM。
+		// 直接用 ParseStream(默认 flags) 解析带 BOM 的文件(常见于编辑器保存)会失败，
+		// 导致 document 保持为空对象、反序列化静默无效。
+		rapidjson::EncodedInputStream<rapidjson::UTF8<>, rapidjson::IStreamWrapper> encodedStream(streamWrapper);
+		document.ParseStream<0, rapidjson::UTF8<>>(encodedStream);
 
 		DeserializeJson(&document, outVal);
 
@@ -211,102 +216,7 @@ namespace mirror::Serialization
 		}
 	}
 
-	///** TypeId */
-	//inline void JsonSerializer<TypeId>::Serialize(rapidjson::Value* jsonVal, const TypeId* inVal, RapidJsonAllocator*)
-	//{
-	//	jsonVal->SetUint64(inVal->GetId());
-	//}
-
-	//inline void JsonSerializer<TypeId>::Deserialize(rapidjson::Value* jsonVal, TypeId* outVal)
-	//{
-	//	outVal->SetTypeId(jsonVal->GetUint64());
-	//}
-
-	///** VariableId */
-	//inline void JsonSerializer<VariableId>::Serialize(rapidjson::Value* jsonVal, const VariableId* inVal, RapidJsonAllocator* allocator)
-	//{
-	//	rapidjson::Value typeVal{};
-	//	rapidjson::Value constFlag{};
-	//	rapidjson::Value volatileFlag{};
-	//	rapidjson::Value referenceFlag{};
-	//	rapidjson::Value rValReferenceFlag{};
-	//	rapidjson::Value pointerAmountFlag{};
-	//	rapidjson::Value arraySizeFlag{};
-
-	//	typeVal.SetUint64(inVal->GetTypeId().GetId());
-	//	constFlag.SetBool(inVal->IsConst());
-	//	volatileFlag.SetBool(inVal->IsVolatile());
-	//	referenceFlag.SetBool(inVal->IsReference());
-	//	rValReferenceFlag.SetBool(inVal->IsRValReference());
-	//	pointerAmountFlag.SetUint(inVal->GetPointerAmount());
-	//	arraySizeFlag.SetUint(inVal->GetArraySize());
-
-	//	jsonVal->AddMember("Type", typeVal, *allocator);
-	//	jsonVal->AddMember("Const", constFlag, *allocator);
-	//	jsonVal->AddMember("Volatile", volatileFlag, *allocator);
-	//	jsonVal->AddMember("Reference", referenceFlag, *allocator);
-	//	jsonVal->AddMember("R Value", rValReferenceFlag, *allocator);
-	//	jsonVal->AddMember("Pointer Amount", pointerAmountFlag, *allocator);
-	//	jsonVal->AddMember("Array Size", arraySizeFlag, *allocator);
-	//}
-
-	//inline void JsonSerializer<VariableId>::Deserialize(rapidjson::Value* jsonVal, VariableId* outVal)
-	//{
-	//	auto typeVal = jsonVal->FindMember("Type");
-	//	auto constVal = jsonVal->FindMember("Const");
-	//	auto volatileVal = jsonVal->FindMember("Volatile");
-	//	auto referenceVal = jsonVal->FindMember("Reference");
-	//	auto rValRefVal = jsonVal->FindMember("R Value");
-	//	auto pointerVal = jsonVal->FindMember("Pointer Amount");
-	//	auto arrayVal = jsonVal->FindMember("Array Size");
-
-	//	if (typeVal != jsonVal->MemberEnd())
-	//	{
-	//		TypeId id{};
-	//		JsonSerializer<TypeId>::Deserialize(&typeVal->value, &id);
-	//		outVal->SetTypeId(id);
-	//	}
-	//	if (constVal != jsonVal->MemberEnd())
-	//	{
-	//		if (constVal->value.GetBool()) outVal->SetConstFlag();
-	//		else outVal->RemoveConstFlag();
-	//	}
-	//	if (volatileVal != jsonVal->MemberEnd())
-	//	{
-	//		if (volatileVal->value.GetBool()) outVal->SetVolatileFlag();
-	//		else outVal->RemoveVolatileFlag();
-	//	}
-	//	if (referenceVal != jsonVal->MemberEnd())
-	//	{
-	//		if (referenceVal->value.GetBool()) outVal->SetReferenceFlag();
-	//		else outVal->RemoveReferenceFlag();
-	//	}
-	//	if (rValRefVal != jsonVal->MemberEnd())
-	//	{
-	//		if (rValRefVal->value.GetBool()) outVal->SetRValReferenceFlag();
-	//		else outVal->RemoveRValReferenceFlag();
-	//	}
-	//	if (pointerVal != jsonVal->MemberEnd())
-	//	{
-	//		outVal->SetPointerAmount(static_cast<uint16_t>(pointerVal->value.GetUint()));
-	//	}
-	//	if (arrayVal != jsonVal->MemberEnd())
-	//	{
-	//		outVal->SetArraySize(arrayVal->value.GetUint());
-	//	}
-	//}
-
-	///** FunctionId */
-	//inline void JsonSerializer<FunctionId>::Serialize(rapidjson::Value* jsonVal, const FunctionId* inVal, RapidJsonAllocator*)
-	//{
-	//	jsonVal->SetUint64(inVal->GetId());
-	//}
-
-	//inline void JsonSerializer<FunctionId>::Deserialize(rapidjson::Value* jsonVal, FunctionId* outVal)
-	//{
-	//	outVal->SetId(jsonVal->GetUint64());
-	//}
-
+	
 
 #ifdef  GLM_ENABLE
 
@@ -406,6 +316,9 @@ namespace mirror::Serialization
 	}
 
 #endif 
+
+
+
 
 
 	// ============ 基础类型特化实现 ============

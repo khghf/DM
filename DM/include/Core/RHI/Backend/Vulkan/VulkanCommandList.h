@@ -8,7 +8,6 @@ namespace DM::RHI
 	class VulkanSwapchain;
 	class VulkanPipeline;
 	class VulkanBuffer;
-	extern uint8_t CURRENT_CPU_PROCESSES_FRAME_INDEX;
 
 	class DM_API VulkanCommandList : public RHICommandList
 	{

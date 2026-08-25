@@ -5,6 +5,7 @@ namespace DM
 {
 	class DM_API AssetObject:public Object
 	{
+		friend struct AssetObjectSetter;
 	public:
 		AssetObject()=default;
 		~AssetObject();

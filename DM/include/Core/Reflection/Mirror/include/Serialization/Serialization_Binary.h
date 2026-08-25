@@ -76,31 +76,7 @@ namespace mirror::Serialization
 	/// <param name="outVal">指向输出值的指针，用于存储反序列化后的数据。</param>
 	/// <param name="type">指定反序列化数据的类型标识符。</param>
 	void DeserializeBinaryDefault(std::istream* stream, void* outVal, mirror::TypeId type);
-
-
-	///** TypeId */
-	//template <>
-	//struct BinarySerializer<TypeId>
-	//{
-	//	static void Serialize(std::ostream* stream, const TypeId* inVal);
-	//	static void Deserialize(std::istream* stream, TypeId* outVal);
-	//};
-
-	///** VariableId */
-	//template <>
-	//struct BinarySerializer<VariableId>
-	//{
-	//	static void Serialize(std::ostream* stream, const VariableId* inVal);
-	//	static void Deserialize(std::istream* stream, VariableId* outVal);
-	//};
-
-	///** FunctionId */
-	//template <>
-	//struct BinarySerializer<FunctionId>
-	//{
-	//	static void Serialize(std::ostream* stream, const FunctionId* inVal);
-	//	static void Deserialize(std::istream* stream, FunctionId* outVal);
-	//};
+	
 
 #ifdef  GLM_ENABLE
 	template <>
@@ -129,7 +105,6 @@ namespace mirror::Serialization
 	};
 
 #endif //  GLM_HPP
-
 
 
 

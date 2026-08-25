@@ -2,6 +2,10 @@
 #include"Core/RHI/RHIBuffer.h"
 #include<vulkan/vulkan.h>
 
+// VMA 分配句柄前置声明（完整定义见 vk_mem_alloc.h，仅在实现文件中包含）
+struct VmaAllocation_T;
+typedef VmaAllocation_T* VmaAllocation;
+
 namespace DM::RHI
 {
 	class VulkanDevice;
@@ -45,7 +49,7 @@ namespace DM::RHI
 	protected:
 		VulkanDevice*const	m_Device;      
 		VkBuffer			m_vkBuffer{};
-		VkDeviceMemory		m_vkMemory{};
+		VmaAllocation		m_vmaAllocation{};
 		void*				m_MappedPtr{};
 		uint32_t			m_Size{};
 		EBufferType			m_Type;

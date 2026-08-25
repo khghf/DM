@@ -83,6 +83,7 @@ namespace DM
 		auto database = AssetMetaDatabase::Get();
 		database->AddNewAssetPack(pack);
 		database->Save();
-		return path.string();
+		// 返回统一后的路径(绝对->相对)，保证调用方(如 world->m_path)与资产库记录/内容浏览器一致
+		return database->NormalizePath(path.string()).string();
 	}
 }

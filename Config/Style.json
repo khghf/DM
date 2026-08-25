@@ -1,0 +1,131 @@
+{
+    "Bg0": [
+        0.10000000149011612,
+        0.10000000149011612,
+        0.10000000149011612,
+        1.0
+    ],
+    "Bg1": [
+        0.10000000149011612,
+        0.10000000149011612,
+        0.10000000149011612,
+        1.0
+    ],
+    "Bg2": [
+        0.19264410436153412,
+        0.20300611853599548,
+        0.2471482753753662,
+        1.0
+    ],
+    "Hovered": [
+        0.463878333568573,
+        0.463878333568573,
+        0.463878333568573,
+        1.0
+    ],
+    "Active": [
+        0.49809885025024414,
+        0.49809885025024414,
+        0.49809885025024414,
+        1.0
+    ],
+    "Border": [
+        0.5,
+        0.4000000059604645,
+        0.30000001192092896,
+        1.0
+    ],
+    "Text": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "TextDisabled": [
+        0.5209125280380249,
+        0.3545374274253845,
+        0.3545374274253845,
+        1.0
+    ],
+    "Accent": [
+        0.8999999761581421,
+        0.6000000238418579,
+        0.20000000298023224,
+        1.0
+    ],
+    "WindowPadding": [
+        6.5,
+        15.0
+    ],
+    "FramePadding": [
+        8.300000190734863,
+        3.5
+    ],
+    "CellPadding": [
+        4.5,
+        4.699999809265137
+    ],
+    "ItemSpacing": [
+        3.5,
+        7.300000190734863
+    ],
+    "ItemInnerSpacing": [
+        3.0,
+        5.0
+    ],
+    "IndentSpacing": 18.299999237060547,
+    "ScrollbarSize": 12.100000381469727,
+    "ScrollbarPadding": 3.0,
+    "GrabMinSize": 3.5,
+    "WindowBorderSize": 2.0,
+    "ChildBorderSize": 1.0,
+    "PopupBorderSize": 1.0,
+    "FrameBorderSize": 0.0,
+    "TabBorderSize": 1.0,
+    "TabBarBorderSize": 1.0,
+    "TabBarOverlineSize": 0.0,
+    "DockingSeparatorSize": 2.0,
+    "WindowBorderHoverPadding": 4.0,
+    "SeparatorSize": 1.0,
+    "WindowRounding": 5.0,
+    "ChildRounding": 5.099999904632568,
+    "FrameRounding": 3.0999999046325684,
+    "PopupRounding": 5.099999904632568,
+    "ScrollbarRounding": 15.800000190734863,
+    "GrabRounding": 0.0,
+    "TabRounding": 11.600000381469727,
+    "MenuItemRounding": 10.5,
+    "ImageRounding": 4.599999904632568,
+    "ImageBorderSize": 0.10000000149011612,
+    "TreeLinesSize": 1.600000023841858,
+    "TreeLinesRounding": 6.0,
+    "DragDropTargetRounding": 8.0,
+    "DragDropTargetBorderSize": 2.0,
+    "DragDropTargetPadding": 5.800000190734863,
+    "WindowTitleAlign": [
+        0.5,
+        0.5
+    ],
+    "ButtonTextAlign": [
+        0.5,
+        0.5
+    ],
+    "SelectableTextAlign": [
+        0.0,
+        0.0
+    ],
+    "WindowMenuButtonPosition": 0,
+    "MouseCursorScale": 1.0,
+    "DisplayWindowPadding": [
+        20.799999237060547,
+        20.0
+    ],
+    "DisplaySafeAreaPadding": [
+        4.199999809265137,
+        4.0
+    ],
+    "AntiAliasedLines": true,
+    "AntiAliasedFill": true,
+    "CurveTessellationMaxError": 0.5,
+    "CircleTessellationMaxError": 0.4000000059604645
+}

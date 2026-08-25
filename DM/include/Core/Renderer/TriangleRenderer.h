@@ -88,6 +88,7 @@ namespace DM
 		};
 		void UpdateGlobalData(int index);
 		void UpdateInstanceData(int index);
+		bool EnsurePipelineResources();
 	public:
 
 		TriangleRenderer();
@@ -134,9 +135,11 @@ namespace DM
 		std::vector<RHI::RHIFramebuffer*>			m_Framebuffers;
 
 
-		uint8_t				m_AvailableFramebufferIndex;
+		uint8_t				m_AvailableFramebufferIndex = 0;
 		RHI::ESampleMode	m_SameMode;
 		bool				m_EnableDepth;
+		bool				m_bPipelineReady = false;	// 内置 shader 管线资源是否已就绪(惰性创建)
+		bool				m_bFrameActive = true;		// 本帧是否可渲染(管线未就绪时跳过)
 		RenderData			m_RenderData{};
 	};
 }

@@ -1,6 +1,7 @@
 ﻿#include<Core/AssetManagent/AssetLoader/ShaderLoader.h>
 #include<Core/AssetManagent/AssetImporter/ShaderImporter.h>
 #include<Core/AssetManagent/AssetObject/Shader.h>
+#include<Core/AssetManagent/AssetObject/AssetObjectSetter.h>
 #include<Core/AssetManagent/AsetPack/ShaderPack.h>
 #include<Core/RHI/RHI.h>
 namespace DM
@@ -34,6 +35,9 @@ namespace DM
 		}
 
 		shader->m_RHISHader = RHI::RHIDevice::Get()->CreateShader(desc);
+
+		// 资产对象持有包内 GUID，后续可通过资产库反查源文件路径
+		AssetObjectSetter::SetAssetId(shader, pack->GetGUID());
 
 		return CreateSPtr_Raw(shader);
 	}

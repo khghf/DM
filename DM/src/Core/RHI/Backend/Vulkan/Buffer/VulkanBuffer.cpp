@@ -1,6 +1,7 @@
 ﻿#include"Core/RHI/Backend/Vulkan/Buffer/VulkanBuffer.h"
 #include"Core/RHI/Backend/Vulkan/VulkanDevice.h"
 #include<Core/RHI/Backend/Vulkan/VulkanTypeMapping.h>
+#include<vk_mem_alloc.h>
 
 namespace DM::RHI
 {
@@ -36,9 +37,11 @@ namespace DM::RHI
 
 	VulkanBuffer::~VulkanBuffer()
 	{
-		if ( m_MappedPtr) vkUnmapMemory(m_Device->GetvkDevice(),  m_vkMemory); 
-		vkDestroyBuffer(m_Device->GetvkDevice(),  m_vkBuffer, nullptr);
-		vkFreeMemory(m_Device->GetvkDevice(),  m_vkMemory, nullptr);
+		if (m_vmaAllocation)
+		{
+			if (m_MappedPtr) vmaUnmapMemory(m_Device->GetVmaAllocator(), m_vmaAllocation);
+			vmaDestroyBuffer(m_Device->GetVmaAllocator(), m_vkBuffer, m_vmaAllocation);
+		}
 	}
 
 	void VulkanBuffer::Update(const void* data, size_t size)
@@ -67,13 +70,13 @@ namespace DM::RHI
 	void* VulkanBuffer::Map()
 	{
 		//将内存实际的物理地址映射为CPU的虚拟地址以便CPU能够访问
-		VK_CHECK(vkMapMemory(m_Device->GetvkDevice(),  m_vkMemory, 0, m_Size, 0, & m_MappedPtr));
+		VK_CHECK(vmaMapMemory(m_Device->GetVmaAllocator(), m_vmaAllocation, &m_MappedPtr));
 		return GetMappedPtr();
 	}
 
 	void VulkanBuffer::Unmap()
 	{
-		vkUnmapMemory(m_Device->GetvkDevice(),  m_vkMemory);
+		vmaUnmapMemory(m_Device->GetVmaAllocator(), m_vmaAllocation);
 		m_MappedPtr = nullptr;
 	}
 
@@ -92,55 +95,53 @@ namespace DM::RHI
 
 	void VulkanBuffer::CreateVertexBuffer(const RHIBufferDesc& desc)
 	{
-		m_Device->CreatevkBuffer(m_Size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_vkBuffer, m_vkMemory);
+		m_Device->CreatevkBuffer(m_Size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_vkBuffer, m_vmaAllocation);
 	}
 
 	void VulkanBuffer::UpdateVertexBuffer(const void* data, size_t size)
 	{
 		VkBuffer temporaryvkBuffer{};
-		VkDeviceMemory temporaryvkMemory{};
+		VmaAllocation temporaryAllocation{};
 		void* temporaryMapedPtr = nullptr;
 		//创建CPU可写的用于作为数据传输源的中间缓存
-		m_Device->CreatevkBuffer(m_Size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, temporaryvkBuffer, temporaryvkMemory);
+		m_Device->CreatevkBuffer(m_Size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, temporaryvkBuffer, temporaryAllocation);
 		//映射到对应内存局域(获取指向刚分配的中间内存的指针)
-		vkMapMemory(m_Device->GetvkDevice(), temporaryvkMemory, 0, m_Size, 0, &temporaryMapedPtr);
+		VK_CHECK(vmaMapMemory(m_Device->GetVmaAllocator(), temporaryAllocation, &temporaryMapedPtr));
 		memcpy(temporaryMapedPtr, data, size);//写入数据
-		vkUnmapMemory(m_Device->GetvkDevice(), temporaryvkMemory);//解除映射
+		vmaUnmapMemory(m_Device->GetVmaAllocator(), temporaryAllocation);//解除映射
 		temporaryMapedPtr = nullptr;
 
 		//将数据复制到GPU本地内存
 		CopyBuffer(temporaryvkBuffer, m_vkBuffer);
 
-		vkDestroyBuffer(m_Device->GetvkDevice(), temporaryvkBuffer, nullptr);
-		vkFreeMemory(m_Device->GetvkDevice(), temporaryvkMemory, nullptr);
+		vmaDestroyBuffer(m_Device->GetVmaAllocator(), temporaryvkBuffer, temporaryAllocation);
 	}
 
 	void VulkanBuffer::CreateIndexBuffer(const RHIBufferDesc& desc)
 	{
-		m_Device->CreatevkBuffer(m_Size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_vkBuffer, m_vkMemory);
+		m_Device->CreatevkBuffer(m_Size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_vkBuffer, m_vmaAllocation);
 	}
 
 	void VulkanBuffer::UpdateIndexBuffer(const void* data, size_t size)
 	{
 		VkBuffer temporaryvkBuffer{};
-		VkDeviceMemory temporaryvkMemory{};
+		VmaAllocation temporaryAllocation{};
 		void* temporaryMapedPtr = nullptr;
 
 		//创建CPU可写的用于作为数据传输源的中间缓存
-		m_Device->CreatevkBuffer(m_Size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, temporaryvkBuffer, temporaryvkMemory);
+		m_Device->CreatevkBuffer(m_Size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, temporaryvkBuffer, temporaryAllocation);
 		//映射到对应内存局域(获取指向刚分配的中间内存的指针)
-		vkMapMemory(m_Device->GetvkDevice(), temporaryvkMemory, 0, m_Size, 0, &temporaryMapedPtr);
+		VK_CHECK(vmaMapMemory(m_Device->GetVmaAllocator(), temporaryAllocation, &temporaryMapedPtr));
 		memcpy(temporaryMapedPtr, data, size);//写入数据
-		vkUnmapMemory(m_Device->GetvkDevice(), temporaryvkMemory);//解除映射
+		vmaUnmapMemory(m_Device->GetVmaAllocator(), temporaryAllocation);//解除映射
 
 		CopyBuffer(temporaryvkBuffer, m_vkBuffer);
-		vkDestroyBuffer(m_Device->GetvkDevice(), temporaryvkBuffer, nullptr);
-		vkFreeMemory(m_Device->GetvkDevice(), temporaryvkMemory, nullptr);
+		vmaDestroyBuffer(m_Device->GetVmaAllocator(), temporaryvkBuffer, temporaryAllocation);
 	}
 
 	void VulkanBuffer::CreateUniformBuffer(const RHIBufferDesc& desc)
 	{
-		m_Device->CreatevkBuffer(m_Size, ToVkBufferUsage(desc.Type), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_vkBuffer, m_vkMemory);
+		m_Device->CreatevkBuffer(m_Size, ToVkBufferUsage(desc.Type), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_vkBuffer, m_vmaAllocation);
 		Map();
 	}
 

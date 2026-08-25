@@ -5,6 +5,14 @@
 #include<string>
 #include<vector>
 #include<cstdint>
+#include<functional>
+#include<deque>
+
+// VMA 句柄前置声明（完整定义位于 vk_mem_alloc.h，仅在实现文件中包含）
+struct VmaAllocator_T;
+struct VmaAllocation_T;
+typedef VmaAllocator_T* VmaAllocator;
+typedef VmaAllocation_T* VmaAllocation;
 
 #ifndef VK_CHECK
 #define VK_CHECK(x)                                                                   \
@@ -35,10 +43,6 @@ namespace DM::RHI
 	/// 表示最大并行帧数。
 	/// </summary>
 	constexpr inline uint8_t MAX_FRAMES_IN_FLIGHT = 2;
-	/// <summary>
-	/// 用于表示当前 CPU正在处理的帧的索引。
-	/// </summary>
-	inline uint8_t CURRENT_CPU_PROCESSES_FRAME_INDEX=0;
 
 	/// <summary>
 	/// 队列族(Queue Family)
@@ -81,8 +85,8 @@ namespace DM::RHI
 		virtual RHICommandList* CreateCommandList() override;
 
 		virtual uint8_t	GetConcurrentFrameCount()const { return MAX_FRAMES_IN_FLIGHT; }
-		virtual uint8_t GetCpuProcessFrameIndex()const override { return CURRENT_CPU_PROCESSES_FRAME_INDEX;}
-		virtual uint8_t GetGpuProcessFrameIndex()const override { return m_bIsFirstRenderFrame ? CURRENT_CPU_PROCESSES_FRAME_INDEX : (CURRENT_CPU_PROCESSES_FRAME_INDEX + MAX_FRAMES_IN_FLIGHT - 1) % MAX_FRAMES_IN_FLIGHT; }
+		virtual uint8_t GetCpuProcessFrameIndex()const override { return m_CurrentFrameIndex;}
+		virtual uint8_t GetGpuProcessFrameIndex()const override { return m_bIsFirstRenderFrame ? m_CurrentFrameIndex : (m_CurrentFrameIndex + MAX_FRAMES_IN_FLIGHT - 1) % MAX_FRAMES_IN_FLIGHT; }
 
 
 		VkInstance			GetvkInstance()				const { return m_vkInstance; }
@@ -93,9 +97,9 @@ namespace DM::RHI
 		VkQueue				GetvkPresentQueue()			const { return m_vkPresentQueue; }
 		uint32_t			GetvkGraphicsQueueFamily()	const { return m_vkGraphicsFamily; }
 		uint32_t			GetvkPresentQueueFamily()	const { return m_vkPresentFamily; }
-		VkSemaphore			GetRenderFinishedSemaphore()const { return m_RenderFinishedSemaphores[CURRENT_CPU_PROCESSES_FRAME_INDEX]; }
-		VkSemaphore			GetImageAvailableSemaphore()const { return m_ImageAvailableSemaphores[CURRENT_CPU_PROCESSES_FRAME_INDEX]; }
-		VkFence*			GetInFlightFence()			const { return const_cast<VkFence*>(&m_InFlightFences[CURRENT_CPU_PROCESSES_FRAME_INDEX]); }
+		VkSemaphore			GetRenderFinishedSemaphore()const { return m_RenderFinishedSemaphores[m_CurrentFrameIndex]; }
+		VkSemaphore			GetImageAvailableSemaphore()const { return m_ImageAvailableSemaphores[m_CurrentFrameIndex]; }
+		VkFence*			GetInFlightFence()			const { return const_cast<VkFence*>(&m_InFlightFences[m_CurrentFrameIndex]); }
 		uint32_t			GetAPIVersion() 			const { return m_APIVersion; }
 
 
@@ -122,10 +126,18 @@ namespace DM::RHI
 		void			EndSingleTimeCommands();
 
 
-		//@todo use vma as alloactor
-		void CreatevkBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)const;
-		void CreatevkImage(VkImageType imageType, uint32_t width, uint32_t height, VkFormat format,VkSampleCountFlagBits sampleCount, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, uint32_t depth=1, uint32_t mipLevels=1, uint32_t arrayLayers=1)const;
+		void CreatevkBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& bufferAllocation)const;
+		void CreatevkImage(VkImageType imageType, uint32_t width, uint32_t height, VkFormat format,VkSampleCountFlagBits sampleCount, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VmaAllocation& imageAllocation, uint32_t depth=1, uint32_t mipLevels=1, uint32_t arrayLayers=1)const;
 		void CreatevkImageView(VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectMask, VkImageView& imageView, uint32_t baseMipLevel=0, uint32_t levelCount=1, uint32_t baseArrayLayer=0, uint32_t layerCount=1)const;
+		/// <summary>
+		/// 获取 VMA 分配器句柄，供资源类执行 vmaMapMemory / vmaDestroyBuffer 等操作。
+		/// </summary>
+		VmaAllocator			GetVmaAllocator()			const { return m_vmaAllocator; }
+		/// <summary>
+		/// 将资源销毁延迟到 MAX_FRAMES_IN_FLIGHT 帧之后执行，避免 GPU 仍在使用该资源。
+		/// </summary>
+		/// <param name="func">在安全时刻执行的回调（通常为 vkDestroy / vmaDestroy 调用）。</param>
+		void					DeferFree(std::function<void()>&& func);
 		
 		void TransitionImageLayout(VkCommandBuffer cmdBuffer,VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageAspectFlags aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, uint32_t baseMipLevel = 0, uint32_t levelCount = 1, uint32_t baseArrayLayer = 0, uint32_t layerCount = 1);
 		void TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageAspectFlags aspectMask=VK_IMAGE_ASPECT_COLOR_BIT, uint32_t baseMipLevel=0, uint32_t levelCount=1, uint32_t baseArrayLayer=0, uint32_t layerCount=1);
@@ -168,8 +180,22 @@ namespace DM::RHI
 		std::vector<VkSemaphore> m_RenderFinishedSemaphores;// 信号量：该图"渲染完了，可以呈现了"
 		std::vector<VkSemaphore> m_ImageAvailableSemaphores;// 信号量：交换链"某张图可以取来画了"
 		std::vector<VkFence>	m_InFlightFences;
-	
-		bool m_bIsFirstRenderFrame = true;
+
+		VmaAllocator				m_vmaAllocator			= nullptr; // VMA 内存分配器
+
+		uint8_t						m_CurrentFrameIndex		= 0;     // 当前 CPU 正在处理的帧索引(0..MAX_FRAMES_IN_FLIGHT-1)
+		bool						m_bIsFirstRenderFrame	= true;
+		/// <summary> 延迟销毁队列项：记录入队时的绝对帧计数，到达安全帧后执行销毁回调。</summary>
+		struct DeferredFreeItem
+		{
+			uint64_t				FrameCounter;   // 入队时的绝对帧计数
+			std::function<void()>	Func;           // 销毁回调
+		};
+		std::deque<DeferredFreeItem> m_DeferredFreeQueue;
+		uint64_t					m_FrameCounter	= 0; // 单调递增的绝对帧计数
+
+		/// <summary> 刷新已安全到期的延迟销毁项（在 BeginFrame 等待 fence 之后调用）。</summary>
+		void FlushDeferredFreeQueue();
 
 		void CreatevkInstance(bool enableValidation);  
 	
@@ -186,6 +212,11 @@ namespace DM::RHI
 		void CreateSyncObjects();
 
 		void CreatevkDescriptorPool();
+
+		/// <summary>
+		/// 初始化 VMA 内存分配器（需在 CreatevkDevice 之后调用）。
+		/// </summary>
+		void CreateVmaAllocator();
 
 		static bool CheckValidationLayerSupport(const std::vector<const char*>& layers);
 		static std::vector<const char*> GetRequiredExtensions();

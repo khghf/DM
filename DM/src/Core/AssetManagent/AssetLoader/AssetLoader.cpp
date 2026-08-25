@@ -8,20 +8,31 @@ namespace DM
 
 	AssetLoader::Loader_Path AssetLoader::SelectLoader(std::string_view packPath)
 	{
-		std::string sourceFilePath = packPath.data();
-			
+		// 1. 优先按资产包路径精确匹配
+		//    World 等自包含资产的资产包路径即源文件路径没有 .dasset 后缀
+		const AssetRecord* record = AssetMetaDatabase::Get()->GetRecordByAssetPackPath(packPath);
 
-		auto pos= sourceFilePath.find_last_of('.');
-		if (pos != std::string::npos)
+		// 2.剥掉 ".dasset" 后缀按源文件路径匹配
+		if (!record)
 		{
-			sourceFilePath = sourceFilePath.substr(0, pos);
+			std::string sourceFilePath(packPath);   // 注意：勿用 packPath.data()，string_view 不保证以 \0 结尾
+			constexpr std::string_view dasSuffix = ".dasset";
+			if (sourceFilePath.size() > dasSuffix.size()&& sourceFilePath.compare(sourceFilePath.size() - dasSuffix.size(), dasSuffix.size(), dasSuffix) == 0)
+			{
+				sourceFilePath.resize(sourceFilePath.size() - dasSuffix.size());
+			}
+			record = AssetMetaDatabase::Get()->GetRecordBySourceFilePath(sourceFilePath);
 		}
 
-		const AssetRecord* record = AssetMetaDatabase::Get()->GetRecordBySourceFilePath(sourceFilePath);
+		if (!record)
+		{
+			LOG_CORE_ERROR("[AssetLoader]no asset record found for pack path: {}", packPath);
+			return nullptr;
+		}
 
 		const auto& registry = GetLoaderRegistry_Path();
 		auto it = registry.find(record->AssetType);
-		return it!= registry.end()?it->second:nullptr;
+		return it != registry.end() ? it->second : nullptr;
 	}
 
 	AssetLoader::Loader_Pack AssetLoader::SelectLoader(AssetPack* pack)

@@ -1,4 +1,6 @@
 ﻿#include<Core/RHI/Backend/Vulkan/VulkanDevice.h>
+#define VMA_IMPLEMENTATION
+#include<vk_mem_alloc.h>
 #include<Core/RHI/Backend/Vulkan/VulkanRenderPass.h>
 #include<Core/RHI/Backend/Vulkan/VulkanSwapchain.h>
 #include<Core/RHI/Backend/Vulkan/Buffer/VulkanBuffer.h>
@@ -39,10 +41,16 @@ namespace DM::RHI
 		CreateSingleTimevkCommandPool();
 		CreateSyncObjects();
 		CreatevkDescriptorPool();
+		CreateVmaAllocator();
 	}
 
 	VulkanDevice::~VulkanDevice()
 	{
+		vkDeviceWaitIdle(m_vkDevice); // 确保 GPU 已完成所有工作，再释放资源
+		// 立即执行所有待处理的延迟销毁回调(设备即将销毁，不再需要等待帧安全点)
+		for (auto& item : m_DeferredFreeQueue) item.Func();
+		m_DeferredFreeQueue.clear();
+
 		vkDestroyDescriptorPool(m_vkDevice, m_vkDescriptorPool, nullptr);
 		for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 		{
@@ -52,6 +60,11 @@ namespace DM::RHI
 		}
 
 		vkDestroyCommandPool(m_vkDevice, m_SingleTimeCommandPool, nullptr);
+		if (m_vmaAllocator)
+		{
+			vmaDestroyAllocator(m_vmaAllocator);
+			m_vmaAllocator = nullptr;
+		}
 		vkDestroyDevice(m_vkDevice, nullptr);
 		if (m_vkDebugMessenger)
 		{
@@ -66,14 +79,45 @@ namespace DM::RHI
 
 	void VulkanDevice::BeginFrame()
 	{
+		// 等待当前帧的 fence：保证上一轮使用该帧槽位的 GPU 工作已完成
 		vkWaitForFences(m_vkDevice, 1, GetInFlightFence(), VK_TRUE, UINT64_MAX);
 		vkResetFences(m_vkDevice, 1, GetInFlightFence());
+		FlushDeferredFreeQueue(); // 此时之前提交的帧已确认完成，可安全释放延迟销毁的资源
 	}
 
 	void VulkanDevice::EndFrame()
 	{
-		CURRENT_CPU_PROCESSES_FRAME_INDEX = (CURRENT_CPU_PROCESSES_FRAME_INDEX + 1) % MAX_FRAMES_IN_FLIGHT;
+		++m_FrameCounter;
+		m_CurrentFrameIndex = static_cast<uint8_t>(m_FrameCounter % MAX_FRAMES_IN_FLIGHT);
 		m_bIsFirstRenderFrame = false;
+	}
+
+	void VulkanDevice::CreateVmaAllocator()
+	{
+		VmaAllocatorCreateInfo allocatorInfo{};
+		allocatorInfo.physicalDevice = m_vkPhysicalDevice;
+		allocatorInfo.device = m_vkDevice;
+		allocatorInfo.instance = m_vkInstance;
+		allocatorInfo.vulkanApiVersion = VK_API_VERSION_1_2; // 与 CreatevkInstance 保持一致
+		VK_CHECK(vmaCreateAllocator(&allocatorInfo, &m_vmaAllocator));
+	}
+
+	void VulkanDevice::DeferFree(std::function<void()>&& func)
+	{
+		m_DeferredFreeQueue.push_back({ m_FrameCounter, std::move(func) });
+	}
+
+	void VulkanDevice::FlushDeferredFreeQueue()
+	{
+		// 入队于帧 F 的资源，最早要等 GPU 完成该帧的工作才能安全释放；
+		// 由于帧内提交在 EndFrame 之后排队，至少保留 MAX_FRAMES_IN_FLIGHT 帧。
+		while (!m_DeferredFreeQueue.empty() &&
+			m_FrameCounter - m_DeferredFreeQueue.front().FrameCounter >= MAX_FRAMES_IN_FLIGHT)
+		{
+			auto item = std::move(m_DeferredFreeQueue.front());
+			m_DeferredFreeQueue.pop_front();
+			item.Func();
+		}
 	}
 
 	void VulkanDevice::WaitGPUIdle()
@@ -472,37 +516,27 @@ namespace DM::RHI
 		vkQueueWaitIdle(m_vkGraphicsQueue);
 	}
 	
-	void VulkanDevice::CreatevkBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)const
+	void VulkanDevice::CreatevkBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& bufferAllocation)const
 	{
+		VkBufferCreateInfo ci{};
+		ci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		ci.usage = usage;
+		ci.size = size;
+		ci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-		//创建缓冲
+		VmaAllocationCreateInfo allocCI{};
+		allocCI.usage = VMA_MEMORY_USAGE_AUTO;          // 让 VMA 根据 usage/flags 自动选择内存类型
+		allocCI.requiredFlags = properties;              // 保留调用方对内存属性(HOST_VISIBLE 等)的要求
+		// VMA 3.x 要求：若要对该分配调用 vmaMapMemory，创建时必须显式声明 HOST_ACCESS 标志
+		if (properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)
 		{
-			VkBufferCreateInfo ci{};
-			ci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-			ci.usage = usage;
-			ci.size = size;
-			ci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-			(vkCreateBuffer(GetvkDevice(), &ci, nullptr, &buffer));
+			allocCI.flags |= VMA_ALLOCATION_CREATE_HOST_ACCESS_RANDOM_BIT;
 		}
-		{
-			// 询问这块缓冲需要多少显存、能用哪些内存类型。
-			VkMemoryRequirements req{};
-			vkGetBufferMemoryRequirements(GetvkDevice(), buffer, &req);
-
-			VkMemoryAllocateInfo ci{};
-			ci.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-			ci.allocationSize = req.size;
-			ci.memoryTypeIndex = FindMemoryType(req.memoryTypeBits, properties);
-			(vkAllocateMemory(GetvkDevice(), &ci, nullptr, &bufferMemory));
-		}
-		(vkBindBufferMemory(GetvkDevice(), buffer, bufferMemory, 0)); // 把显存绑到缓冲
+		VK_CHECK(vmaCreateBuffer(m_vmaAllocator, &ci, &allocCI, &buffer, &bufferAllocation, nullptr));
 	}
 
-	void VulkanDevice::CreatevkImage(VkImageType imageType, uint32_t width, uint32_t height, VkFormat format, VkSampleCountFlagBits sampleCount, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory, uint32_t depth, uint32_t mipLevels, uint32_t arrayLayers) const
+	void VulkanDevice::CreatevkImage(VkImageType imageType, uint32_t width, uint32_t height, VkFormat format, VkSampleCountFlagBits sampleCount, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VmaAllocation& imageAllocation, uint32_t depth, uint32_t mipLevels, uint32_t arrayLayers) const
 	{
-		//创建图像
-		VkDeviceMemory textureImageMemory;
-
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		imageInfo.imageType = imageType;
@@ -518,23 +552,11 @@ namespace DM::RHI
 		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		imageInfo.samples = sampleCount;
 		imageInfo.flags = 0; // Optional
-		if (vkCreateImage(GetvkDevice(), &imageInfo, nullptr, &image) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create image!");
-		}
-		//申请并绑定设备内存
-		VkMemoryRequirements memRequirements;
-		vkGetImageMemoryRequirements(GetvkDevice(), image, &memRequirements);
 
-		VkMemoryAllocateInfo allocInfo{};
-		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		allocInfo.allocationSize = memRequirements.size;
-		allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
-
-		if (vkAllocateMemory(GetvkDevice(), &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate image memory!");
-		}
-
-		vkBindImageMemory(GetvkDevice(), image, imageMemory, 0);
+		VmaAllocationCreateInfo allocCI{};
+		allocCI.usage = VMA_MEMORY_USAGE_AUTO;
+		allocCI.requiredFlags = properties;
+		VK_CHECK(vmaCreateImage(m_vmaAllocator, &imageInfo, &allocCI, &image, &imageAllocation, nullptr));
 	}
 	void VulkanDevice::CreatevkImageView(VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectMask, VkImageView&imageView,uint32_t baseMipLevel,uint32_t levelCount,uint32_t baseArrayLayer,uint32_t layerCount)const
 	{

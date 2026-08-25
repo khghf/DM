@@ -2,6 +2,7 @@
 #include<Core/RHI/Backend/Vulkan/VulkanDevice.h>
 #include<Core/RHI/Backend/Vulkan/VulkanTypeMapping.h>
 #include<stb_image.h>
+#include<vk_mem_alloc.h>
 namespace DM::RHI
 {
 	static uint8_t ToSTBFormat(EFormat rhiFormat)
@@ -28,18 +29,18 @@ namespace DM::RHI
 	{
 		m_BufferSize = FormatByteSize(desc.Format) * desc.Width * desc.Height;
 
-		CreatevkImage(desc, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_vkImage, m_vkImageMemory);
+		CreatevkImage(desc, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_vkImage, m_vmaAllocation);
 
 		if (data !=nullptr)
 		{
 			//创建中间缓冲区暂存图像数据
 			VkBuffer stagingBuffer;
-			VkDeviceMemory stagingBufferMemory;
-			device->CreatevkBuffer(m_BufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+			VmaAllocation stagingBufferAllocation;
+			device->CreatevkBuffer(m_BufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferAllocation);
 			void* mapPtr;
-			vkMapMemory(device->GetvkDevice(), stagingBufferMemory, 0, m_BufferSize, 0, &mapPtr);
+			VK_CHECK(vmaMapMemory(device->GetVmaAllocator(), stagingBufferAllocation, &mapPtr));
 			memcpy(mapPtr, data, m_BufferSize);
-			vkUnmapMemory(device->GetvkDevice(), stagingBufferMemory);
+			vmaUnmapMemory(device->GetVmaAllocator(), stagingBufferAllocation);
 
 
 			//转换布局准备填充数据
@@ -53,8 +54,7 @@ namespace DM::RHI
 
 
 
-			vkDestroyBuffer(m_Device->GetvkDevice(), stagingBuffer, nullptr);
-			vkFreeMemory(m_Device->GetvkDevice(), stagingBufferMemory, nullptr);
+			vmaDestroyBuffer(device->GetVmaAllocator(), stagingBuffer, stagingBufferAllocation);
 		}
 
 		//创建图像视图
@@ -107,13 +107,13 @@ namespace DM::RHI
 	{
 		vkDestroySampler(m_Device->GetvkDevice(), m_vkSampler, nullptr);
 		vkDestroyImageView(m_Device->GetvkDevice(), m_vkImageView, nullptr);
-		vkDestroyImage(m_Device->GetvkDevice(), m_vkImage, nullptr);
-		vkFreeMemory(m_Device->GetvkDevice(), m_vkImageMemory, nullptr);
+		if (m_vmaAllocation)
+			vmaDestroyImage(m_Device->GetVmaAllocator(), m_vkImage, m_vmaAllocation);
 	}
 	
 
-	void VulkanTexture::CreatevkImage(const RHITextureDesc& desc, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
+	void VulkanTexture::CreatevkImage(const RHITextureDesc& desc, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VmaAllocation& imageAllocation)
 	{
-		m_Device->CreatevkImage(ToVkImageType(desc.Type), desc.Width, desc.Height, ToVkFormat(desc.Format),VK_SAMPLE_COUNT_1_BIT,tiling, usage, properties, m_vkImage, m_vkImageMemory, desc.Depth, desc.MipLevels, desc.ArrayLayers);
+		m_Device->CreatevkImage(ToVkImageType(desc.Type), desc.Width, desc.Height, ToVkFormat(desc.Format),VK_SAMPLE_COUNT_1_BIT,tiling, usage, properties, m_vkImage, m_vmaAllocation, desc.Depth, desc.MipLevels, desc.ArrayLayers);
 	}
 }

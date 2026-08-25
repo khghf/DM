@@ -1,6 +1,11 @@
 ﻿#pragma once
 #include"../../RHIFramebuffer.h"
 #include<vulkan/vulkan.h>
+
+// VMA 分配句柄前置声明（完整定义见 vk_mem_alloc.h，仅在实现文件中包含）
+struct VmaAllocation_T;
+typedef VmaAllocation_T* VmaAllocation;
+
 namespace DM::RHI
 {
 	class VulkanDevice;
@@ -11,7 +16,7 @@ namespace DM::RHI
 		{
 			VkImage			vkImage;
 			VkImageView		vkImageView;
-			VkDeviceMemory	vkMemory;
+			VmaAllocation	vmaAllocation;
 		};
 
 		VulkanFramebuffer(VulkanDevice* device, const RHIFramebufferDesc& desc);

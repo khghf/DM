@@ -60,6 +60,7 @@ target_include_directories(${TARGET_NAME} PRIVATE
     "${IncludeDir_imgui}"
     "${IncludeDir_entt}"
     "${IncludeDir_yaml_cpp}"
+    "${IncludeDir_json}"
     "include"
     "include/ImGui"
     "${CMAKE_SOURCE_DIR}/${EngineName}/include"

@@ -70,6 +70,12 @@ namespace DM
 		glfwSetWindowTitle(glWindow,Props.Title.c_str());
 		glfwSetWindowSize(glWindow, Props.Width, Props.Height);
 
+		// 恢复上次的窗口位置与最大化状态(来自 EngineSettings，PosX/PosY 为 -1 时不定位)
+		if (Props.PosX >= 0 && Props.PosY >= 0)
+			glfwSetWindowPos(glWindow, Props.PosX, Props.PosY);
+		if (Props.Maximized)
+			glfwMaximizeWindow(glWindow);
+
 		glfwMakeContextCurrent(glWindow);
 		glfwSetWindowUserPointer(glWindow, this);
 
@@ -79,7 +85,7 @@ namespace DM
 #endif // ENABLE_OPENGL_API
 
 
-		SetVSync(true);
+		SetVSync(Props.VSync);
 		glfwSetInputMode(glWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 
@@ -277,6 +283,26 @@ namespace DM
 	void* AppWindow::GetNativeWindow() const
 	{
 		return glWindow;
+	}
+
+	bool AppWindow::IsWindowFocused() const
+	{
+		return glfwGetWindowAttrib(glWindow, GLFW_FOCUSED) == GLFW_TRUE;
+	}
+
+	void AppWindow::GetWindowSize(int& width, int& height) const
+	{
+		glfwGetWindowSize(glWindow, &width, &height);
+	}
+
+	void AppWindow::GetWindowPos(int& x, int& y) const
+	{
+		glfwGetWindowPos(glWindow, &x, &y);
+	}
+
+	bool AppWindow::IsMaximized() const
+	{
+		return glfwGetWindowAttrib(glWindow, GLFW_MAXIMIZED) == GLFW_TRUE;
 	}
 }
 #endif // DM_PLATFORM_WINDOW

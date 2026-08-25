@@ -3,7 +3,8 @@
 #include <GLFW/glfw3.h>
 #include <Core/EventBus/Event/WindowEvent.h>
 #include <Platform/Input/Input.h>
-#include "Config.h"
+#include <Core/Config/ConfigMgr.h>
+#include <Core/Config/EngineSettings.h>
 #include <Platform/Window/AppWindow.h>
 #include "Core/Log.h"
 #include <EngineConfig.h>
@@ -37,9 +38,16 @@ namespace DM
 	{
 		Log::Init();
 
-		Config::Init(config.ConfigFilePath);
+		Paths::Init();          // 幂等：APP 已初始化则跳过
+		ConfigMgr::Init();  // 统一加载外部配置(Engine.json/Style.json...)
 
-		WindowProps winProps(config.WindowWidth, config.WindowHeight, config.WindowTitle);
+		// 窗口状态(大小/位置/最大化)来自引擎配置，支持重启恢复
+		const auto& es = ConfigMgr::Get<EngineSettings>();
+		WindowProps winProps(es.WindowWidth, es.WindowHeight, es.WindowTitle);
+		winProps.PosX = es.WindowPosX;
+		winProps.PosY = es.WindowPosY;
+		winProps.Maximized = es.Maximized;
+		winProps.VSync = es.VSync;
 		m_Window = AppWindow::Create(winProps);
 
 		RHI::RHIDeviceDesc desc;
@@ -80,6 +88,23 @@ namespace DM
 
 	void Engine::Shutdown()
 	{
+		// 回写窗口状态(大小/位置/最大化/垂直同步)到引擎配置
+		if (m_Window)
+		{
+			auto& es = ConfigMgr::Get<EngineSettings>();
+			int w = 0, h = 0, x = 0, y = 0;
+			m_Window->GetWindowSize(w, h);
+			m_Window->GetWindowPos(x, y);
+			es.WindowWidth  = w;
+			es.WindowHeight = h;
+			es.WindowPosX   = x;
+			es.WindowPosY   = y;
+			es.Maximized    = m_Window->IsMaximized();
+			es.VSync        = m_Window->IsVSyncEnabled();
+		}
+		// 统一保存所有外部配置到 Config/
+		ConfigMgr::Shutdown();
+
 		m_LayerStack.reset();
 		Input::m_Inst = nullptr;
 		m_Input.reset();
@@ -123,7 +148,6 @@ namespace DM
 
 		if (e->GetResourceType() == EEventType::WindowResize)OnWindowResize(e);
 		if (e->GetResourceType() == EEventType::WindowClose)Close();
-
 
 		PassEvent(e);
 	}

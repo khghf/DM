@@ -151,3 +151,4 @@ _CPack_Packages/
 # 自定义配置（包含本地路径）
 config.local.h
 *.local
+Cache/

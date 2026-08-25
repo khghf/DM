@@ -7,7 +7,6 @@
 #include <vector>
 #include <utility>
 #include <atomic>
-#include "AssetManagmentConfig.h"
 
 namespace DM
 {
@@ -44,7 +43,7 @@ namespace DM
     /// </summary>
     class DM_API AssetMetaDatabase
     {
-        using KeyEvent = AssetID;  // GUID 类型别名
+        using ID = AssetID;  // GUID 类型别名
 
     private:
         AssetMetaDatabase()
@@ -72,7 +71,7 @@ namespace DM
         /// <summary>
         /// 从记录添加
         /// </summary>
-        void AddNewAssetPack(const KeyEvent& guid, const AssetRecord& record);
+        void AddNewAssetPack(const ID& guid, const AssetRecord& record);
 
         /// <summary>
         /// 手动指定所有字段添加
@@ -83,7 +82,7 @@ namespace DM
         /// <param name="sourceFileContentHash">源文件内容哈希</param>
         /// <param name="lastModifyTime">最后修改时间</param>
         /// <param name="type">资产类型</param>
-        void AddNewAssetPack(const KeyEvent& guid, const std::string& packPath,
+        void AddNewAssetPack(const ID& guid, const std::string& packPath,
             const std::string& sourceFilePath,
             const std::string& sourceFileContentHash,
             uint64_t lastModifyTime, EAssetType type);
@@ -102,12 +101,19 @@ namespace DM
         /// <summary>
         /// 通过 GUID 查询记录
         /// </summary>
-        const AssetRecord* GetRecordByGuid(const KeyEvent& guid) const;
+        const AssetRecord* GetRecordByGuid(const ID& guid) const;
 
         /// <summary>
         /// 通过源文件路径查询记录
         /// </summary>
         const AssetRecord* GetRecordBySourceFilePath(std::string_view path) const;
+
+        /// <summary>
+        /// 通过资产包路径精确查询记录。
+        /// 注：World 等自包含资产的资产包路径即源文件路径(无 .dasset 后缀)，
+        /// 与 Shader/Texture/Model 的 "xxx.ext.dasset" 格式不同，必须按包路径精确匹配。
+        /// </summary>
+        const AssetRecord* GetRecordByAssetPackPath(std::string_view packPath) const;
 
         /// <summary>
         /// 通过源文件内容查询记录(计算SHA256后匹配)
@@ -125,20 +131,35 @@ namespace DM
         AssetID GetAssetIDBySourceFileContent(std::string_view filePath) const;
 
         /// <summary>
+        /// 解析源文件路径对应的资产ID：
+        /// 1. 优先按源文件路径精确匹配
+        /// 2. 未命中时按内容哈希匹配(覆盖重命名/移动且内容未变的场景)，命中则自动更新路径索引
+        /// 3. 均未命中返回无效ID
+        /// 供加载侧(AssetMgr)与导入侧(AssetImporter)共用，保证身份解析逻辑唯一。
+        /// </summary>
+        AssetID ResolveAssetIDBySourcePath(std::string_view sourceFilePath);
+
+        /// <summary>
         /// 通过 GUID 获取资产包路径
         /// </summary>
-        std::string GetAssetPathByGuid(const KeyEvent& guid) const;
+        std::string GetAssetPathByGuid(const ID& guid) const;
 
         /// <summary>
         /// 通过 GUID 获取源文件路径
         /// </summary>
-        std::string GetSourceFilePathByGuid(const KeyEvent& guid) const;
+        std::string GetSourceFilePathByGuid(const ID& guid) const;
 
         /// <summary>
         /// 源文件路径变化时调用(文件重命名/移动)
         /// 更新路径索引和记录
         /// </summary>
         void OnSourceFilePathChanged(const AssetID& guid, std::string_view newPath);
+
+        /// <summary>
+        /// 资产整体移动时调用(源文件与 .dasset 资产包已物理移动)。
+        /// 同步更新 SourceFilePath 与 AssetPackPath 两条路径记录及索引。
+        /// </summary>
+        void OnAssetMoved(const AssetID& guid, std::string_view newSourceFilePath, std::string_view newAssetPackPath);
 
         /// <summary>
         /// 保存到磁盘(仅当数据有变化时)
@@ -166,37 +187,29 @@ namespace DM
         /// </summary>
         std::vector<std::pair<AssetID, AssetRecord>> GetAllRecords() const;
 
-        /// <summary>
-        /// 数据修改次数(每次增删改递增)
-        /// 用于外部(如内容面板)感知数据库变更并自动刷新
-        /// </summary>
-        uint64_t GetModifyCount() const { return m_ModifyCount.load(std::memory_order_relaxed); }
-
     private:
         /// <summary>
         /// 添加反向索引(路径->GUID、内容哈希->GUID)
         /// </summary>
-        void AddIndexes(const AssetRecord& record, const KeyEvent& guid);
+        void AddIndexes(const AssetRecord& record, const ID& guid);
 
         /// <summary>
         /// 删除反向索引
         /// </summary>
-        void RemoveIndexes(const AssetRecord& record, const KeyEvent& guid);
+        void RemoveIndexes(const AssetRecord& record, const ID& guid);
 
         /// <summary>
         /// 从主表重建所有索引(反序列化后调用)
         /// </summary>
         void RebuildIndexes();
 
-        std::unordered_map<KeyEvent, AssetRecord> m_GuidToRecord;          // 主表：GUID -> 记录
-        std::unordered_map<std::filesystem::path, KeyEvent> m_SourceFilePathToGuid;  // 索引：路径 -> GUID
-        std::unordered_map<std::string, KeyEvent> m_ContentHashToGuid;     // 索引：内容哈希 -> GUID
+        std::unordered_map<ID, AssetRecord> m_GuidToRecord;          // 主表：GUID -> 记录
+        std::unordered_map<std::filesystem::path, ID> m_SourceFilePathToGuid;  // 索引：路径 -> GUID
+        std::unordered_map<std::string, ID> m_ContentHashToGuid;     // 索引：内容哈希 -> GUID
 
         mutable std::shared_mutex m_Mutex;
 
         bool m_IsDataDirty = false;
-
-        std::atomic<uint64_t> m_ModifyCount{ 0 };  // 数据修改计数(增删改时递增)
 
         std::string m_DatabaseFileName = "AssetDatabase.txt";
     };

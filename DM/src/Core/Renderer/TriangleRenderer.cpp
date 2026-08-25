@@ -75,29 +75,6 @@ namespace DM
 
 
 
-		SPtr<DM::Shader>vs = DM::AssetMgr::LoadAsset<DM::Shader>("Assets/Shader/BuiltIn.vert");
-		SPtr<DM::Shader>fs = DM::AssetMgr::LoadAsset<DM::Shader>("Assets/Shader/BuiltIn.frag");
-
-
-
-		RHIShaderProgramDesc shaderProgramDesc{};
-		shaderProgramDesc.Shaders.push_back(vs->GetRHIResource());
-		shaderProgramDesc.Shaders.push_back(fs->GetRHIResource());
-		m_ShaderProgram = device->CreateShaderProgram(shaderProgramDesc);
-
-
-
-		RHIPipelineDesc pipeDesc{};
-		pipeDesc.Topology = EPrimitiveTopology::TriangleList;
-		pipeDesc.CullMode = ECullMode::Back;
-		pipeDesc.FillMode = EPolygonMode::Fill;
-		pipeDesc.DepthTest = true;
-		pipeDesc.DepthWrite = true;
-		pipeDesc.ShaderProgram = m_ShaderProgram;
-		pipeDesc.RenderPass = m_RenderPass;
-		m_Pipeline = device->CreatePipeline(pipeDesc);
-
-
 		m_Cmd = device->CreateCommandList();
 
 
@@ -149,12 +126,44 @@ namespace DM
 		for (auto& ele : m_Framebuffers)ele = m_RenderPass->CreateFramebuffer(framebufferDesc);
 
 
+	}
+
+	bool TriangleRenderer::EnsurePipelineResources()
+	{
+		if (m_bPipelineReady) return true;
+
+		RHIDevice* device = RHIDevice::Get();
+
+		// 内置 shader 资产包缺失时(如删除了 metadata 缓存后重启)，由 AssetMgr 缺包回调触发编辑器侧按需导入
+		SPtr<DM::Shader> vs = DM::AssetMgr::LoadAsset<DM::Shader>("Assets/Shader/BuiltIn.vert");
+		SPtr<DM::Shader> fs = DM::AssetMgr::LoadAsset<DM::Shader>("Assets/Shader/BuiltIn.frag");
+		if (!vs || !fs)
+		{
+			LOG_CORE_ERROR("[TriangleRenderer]failed to load builtin shaders, retry next frame: Assets/Shader/BuiltIn.vert/.frag");
+			return false;
+		}
+
+		RHIShaderProgramDesc shaderProgramDesc{};
+		shaderProgramDesc.Shaders.push_back(vs->GetRHIResource());
+		shaderProgramDesc.Shaders.push_back(fs->GetRHIResource());
+		m_ShaderProgram = device->CreateShaderProgram(shaderProgramDesc);
+
+		RHIPipelineDesc pipeDesc{};
+		pipeDesc.Topology = EPrimitiveTopology::TriangleList;
+		pipeDesc.CullMode = ECullMode::Back;
+		pipeDesc.FillMode = EPolygonMode::Fill;
+		pipeDesc.DepthTest = true;
+		pipeDesc.DepthWrite = true;
+		pipeDesc.ShaderProgram = m_ShaderProgram;
+		pipeDesc.RenderPass = m_RenderPass;
+		m_Pipeline = device->CreatePipeline(pipeDesc);
+
 		m_GlobalSets.resize(device->GetConcurrentFrameCount());
 		for (auto& ele : m_GlobalSets)ele = m_ShaderProgram->GenDescriptorSet(0);
+		for (int i = 0; i < m_GlobalSets.size(); ++i)m_GlobalSets[i]->BindUBO(m_GlobalBuffers[i], "globalData");
 
-
-		for (int i=0;i< m_GlobalSets.size();++i)m_GlobalSets[i]->BindUBO(m_GlobalBuffers[i],"globalData");
-
+		m_bPipelineReady = true;
+		return true;
 	}
 
 	TriangleRenderer::~TriangleRenderer()
@@ -183,6 +192,15 @@ namespace DM
 	{
 		Renderer::BeginFrame();
 
+		// 内置 shader 管线资源惰性创建：删除 metadata 缓存后重启时，
+		// 首帧 Editor 已注册缺包回调，此处会自动按需导入并加载成功
+		if (!EnsurePipelineResources())
+		{
+			m_bFrameActive = false;
+			return;
+		}
+		m_bFrameActive = true;
+
 		m_AvailableFramebufferIndex=m_Swapchain->AcquireNextImage();
 
 		auto framebuffer = GetAvailableFramebuffer();
@@ -206,6 +224,8 @@ namespace DM
 
 	void TriangleRenderer::Update(float deltaTime)
 	{
+		if (!m_bFrameActive) return;
+
 		static uint32_t frameIndex{};
 		frameIndex = RHIDevice::Get()->GetCpuProcessFrameIndex();
 		UpdateGlobalData(frameIndex);
@@ -218,6 +238,13 @@ namespace DM
 
 	void TriangleRenderer::EndFrame()
 	{
+		if (!m_bFrameActive)
+		{
+			// 本帧未渲染，仍需推进 RHI 帧索引保持 Begin/End 配对
+			Renderer::EndFrame();
+			return;
+		}
+
 		m_Cmd->EndRecord();
 		m_Cmd->Submit();
 		m_Swapchain->Present();

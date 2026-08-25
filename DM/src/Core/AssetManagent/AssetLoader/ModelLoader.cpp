@@ -3,6 +3,7 @@
 #include<Core/AssetManagent/AssetImporter/Texture2DImporter.h>
 #include<Core/AssetManagent/AsetPack/ModelPack.h>
 #include<Core/AssetManagent/AssetObject/Model.h>
+#include<Core/AssetManagent/AssetObject/AssetObjectSetter.h>
 #include<Core/RHI/RHI.h>
 #include<Core/AssetManagent/AssetMetaDatabase.h>
 #include<Core/AssetManagent/AssetCache.h>
@@ -95,6 +96,9 @@ namespace DM
 		//model->m_Indices = device->CreateIndexBuffer(indexDesc);
 
 		model->m_RefedTexture = std::move(modelPack->m_Textures);
+
+		// 资产对象持有包内 GUID，后续可通过资产库反查源文件路径
+		AssetObjectSetter::SetAssetId(model, pack->GetGUID());
 
 		return CreateSPtr_Raw<Model>(model);
 

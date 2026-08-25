@@ -31,6 +31,10 @@ namespace DM
 	{
 		using InnerID = std::string;
 		friend class AssetIDGen;
+
+		AssetID() = default;
+		explicit AssetID(InnerID id) : m_ID(std::move(id)) {}
+
 		bool operator==(const AssetID& other)const
 		{
 			return this->m_ID == other.m_ID;

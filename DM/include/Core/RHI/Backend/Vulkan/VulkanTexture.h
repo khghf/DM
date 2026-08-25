@@ -1,6 +1,11 @@
 ﻿#pragma once
 #include"../../RHITexture.h"
 #include<vulkan/vulkan.h>
+
+// VMA 分配句柄前置声明（完整定义见 vk_mem_alloc.h，仅在实现文件中包含）
+struct VmaAllocation_T;
+typedef VmaAllocation_T* VmaAllocation;
+
 namespace DM::RHI
 {
 	class VulkanDevice;
@@ -14,12 +19,12 @@ namespace DM::RHI
 		VkImageLayout GetvkImageLayout()const { return m_vkImageLayout; }
 
 	protected:
-		void CreatevkImage(const RHITextureDesc& desc, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+		void CreatevkImage(const RHITextureDesc& desc, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VmaAllocation& imageAllocation);
 	private:
 		VulkanDevice*	m_Device;
 		VkImage			m_vkImage;
 		VkImageView		m_vkImageView;
-		VkDeviceMemory	m_vkImageMemory;
+		VmaAllocation	m_vmaAllocation;
 		VkImageLayout	m_vkImageLayout;
 		VkSampler		m_vkSampler;
 

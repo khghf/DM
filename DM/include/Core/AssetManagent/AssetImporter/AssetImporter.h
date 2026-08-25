@@ -16,6 +16,14 @@ namespace DM
 		/// 将外部文件导入并生成.dasset文件保存到磁盘、对于引擎内部资产类则直接生产资产包
 		/// </summary>
 		static AssetPack* Import(std::string_view sourceFilePath);
+
+		/// <summary>
+		/// 带身份复用开关的导入。
+		/// reuseGuid=true  默认行为：按源路径/内容哈希复用已有 GUID(保持重命名/重复导入身份稳定)；
+		/// reuseGuid=false 跳过身份解析，由具体导入器生成全新 GUID——用于复制资产等
+		/// 必须生成独立新身份的场合(否则同内容副本会被识别为原资产)。
+		/// </summary>
+		static AssetPack* Import(std::string_view sourceFilePath, bool reuseGuid);
 	private:
 		static Importer SelectImporter(std::string_view sourceFilePath);
 		/*static std::unordered_map<EAssetType, Importer>& GetImporterRegistry()
@@ -32,6 +40,12 @@ namespace DM
 		/// <param name="sourceFilePath"></param>
 		/// <returns></returns>
 		static bool IsEngineAsset(std::string_view sourceFilePath);
+
+		/// <summary>
+		/// 判断源文件是否支持导入(扩展名/魔术头匹配现有导入器表)
+		/// 用于资产目录扫描：不触发 assert
+		/// </summary>
+		static bool IsImportable(std::string_view sourceFilePath);
 
 
 	};

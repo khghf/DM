@@ -177,44 +177,7 @@ namespace mirror::Serialization
 
 
 
-	/*inline void BinarySerializer<TypeId>::Serialize(std::ostream* stream, const TypeId* inVal)
-	{
-		const auto id = inVal->GetId();
-		WriteStream(stream,&id);
-	}
-	inline void BinarySerializer<TypeId>::Deserialize(std::istream* stream, TypeId* outVal)
-	{
-		uint64_t id = ReadStream<uint64_t>(stream);
-		outVal->SetTypeId(id);
-	}
-	inline void BinarySerializer<VariableId>::Serialize(std::ostream* stream, const VariableId* inVal)
-	{
-		const auto id = inVal->GetTypeId().GetId();
-		const auto isConst = inVal->IsConst();
-		const auto isVolatile = inVal->IsVolatile();
-		const auto isReference = inVal->IsReference();
-		const auto isRValReference = inVal->IsRValReference();
-		const auto pointerAmount = inVal->GetPointerAmount();
-		const auto arraySize = inVal->GetArraySize();
-
-		WriteStream(stream, &id);
-		WriteStream(stream, &isConst);
-		WriteStream(stream, &isVolatile);
-		WriteStream(stream, &isReference);
-		WriteStream(stream, &isRValReference);
-		WriteStream(stream, &pointerAmount);
-		WriteStream(stream, &arraySize);
-	}
-	inline void BinarySerializer<VariableId>::Deserialize(std::istream* stream, VariableId* outVal)
-	{
 	
-	}
-	inline void BinarySerializer<FunctionId>::Serialize(std::ostream* stream, const FunctionId* inVal)
-	{
-	}
-	inline void BinarySerializer<FunctionId>::Deserialize(std::istream* stream, FunctionId* outVal)
-	{
-	}*/
 #ifdef  GLM_ENABLE
 	inline void BinarySerializer<glm::vec1>::Serialize(std::ostream* stream, const glm::vec1* inVal)
 	{
@@ -261,6 +224,8 @@ namespace mirror::Serialization
 		outVal->w = ReadStream<decltype(outVal->w)>(stream);
 	}
 #endif //  GLM_ENABLE
+
+
 
 
 	// ============ 基础类型特化实现 ============

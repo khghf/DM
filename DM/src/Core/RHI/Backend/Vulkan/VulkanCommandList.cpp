@@ -231,6 +231,6 @@ namespace DM::RHI
     }
     VkCommandBuffer* VulkanCommandList::GetIdleCommandBuffer() const
     {
-        return const_cast<VkCommandBuffer*>(&m_CommandBuffers[CURRENT_CPU_PROCESSES_FRAME_INDEX]);
+        return const_cast<VkCommandBuffer*>(&m_CommandBuffers[m_Device->GetCpuProcessFrameIndex()]);
     }
 } // namespace DM::RHI
